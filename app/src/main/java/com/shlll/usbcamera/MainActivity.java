@@ -50,119 +50,7 @@ public class MainActivity extends AppCompatActivity {
         FrameLayout frame_layout = findViewById(R.id.camera_view_frame);
         mUSBCameraHelper = new USBCameraHelper(this, mUVCCameraView, frame_layout);
 
-        FloatingActionButton fab_capture = findViewById(R.id.fab_capture),
-                fab_pos = findViewById(R.id.fab_pos),
-                fab_front_up = findViewById(R.id.fab_front_up),
-                fab_front_down = findViewById(R.id.fab_front_down),
-                fab_front_right = findViewById(R.id.fab_front_right),
-                fab_front_left = findViewById(R.id.fab_front_left),
-                fab_back_up = findViewById(R.id.fab_back_up),
-                fab_back_down = findViewById(R.id.fab_back_down),
-                fab_back_right = findViewById(R.id.fab_back_right),
-                fab_back_left = findViewById(R.id.fab_back_left);
-        LinearLayout fab_front_right_layout = findViewById(R.id.fab_front_right_layout),
-                fab_front_left_layout = findViewById(R.id.fab_front_left_layout),
-                fab_front_down_layout = findViewById(R.id.fab_front_down_layout),
-                fab_front_up_layout = findViewById(R.id.fab_front_up_layout),
-                fab_back_right_layout = findViewById(R.id.fab_back_right_layout),
-                fab_back_left_layout = findViewById(R.id.fab_back_left_layout),
-                fab_back_down_layout = findViewById(R.id.fab_back_down_layout),
-                fab_back_up_layout = findViewById(R.id.fab_back_up_layout);
-        TextView  fab_front_right_text = findViewById(R.id.fab_front_right_text),
-                fab_front_left_text = findViewById(R.id.fab_front_left_text),
-                fab_front_down_text = findViewById(R.id.fab_front_down_text),
-                fab_front_up_text = findViewById(R.id.fab_front_up_text),
-                fab_back_right_text = findViewById(R.id.fab_back_right_text),
-                fab_back_left_text = findViewById(R.id.fab_back_left_text),
-                fab_back_down_text = findViewById(R.id.fab_back_down_text),
-                fab_back_up_text = findViewById(R.id.fab_back_up_text);
-
-        fab_front_up_layout.animate().setListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-                if (!isRightFABOpen) {
-                    fab_front_right_text.setVisibility(View.GONE);
-                    fab_front_left_text.setVisibility(View.GONE);
-                    fab_front_down_text.setVisibility(View.GONE);
-                    fab_front_up_text.setVisibility(View.GONE);
-                    fab_back_right_text.setVisibility(View.GONE);
-                    fab_back_left_text.setVisibility(View.GONE);
-                    fab_back_down_text.setVisibility(View.GONE);
-                    fab_back_up_text.setVisibility(View.GONE);
-                } else {
-                    fab_front_up.setVisibility(View.VISIBLE);
-                    fab_front_down.setVisibility(View.VISIBLE);
-                    fab_front_right.setVisibility(View.VISIBLE);
-                    fab_front_left.setVisibility(View.VISIBLE);
-                    fab_back_up.setVisibility(View.VISIBLE);
-                    fab_back_down.setVisibility(View.VISIBLE);
-                    fab_back_right.setVisibility(View.VISIBLE);
-                    fab_back_left.setVisibility(View.VISIBLE);
-                }
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                if (!isRightFABOpen) {
-                    fab_front_up.setVisibility(View.GONE);
-                    fab_front_down.setVisibility(View.GONE);
-                    fab_front_right.setVisibility(View.GONE);
-                    fab_front_left.setVisibility(View.GONE);
-                    fab_back_up.setVisibility(View.GONE);
-                    fab_back_down.setVisibility(View.GONE);
-                    fab_back_right.setVisibility(View.GONE);
-                    fab_back_left.setVisibility(View.GONE);
-                } else {
-                    fab_front_right_text.setVisibility(View.VISIBLE);
-                    fab_front_left_text.setVisibility(View.VISIBLE);
-                    fab_front_down_text.setVisibility(View.VISIBLE);
-                    fab_front_up_text.setVisibility(View.VISIBLE);
-                    fab_back_right_text.setVisibility(View.VISIBLE);
-                    fab_back_left_text.setVisibility(View.VISIBLE);
-                    fab_back_down_text.setVisibility(View.VISIBLE);
-                    fab_back_up_text.setVisibility(View.VISIBLE);
-                }
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-
-            }
-        });
-
-        Function<Boolean, Boolean> animatePosFabMenu = (open)-> {
-            if(isRightFABOpen == open)
-                return false;
-
-            if(!isRightFABOpen) {
-                isRightFABOpen = true;
-                fab_front_up_layout.animate().translationY(-getResources().getDimension(R.dimen.fab_menu_1));
-                fab_back_up_layout.animate().translationY(-getResources().getDimension(R.dimen.fab_menu_2));
-                fab_front_left_layout.animate().translationY(-getResources().getDimension(R.dimen.fab_menu_3));
-                fab_back_left_layout.animate().translationY(-getResources().getDimension(R.dimen.fab_menu_4));
-                fab_front_right_layout.animate().translationY(-getResources().getDimension(R.dimen.fab_menu_5));
-                fab_back_right_layout.animate().translationY(-getResources().getDimension(R.dimen.fab_menu_6));
-                fab_front_down_layout.animate().translationY(-getResources().getDimension(R.dimen.fab_menu_7));
-                fab_back_down_layout.animate().translationY(-getResources().getDimension(R.dimen.fab_menu_8));
-            } else {
-                isRightFABOpen = false;
-                fab_front_up_layout.animate().translationY(0);
-                fab_back_up_layout.animate().translationY(0);
-                fab_front_left_layout.animate().translationY(0);
-                fab_back_left_layout.animate().translationY(0);
-                fab_front_right_layout.animate().translationY(0);
-                fab_back_right_layout.animate().translationY(0);
-                fab_front_down_layout.animate().translationY(0);
-                fab_back_down_layout.animate().translationY(0);
-            }
-
-            return true;
-        };
+        FloatingActionButton fab_capture = findViewById(R.id.fab_capture);
 
         mUSBCameraHelper.setOnCameraButtonListener(new USBCameraHelper.OnCameraButtonListener() {
             @Override
@@ -171,70 +59,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        mUVCCameraView.setOnTransStateChangeListener(new UVCCameraTextureView.OnTransStateChangeListener() {
-            @Override
-            public void onTransStateChange(UVCCameraTextureView.TransState state) {
-                switch (state) {
-                    case CUSTOM:
-                        fab_pos.setImageResource(R.drawable.ic_none);
-                        fab_pos.setRotation(0);
-                        return;
-                    case BACK_UP:
-                        fab_pos.setImageResource(R.drawable.ic_cam_back);
-                        fab_pos.setRotation(0);
-                        break;
-                    case FRONT_UP:
-                        fab_pos.setImageResource(R.drawable.ic_cam_front);
-                        fab_pos.setRotation(0);
-                        break;
-                    case BACK_DOWN:
-                        fab_pos.setImageResource(R.drawable.ic_cam_back);
-                        fab_pos.setRotation(180);
-                        break;
-                    case FRONT_DOWN:
-                        fab_pos.setImageResource(R.drawable.ic_cam_front);
-                        fab_pos.setRotation(180);
-                        break;
-                    case BACK_LEFT:
-                        fab_pos.setImageResource(R.drawable.ic_cam_back);
-                        fab_pos.setRotation(270);
-                        break;
-                    case FRONT_LEFT:
-                        fab_pos.setImageResource(R.drawable.ic_cam_front);
-                        fab_pos.setRotation(270);
-                        break;
-                    case BACK_RIGHT:
-                        fab_pos.setImageResource(R.drawable.ic_cam_back);
-                        fab_pos.setRotation(90);
-                        break;
-                    case FRONT_RIGHT:
-                        fab_pos.setImageResource(R.drawable.ic_cam_front);
-                        fab_pos.setRotation(90);
-                        break;
-                }
-            }
-        });
-
-        frame_layout.setOnClickListener((view)->{
-            animatePosFabMenu.apply(false);
-        });
-
         fab_capture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mUSBCameraHelper.saveCapturePicture();
             }
         });
-
-        fab_pos.setOnClickListener((view)->animatePosFabMenu.apply(true ^ isRightFABOpen));
-        fab_front_up.setOnClickListener((view)->mUSBCameraHelper.setPosition(UVCCameraTextureView.TransState.FRONT_UP));
-        fab_front_down.setOnClickListener((view)->mUSBCameraHelper.setPosition(UVCCameraTextureView.TransState.FRONT_DOWN));
-        fab_front_left.setOnClickListener((view)->mUSBCameraHelper.setPosition(UVCCameraTextureView.TransState.FRONT_LEFT));
-        fab_front_right.setOnClickListener((view)->mUSBCameraHelper.setPosition(UVCCameraTextureView.TransState.FRONT_RIGHT));
-        fab_back_up.setOnClickListener((view)->mUSBCameraHelper.setPosition(UVCCameraTextureView.TransState.BACK_UP));
-        fab_back_down.setOnClickListener((view)->mUSBCameraHelper.setPosition(UVCCameraTextureView.TransState.BACK_DOWN));
-        fab_back_left.setOnClickListener((view)->mUSBCameraHelper.setPosition(UVCCameraTextureView.TransState.BACK_LEFT));
-        fab_back_right.setOnClickListener((view)->mUSBCameraHelper.setPosition(UVCCameraTextureView.TransState.BACK_RIGHT));
     }
 
     @Override

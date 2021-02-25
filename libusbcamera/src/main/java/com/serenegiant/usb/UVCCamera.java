@@ -44,8 +44,9 @@ public class UVCCamera {
 	private static final String TAG = UVCCamera.class.getSimpleName();
 	private static final String DEFAULT_USBFS = "/dev/bus/usb";
 
-	public static final int DEFAULT_PREVIEW_WIDTH = 640;
-	public static final int DEFAULT_PREVIEW_HEIGHT = 480;
+	//1024*656
+	public static final int DEFAULT_PREVIEW_WIDTH = 1024; //640;
+	public static final int DEFAULT_PREVIEW_HEIGHT = 656; //480;
 	public static final int DEFAULT_PREVIEW_MODE = 0;
 	public static final int DEFAULT_PREVIEW_MIN_FPS = 1;
 	public static final int DEFAULT_PREVIEW_MAX_FPS = 31;
@@ -210,6 +211,9 @@ public class UVCCamera {
 		}
 
 		if (result != 0) {
+			if(mCtrlBlock == null){
+				return;
+			}
 			throw new UnsupportedOperationException("open failed:result=" + result+"----->" +
 					"id_camera="+mNativePtr+";venderId="+mCtrlBlock.getVenderId()
 					+";productId="+mCtrlBlock.getProductId()+";fileDescriptor="+mCtrlBlock.getFileDescriptor()
@@ -707,6 +711,13 @@ public class UVCCamera {
 			if (range > 0)
 				nativeSetGain(mNativePtr, (int)(gain / 100.f * range) + mGainMin);
 		}
+	}
+
+	public synchronized int sensorInt(final int delay) {
+		if (mNativePtr != 0) {
+				return nativeSensorInt(delay);
+		}
+		return 0;
 	}
 
 	/**
@@ -1235,4 +1246,22 @@ public class UVCCamera {
 	private final native int nativeUpdatePrivacyLimit(final long id_camera);
 	private static final native int nativeSetPrivacy(final long id_camera, final boolean privacy);
 	private static final native int nativeGetPrivacy(final long id_camera);
+
+	//专用接口
+	public static final native int nativeSensorInt(final int delay);
+	public static final native int nativeSensorExit();
+	public static final native int nativeSensorLedOn();
+	public static final native int nativeSensorLedOff();
+	public static final native int nativeSensorSensorOn();
+	public static final native int nativeSensorSensorOff();
+	public static final native int nativeSensorGetHeight();
+	public static final native int nativeSensorGetWidth();
+
+	public static final native int nativeSensorSetGain(int gain);
+	public static final native int nativeSensorGetGain();
+	public static final native int nativeSensorSetExp(int exp);
+	public static final native int nativeSensorGetExp();
+
+	public static final native int nativeSensorReadImg(byte[] pixs);
+
 }

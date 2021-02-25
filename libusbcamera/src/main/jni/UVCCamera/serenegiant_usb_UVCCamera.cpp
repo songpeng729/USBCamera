@@ -38,7 +38,7 @@
 
 #include "libUVCCamera.h"
 #include "UVCCamera.h"
-
+#include "serenegiant_usb_UVCCamera.h"
 /**
  * set the value into the long field
  * @param env: this param should not be null
@@ -1994,6 +1994,132 @@ static jint nativeGetPrivacy(JNIEnv *env, jobject thiz,
 	RETURN(result, jint);
 }
 
+//----------------专门用于 Camera 接口-------------------------------------------
+int sensor_int(int nDelay){
+    return nDelay;
+}
+
+int sensor_exit(){
+    return RET_SUCCESS;
+}
+
+int sensor_LEDOn(){
+    return RET_SUCCESS;
+}
+
+int sensor_LEDOff(){
+    return RET_SUCCESS;
+}
+
+int sensor_On(){
+    return RET_SUCCESS;
+}
+
+int sensor_Off(){
+    return RET_SUCCESS;
+}
+
+int sensor_getHeight(){
+    return IMG_HEIGHT;
+}
+
+int sensor_getWidth(){
+    return IMG_WIDTH;
+}
+//增益
+int sensor_setGain(int value){
+//1-48
+return value;
+}
+
+int sensor_getGain(){
+
+return RET_SUCCESS;
+}
+
+//曝光
+int sensor_setExp(int value){
+//1-1048
+
+return value;
+}
+
+int sensor_getExp(){
+return RET_SUCCESS;
+}
+
+int sensor_readimg(unsigned char* buf){
+        int line = 0;
+        int point = 0;
+        for (line = 0; line < 640; line++) {
+            for (point = 0; point < 640; point++) {
+                (*buf) = 0x54&0xFF;
+                buf ++;
+            }
+        }
+    return RET_SUCCESS;
+}
+
+static jint nativeSensorInt(JNIEnv *env, jobject thiz, jint nDelay) {
+	return sensor_int(nDelay);
+}
+static jint nativeSensorExit(JNIEnv *env, jobject thiz) {
+	return sensor_exit();
+}
+
+static jint nativeSensorLedOn(JNIEnv *env, jobject thiz) {
+	return sensor_LEDOn();
+}
+static jint nativeSensorLedOff(JNIEnv *env, jobject thiz) {
+	return sensor_LEDOff();
+}
+static jint nativeSensorSensorOn(JNIEnv *env, jobject thiz) {
+	return sensor_On();
+}
+static jint nativeSensorSensorOff(JNIEnv *env, jobject thiz) {
+	return sensor_Off();
+}
+
+static jint nativeSensorGetHeight(JNIEnv *env, jobject thiz) {
+	return sensor_getHeight();
+}
+
+static jint nativeSensorGetWidth(JNIEnv *env, jobject thiz) {
+	return sensor_getWidth();
+}
+
+//设置参数
+static jint nativeSensorSetGain(JNIEnv *env, jobject thiz, jint gain) {
+	return sensor_setGain(gain);
+}
+static jint nativeSensorGetGain(JNIEnv *env, jobject thiz) {
+	return sensor_getGain();
+}
+static jint nativeSensorSetExp(JNIEnv *env, jobject thiz, jint exp) {
+	return sensor_setExp(exp);
+}
+static jint nativeSensorGetExp(JNIEnv *env, jobject thiz) {
+	return sensor_getExp();
+}
+static jint nativeSensorReadImg(JNIEnv *env, jobject thiz, jbyteArray outputBuff) {
+        unsigned char array[640 * 640]; //按行存储
+        sensor_readimg(array);
+
+        unsigned char * dscTmp = (unsigned char *)env->GetByteArrayElements(outputBuff, 0);
+
+        int line = 0;
+        int point = 0;
+        for (line = 0; line < 640; line++) {
+            for (point = 0; point < 640; point++) {
+                (*dscTmp) = (*array);
+                dscTmp ++;
+            }
+        }
+
+	return RET_SUCCESS;
+}
+//-------------------------end of camera interfaces-----------
+
 //**********************************************************************
 //
 //**********************************************************************
@@ -2189,6 +2315,22 @@ static JNINativeMethod methods[] = {
 	{ "nativeUpdatePrivacyLimit",		"(J)I", (void *) nativeUpdatePrivacyLimit },
 	{ "nativeSetPrivacy",				"(JZ)I", (void *) nativeSetPrivacy },
 	{ "nativeGetPrivacy",				"(J)I", (void *) nativeGetPrivacy },
+
+	{ "nativeSensorInt",				"(I)I", (void *) nativeSensorInt },
+	{ "nativeSensorExit",               "()I", (void *) nativeSensorExit },
+
+	{ "nativeSensorLedOn",               "()I", (void *) nativeSensorLedOn },
+	{ "nativeSensorLedOff",               "()I", (void *) nativeSensorLedOff },
+	{ "nativeSensorSensorOn",               "()I", (void *) nativeSensorSensorOn },
+	{ "nativeSensorSensorOff",               "()I", (void *) nativeSensorSensorOff },
+	{ "nativeSensorGetHeight",               "()I", (void *) nativeSensorGetHeight },
+	{ "nativeSensorGetWidth",               "()I", (void *) nativeSensorGetWidth },
+
+	{ "nativeSensorSetGain",               "(I)I", (void *) nativeSensorSetGain },
+	{ "nativeSensorGetGain",               "()I", (void *) nativeSensorGetGain },
+	{ "nativeSensorSetExp",               "(I)I", (void *) nativeSensorSetExp },
+	{ "nativeSensorGetExp",               "()I", (void *) nativeSensorGetExp },
+    { "nativeSensorReadImg",              "([B)I", (void *) nativeSensorReadImg },
 };
 
 int register_uvccamera(JNIEnv *env) {

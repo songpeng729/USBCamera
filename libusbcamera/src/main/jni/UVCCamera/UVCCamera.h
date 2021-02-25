@@ -353,6 +353,7 @@ public:
 	int updateAnalogVideoLockStateLimit(int &min, int &max, int &def);
 	int setAnalogVideoLockState(int status);
 	int getAnalogVideoLockState();
+
 };
 
 #endif /* UVCCAMERA_H_ */

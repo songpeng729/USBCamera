@@ -175,7 +175,7 @@ public class UVCCameraTextureView extends TextureView {
 	public Bitmap getBitmap() {
 		Bitmap origin = super.getBitmap();
 
-		int width = origin.getWidth();
+		/*int width = origin.getWidth();
 		int height = origin.getHeight();
 		Matrix matrix = new Matrix();
 		matrix.postScale(getScaleX(), getScaleY());
@@ -183,7 +183,8 @@ public class UVCCameraTextureView extends TextureView {
 
 		Bitmap resmap = Bitmap.createBitmap(origin, 0, 0, width, height, matrix, false);
 
-		return resmap;
+		return resmap;*/
+		return origin;
 	}
 
 	private void setTransState(TransState state) {

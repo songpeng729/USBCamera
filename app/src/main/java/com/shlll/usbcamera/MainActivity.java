@@ -1,7 +1,7 @@
 package com.shlll.usbcamera;
 
 import android.Manifest;
-import android.animation.Animator;
+import android.graphics.Bitmap;
 import android.hardware.usb.UsbDevice;
 import android.os.Bundle;
 
@@ -19,18 +19,17 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.util.List;
-import java.util.function.Function;
 
 
 public class MainActivity extends AppCompatActivity {
     private UVCCameraTextureView mUVCCameraView;
     private USBCameraHelper mUSBCameraHelper;
     boolean isRightFABOpen = false;
-
+    private ImageView cPimageView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
         mUVCCameraView = (UVCCameraTextureView)findViewById(R.id.camera_view);
         FrameLayout frame_layout = findViewById(R.id.camera_view_frame);
         mUSBCameraHelper = new USBCameraHelper(this, mUVCCameraView, frame_layout);
-
+        cPimageView = findViewById(R.id.cp_imageView);
         FloatingActionButton fab_capture = findViewById(R.id.fab_capture);
 
         mUSBCameraHelper.setOnCameraButtonListener(new USBCameraHelper.OnCameraButtonListener() {
@@ -65,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
                 mUSBCameraHelper.saveCapturePicture();
             }
         });
+
     }
 
     @Override
@@ -95,6 +95,19 @@ public class MainActivity extends AppCompatActivity {
 
             AlertDialog dialog = builder.create();
             dialog.show();
+
+            //-------------专用接口测试程序------------------
+            int ret = mUSBCameraHelper.cameraSensorInt(5);
+            byte[] pixs = mUSBCameraHelper.cameraSensorGetImg();
+            //保存图片
+            int picw = 640, pich = 640;
+            int[] pixFilter = BitmapUtil.convToImage(pixs);
+            Bitmap bmpFilter = Bitmap.createBitmap(picw, pich, Bitmap.Config.ARGB_8888);
+            bmpFilter.setPixels(pixFilter, 0, picw, 0, 0, picw, pich);
+            cPimageView.setImageBitmap(bmpFilter);
+
+            Toast.makeText(this, ret + "", 1000).show();
+
         } else if (id == R.id.action_usbinfo) {
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
             builder.setTitle(getResources().getString(R.string.diag_usbinfo_title));

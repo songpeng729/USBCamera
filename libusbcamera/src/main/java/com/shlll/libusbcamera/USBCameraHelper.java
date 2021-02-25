@@ -156,6 +156,36 @@ public class USBCameraHelper {
         mUVCCameraView = null;
     }
 
+    //---------------专用接口------------------------
+    public synchronized int cameraSensorInt(int delay){
+        synchronized (mSync) {
+            //java层测试接口
+//            if (mUVCCamera != null)
+            {
+//                return mUVCCamera.sensorInt(delay);
+//                return mUVCCamera.nativeSensorExit();
+//                return mUVCCamera.nativeSensorLedOn();
+//                return mUVCCamera.nativeSensorLedOff();
+//                return mUVCCamera.nativeSensorSensorOn();
+//                return mUVCCamera.nativeSensorSensorOff();
+//                return mUVCCamera.nativeSensorGetHeight();
+//                return mUVCCamera.nativeSensorSetGain(50);
+//                return mUVCCamera.nativeSensorGetGain();
+//                return mUVCCamera.nativeSensorSetExp(99);
+                return mUVCCamera.nativeSensorGetExp();
+            }
+        }
+//        return -1;
+    }
+
+
+    public synchronized byte[] cameraSensorGetImg() {
+        synchronized (mSync) {
+            byte[] pixs = new byte[640 * 640];
+            mUVCCamera.nativeSensorReadImg(pixs);
+            return  pixs;
+        }
+    }
     /**
      * Save current picture to system and add picture to gallery.
      */
@@ -258,7 +288,7 @@ public class USBCameraHelper {
                         mPreviewSurface = null;
                     }
                     try {
-                        camera.setPreviewSize(UVCCamera.DEFAULT_PREVIEW_WIDTH, UVCCamera.DEFAULT_PREVIEW_HEIGHT, UVCCamera.FRAME_FORMAT_MJPEG);
+                        camera.setPreviewSize(UVCCamera.DEFAULT_PREVIEW_WIDTH, UVCCamera.DEFAULT_PREVIEW_HEIGHT, UVCCamera.PIXEL_FORMAT_YUV420SP);//FRAME_FORMAT_MJPEG);
                     } catch (final IllegalArgumentException e) {
                         // fallback to YUV mode
                         try {

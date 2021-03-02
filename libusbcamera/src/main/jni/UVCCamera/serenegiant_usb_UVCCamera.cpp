@@ -38,7 +38,11 @@
 
 #include "libUVCCamera.h"
 #include "UVCCamera.h"
-#include "serenegiant_usb_UVCCamera.h"
+//#include "serenegiant_usb_UVCCamera.h"
+
+#include "FingerSensorImpl.h"
+#include "FingerAPI.h"
+
 /**
  * set the value into the long field
  * @param env: this param should not be null
@@ -117,10 +121,13 @@ jint setField_int(JNIEnv *env, jobject java_obj, const char *field_name, jint va
 	return val;
 }
 
+UVCCamera *camera;
+FingerAPI myFingerAPI;
 static ID_TYPE nativeCreate(JNIEnv *env, jobject thiz) {
 
 	ENTER();
-	UVCCamera *camera = new UVCCamera();
+	camera = new UVCCamera();
+	myFingerAPI.camera = camera;
 	setField_long(env, thiz, "mNativePtr", reinterpret_cast<ID_TYPE>(camera));
 	RETURN(reinterpret_cast<ID_TYPE>(camera), ID_TYPE);
 }
@@ -1995,122 +2002,60 @@ static jint nativeGetPrivacy(JNIEnv *env, jobject thiz,
 }
 
 //----------------专门用于 Camera 接口-------------------------------------------
-int sensor_int(int nDelay){
-    return nDelay;
-}
-
-int sensor_exit(){
-    return RET_SUCCESS;
-}
-
-int sensor_LEDOn(){
-    return RET_SUCCESS;
-}
-
-int sensor_LEDOff(){
-    return RET_SUCCESS;
-}
-
-int sensor_On(){
-    return RET_SUCCESS;
-}
-
-int sensor_Off(){
-    return RET_SUCCESS;
-}
-
-int sensor_getHeight(){
-    return IMG_HEIGHT;
-}
-
-int sensor_getWidth(){
-    return IMG_WIDTH;
-}
-//增益
-int sensor_setGain(int value){
-//1-48
-return value;
-}
-
-int sensor_getGain(){
-
-return RET_SUCCESS;
-}
-
-//曝光
-int sensor_setExp(int value){
-//1-1048
-
-return value;
-}
-
-int sensor_getExp(){
-return RET_SUCCESS;
-}
-
-int sensor_readimg(unsigned char* buf){
-        int line = 0;
-        int point = 0;
-        for (line = 0; line < 640; line++) {
-            for (point = 0; point < 640; point++) {
-                (*buf) = 0x54&0xFF;
-                buf ++;
-            }
-        }
-    return RET_SUCCESS;
-}
 
 static jint nativeSensorInt(JNIEnv *env, jobject thiz, jint nDelay) {
-	return sensor_int(nDelay);
+	return myFingerAPI.sensor_int(nDelay);
 }
 static jint nativeSensorExit(JNIEnv *env, jobject thiz) {
-	return sensor_exit();
+	return myFingerAPI.sensor_exit();
 }
 
 static jint nativeSensorLedOn(JNIEnv *env, jobject thiz) {
-	return sensor_LEDOn();
+	return myFingerAPI.sensor_LEDOn();
 }
 static jint nativeSensorLedOff(JNIEnv *env, jobject thiz) {
-	return sensor_LEDOff();
+	return myFingerAPI.sensor_LEDOff();
 }
 static jint nativeSensorSensorOn(JNIEnv *env, jobject thiz) {
-	return sensor_On();
+	return myFingerAPI.sensor_On();
 }
 static jint nativeSensorSensorOff(JNIEnv *env, jobject thiz) {
-	return sensor_Off();
+	return myFingerAPI.sensor_Off();
 }
 
 static jint nativeSensorGetHeight(JNIEnv *env, jobject thiz) {
-	return sensor_getHeight();
+	return myFingerAPI.sensor_getHeight();
 }
 
 static jint nativeSensorGetWidth(JNIEnv *env, jobject thiz) {
-	return sensor_getWidth();
+	return myFingerAPI.sensor_getWidth();
 }
 
 //设置参数
 static jint nativeSensorSetGain(JNIEnv *env, jobject thiz, jint gain) {
-	return sensor_setGain(gain);
+	return myFingerAPI.sensor_setGain(gain);
 }
 static jint nativeSensorGetGain(JNIEnv *env, jobject thiz) {
-	return sensor_getGain();
+	return myFingerAPI.sensor_getGain();
 }
 static jint nativeSensorSetExp(JNIEnv *env, jobject thiz, jint exp) {
-	return sensor_setExp(exp);
+	return myFingerAPI.sensor_setExp(exp);
 }
 static jint nativeSensorGetExp(JNIEnv *env, jobject thiz) {
-	return sensor_getExp();
+	return myFingerAPI.sensor_getExp();
 }
 static jint nativeSensorReadImg(JNIEnv *env, jobject thiz, jbyteArray outputBuff) {
-        unsigned char array[640 * 640]; //按行存储
-        sensor_readimg(array);
+        unsigned char array[640 * 640];
+
+        //按行存储[h][w]
+        myFingerAPI.sensor_readimg(array);
 
         unsigned char * dscTmp = (unsigned char *)env->GetByteArrayElements(outputBuff, 0);
 
-        int line = 0;
-        int point = 0;
-        for (line = 0; line < 640; line++) {
-            for (point = 0; point < 640; point++) {
+        int h = 0;
+        int w = 0;
+        for (h = 0; h < 640; h++) {
+            for (w = 0; w < 640; w++) {
                 (*dscTmp) = (*array);
                 dscTmp ++;
             }

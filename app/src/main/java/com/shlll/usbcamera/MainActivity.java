@@ -20,7 +20,6 @@ import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import java.util.List;
 
@@ -80,24 +79,35 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    int gainCnt = 50, expCnt = 30;
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
+
+        //-------------专用接口测试程序------------------
         int id = item.getItemId();
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setTitle(getResources().getString(R.string.diag_about_title))
+                .setMessage(getResources().getString(R.string.diag_about_message));
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_about) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-            builder.setTitle(getResources().getString(R.string.diag_about_title))
-                    .setMessage(getResources().getString(R.string.diag_about_message));
-
+        if (id == R.id.action_gain) {
+            gainCnt = gainCnt +10;
+            int ret = mUSBCameraHelper.cameraSensorSetgain(gainCnt);
+            builder.setMessage("返回值：" + ret);
             AlertDialog dialog = builder.create();
             dialog.show();
 
-            //-------------专用接口测试程序------------------
-            int ret = mUSBCameraHelper.cameraSensorInt(5);
+        }else if (id == R.id.action_exp) {
+            expCnt = expCnt + 10;
+            int ret = mUSBCameraHelper.cameraSensorSetExp(expCnt);
+            builder.setMessage("返回值：" + ret);
+            AlertDialog dialog = builder.create();
+            dialog.show();
+
+        }else if (id == R.id.action_image) {
             byte[] pixs = mUSBCameraHelper.cameraSensorGetImg();
             //保存图片
             int picw = 640, pich = 640;
@@ -106,10 +116,8 @@ public class MainActivity extends AppCompatActivity {
             bmpFilter.setPixels(pixFilter, 0, picw, 0, 0, picw, pich);
             cPimageView.setImageBitmap(bmpFilter);
 
-            Toast.makeText(this, ret + "", 1000).show();
-
         } else if (id == R.id.action_usbinfo) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder = new AlertDialog.Builder(MainActivity.this);
             builder.setTitle(getResources().getString(R.string.diag_usbinfo_title));
 
             String diag_str = "";

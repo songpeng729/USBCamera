@@ -159,6 +159,7 @@ public class USBCameraHelper {
     //---------------专用接口------------------------
     public synchronized int cameraSensorInt(int delay){
         synchronized (mSync) {
+            mUVCCamera.updateCameraParams();
             //java层测试接口
 //            if (mUVCCamera != null)
             {
@@ -172,12 +173,39 @@ public class USBCameraHelper {
 //                return mUVCCamera.nativeSensorSetGain(50);
 //                return mUVCCamera.nativeSensorGetGain();
 //                return mUVCCamera.nativeSensorSetExp(99);
+//                return mUVCCamera.nativeSensorGetExp();
+//                mUVCCamera.nativeSensorSetGain(90);
+//                mUVCCamera.setExposure(78);
+                mUVCCamera.nativeSensorSetExp(20);
                 return mUVCCamera.nativeSensorGetExp();
             }
         }
 //        return -1;
     }
 
+    public synchronized int cameraSensorSetgain(int gain){
+        synchronized (mSync) {
+            mUVCCamera.updateCameraParams();
+            //java层测试接口
+            {
+                mUVCCamera.nativeSensorSetGain(gain);
+
+                return mUVCCamera.nativeSensorGetGain();
+            }
+        }
+    }
+
+    public synchronized int cameraSensorSetExp(int Exp){
+        synchronized (mSync) {
+            mUVCCamera.updateCameraParams();
+            //java层测试接口
+            {
+                mUVCCamera.nativeSensorSetExp(Exp);
+
+                return mUVCCamera.nativeSensorGetExp();
+            }
+        }
+    }
 
     public synchronized byte[] cameraSensorGetImg() {
         synchronized (mSync) {

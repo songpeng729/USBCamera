@@ -3,9 +3,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.shlll.usbcamera.MainActivity">
     <item
-        android:id="@+id/action_about"
+        android:id="@+id/action_gain"
         android:orderInCategory="100"
-        android:title="@string/action_about"
+        android:title="gain"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_exp"
+        android:orderInCategory="100"
+        android:title="exp"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_image"
+        android:orderInCategory="100"
+        android:title="image"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_usbinfo"

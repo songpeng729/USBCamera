@@ -720,6 +720,47 @@ public class UVCCamera {
 		return 0;
 	}
 
+//==================================曝光==============================================
+	/**
+	 * @param contrast [%]
+	 */
+	public synchronized void setExposure(final int contrast) {
+		if (mNativePtr != 0) {
+			nativeSetExposureMode(mNativePtr,1);	 //设置模式才有效
+			nativeUpdateExposureLimit(mNativePtr);
+			final float range = Math.abs(mExposureMax - mExposureMin);
+			if (range > 0)
+				nativeSetExposure(mNativePtr, (int)(contrast / 100.f * range) + mExposureMin);
+		}
+	}
+
+	public synchronized int getExposure() {
+
+		return getExposure(nativeGetExposure(mNativePtr));
+	}
+
+	/**
+	 * @param contrast_abs
+	 * @return contrast[%]
+	 */
+	public synchronized int getExposure(final int exposure_abs) {
+		int result = 0;
+		if (mNativePtr != 0) {
+			final float range = Math.abs(mExposureMax - mExposureMin);
+			if (range > 0) {
+				result = (int)((exposure_abs - mExposureMin) * 100.f / range);
+			}
+		}
+		return result;
+	}
+
+	public synchronized void resetExposure() {
+		if (mNativePtr != 0) {
+			nativeSetExposure(mNativePtr, mExposureDef);
+		}
+	}
+
+//================================================================================
 	/**
 	 * @param gain_abs
 	 * @return gain[%]

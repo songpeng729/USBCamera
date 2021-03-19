@@ -195,6 +195,9 @@ public:
 	int stopPreview();
 	int setCaptureDisplay(ANativeWindow *capture_window);
 
+    //获取这一帧图像
+	int getCurFrame(unsigned char *cameraData);
+
 	int getCtrlSupports(uint64_t *supports);
 	int getProcSupports(uint64_t *supports);
 

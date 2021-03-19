@@ -77,22 +77,16 @@ return result;
 }
 
 int FingerAPI::sensor_readimg(unsigned char* buf){
+        UVCCamera *camera1 = reinterpret_cast<UVCCamera *>(camera);
+
         unsigned char inputData[656 * 1024];
+        int result = camera1->getCurFrame(inputData);
+
         unsigned char outputData[640 * 640];
-
-        //按行存储[h][w]
-        int h = 0;
-        int w = 0;
-        for (h = 0; h < 656; h++) {
-            for (w = 0; w < 1024; w++) {
-                inputData[h * 1024 + w] = w &0xFF;
-            }
-        }
-
         CFingerSensor::CImplicit().CorrectDistortion(inputData, outputData);
 
-        for (h = 0; h < 640; h++) {
-            for (w = 0; w < 640; w++) {
+        for (int h = 0; h < 640; h++) {
+            for (int w = 0; w < 640; w++) {
                 (*buf) = outputData[h * 640 + w]; //0x98&0xFF;
                 buf ++;
             }

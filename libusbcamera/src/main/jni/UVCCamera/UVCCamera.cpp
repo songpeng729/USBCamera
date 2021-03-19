@@ -273,6 +273,27 @@ int UVCCamera::setFrameCallback(JNIEnv *env, jobject frame_callback_obj, int pix
 	RETURN(result, int);
 }
 
+int UVCCamera::getCurFrame(unsigned char *cameraData){
+	ENTER();
+	int result = EXIT_FAILURE;
+	if (mPreview) {
+		result = mPreview->setFrameCallback(env, frame_callback_obj, pixel_format);
+	}
+	RETURN(result, int);
+
+        //按行存储[h][w] inputData[656 * 1024]
+        int h = 0;
+        int w = 0;
+        for (h = 0; h < 656; h++) {
+            for (w = 0; w < 1024; w++) {
+                //cameraData[h * 1024 + w] = w &0xFF;
+                (*cameraData) = w &0xFF;
+                cameraData ++;
+            }
+        }
+        return UVC_SUCCESS;
+}
+
 int UVCCamera::startPreview() {
 	ENTER();
 

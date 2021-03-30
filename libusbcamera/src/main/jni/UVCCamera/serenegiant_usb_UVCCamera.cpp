@@ -2048,7 +2048,7 @@ static jint nativeSensorReadImg(JNIEnv *env, jobject thiz, jbyteArray outputBuff
         unsigned char array[640 * 640];
 
         //按行存储[h][w]
-        myFingerAPI.sensor_readimg(array);
+        int ret = myFingerAPI.sensor_readimg(array);
 
         unsigned char * dscTmp = (unsigned char *)env->GetByteArrayElements(outputBuff, 0);
 
@@ -2061,7 +2061,7 @@ static jint nativeSensorReadImg(JNIEnv *env, jobject thiz, jbyteArray outputBuff
             }
         }
 
-	return RET_SUCCESS;
+	return ret;
 }
 //-------------------------end of camera interfaces-----------
 

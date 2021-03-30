@@ -89,8 +89,9 @@ int FingerAPI::sensor_readimg(unsigned char* buf){
             for (int w = 0; w < 640; w++) {
                 (*buf) = outputData[h * 640 + w]; //0x98&0xFF;
                 buf ++;
+                //LOGE("capture ing %d " , (*buf));
             }
         }
 
-    return RET_SUCCESS;
+    return result;
 }

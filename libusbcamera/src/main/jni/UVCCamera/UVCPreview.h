@@ -121,6 +121,9 @@ public:
 	int stopPreview();
 	inline const bool isCapturing() const;
 	int setCaptureDisplay(ANativeWindow *capture_window);
+
+	//获取这一帧图像
+    int getPreviewFrame(unsigned char *cameraData);
 };
 
 #endif /* UVCPREVIEW_H_ */

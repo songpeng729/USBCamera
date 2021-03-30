@@ -333,7 +333,9 @@ int UVCPreview::startPreview() {
 		mIsRunning = true;
 		pthread_mutex_lock(&preview_mutex);
 		{
-			if (LIKELY(mPreviewWindow)) {
+		    //去除窗口非空判断
+			//if (LIKELY(mPreviewWindow))
+			{
 				result = pthread_create(&preview_thread, NULL, preview_thread_func, (void *)this);
 			}
 		}
@@ -533,6 +535,8 @@ void UVCPreview::do_preview(uvc_stream_ctrl_t *ctrl) {
 					result = uvc_mjpeg2yuyv(frame_mjpeg, frame);   // MJPEG => yuyv
 					recycle_frame(frame_mjpeg);
 					if (LIKELY(!result)) {
+						//LOGE("draw_preview_one running...");
+
 						frame = draw_preview_one(frame, &mPreviewWindow, uvc_any2rgbx, 4);
 						addCaptureFrame(frame);
 					} else {
@@ -621,6 +625,78 @@ int copyToSurface(uvc_frame_t *frame, ANativeWindow **window) {
 		result = -1;
 	}
 	return result; //RETURN(result, int);
+}
+
+
+//获取这一帧图像
+int UVCPreview::getPreviewFrame(unsigned char *cameraData){
+          //if (captureQueu)
+          /*{
+            //LOGE("capture ing");
+            //uint8_t *src = (uint8_t *)captureQueu->data;
+            //按行存储[h][w] inputData[656 * 1024]
+            int h = 0;
+            int w = 0;
+            for (h = 0; h < 656; h++) {
+                for (w = 0; w < 1024; w++) {
+                    //cameraData[h * 1024 + w] = w &0xFF;
+                    //(*cameraData) = (*src) &0xFF;
+                    (*cameraData) = (w / 50) &0xFF;
+                    cameraData  = cameraData + 1;
+                    //src = src + 1;
+                }
+            }
+        }*/
+        /*if(captureQueu){
+            return captureQueu->height;
+        }else{
+            return -1;
+        }*/
+
+    ENTER();
+
+	uvc_frame_t *frame = NULL;
+	uvc_frame_t *converted = NULL;
+
+	mIsCapturing = true;
+    LOGE("isCapturing  -->");
+
+	for (; isRunning() && isCapturing() ;)
+	{
+	    LOGE("isCapturing  0");
+		frame = waitCaptureFrame();
+		if (LIKELY(frame)) {
+
+			// frame data is always YUYV format.
+			if LIKELY(isCapturing()) {
+				if (UNLIKELY(!converted)) {
+				    LOGE("isCapturing...");
+					converted = get_frame(previewBytes);
+				}
+				if (LIKELY(converted)) {
+					int b = uvc_any2rgbx(frame, converted);
+					if (!b) {
+						if (LIKELY(mCaptureWindow)) {
+							copyToSurface(converted, &mCaptureWindow);
+						}
+					}
+				}
+			}
+			//do_capture_callback(env, frame);
+		}
+	}
+	if (converted) {
+		recycle_frame(converted);
+	}
+	if (mCaptureWindow) {
+		ANativeWindow_release(mCaptureWindow);
+		mCaptureWindow = NULL;
+	}
+
+	//EXIT();
+
+
+        return 1;
 }
 
 // changed to return original frame instead of returning converted frame even if convert_func is not null.

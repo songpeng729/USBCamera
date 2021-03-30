@@ -14,6 +14,9 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -29,6 +32,8 @@ public class MainActivity extends AppCompatActivity {
     private USBCameraHelper mUSBCameraHelper;
     boolean isRightFABOpen = false;
     private ImageView cPimageView;
+    private boolean previewFlag = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,6 +85,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     int gainCnt = 50, expCnt = 30;
+    int picw = 640, pich = 640;
+    Bitmap bmpFilter = Bitmap.createBitmap(picw, pich, Bitmap.Config.ARGB_8888);
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -108,13 +116,46 @@ public class MainActivity extends AppCompatActivity {
             dialog.show();
 
         }else if (id == R.id.action_image) {
-            byte[] pixs = mUSBCameraHelper.cameraSensorGetImg();
-            //保存图片
-            int picw = 640, pich = 640;
-            int[] pixFilter = BitmapUtil.convToImage(pixs);
-            Bitmap bmpFilter = Bitmap.createBitmap(picw, pich, Bitmap.Config.ARGB_8888);
-            bmpFilter.setPixels(pixFilter, 0, picw, 0, 0, picw, pich);
-            cPimageView.setImageBitmap(bmpFilter);
+            Handler mHandler = new Handler()
+            {
+                public void handleMessage(Message msg)
+                {
+                    super.handleMessage(msg);
+                    //view.invalidate();//此处更新view内容
+                    byte[] pixs = mUSBCameraHelper.cameraSensorGetImg();
+                    /*for (int i=0; i<640; i++){
+                        for(int j=0; j<640; j++){
+                            Log.d("pixFilter tag", pixs[i*640 + j] + "");
+                        }
+                    }
+                    //保存图片
+                    int[] pixFilter = BitmapUtil.convToImage(pixs);
+                    bmpFilter.setPixels(pixFilter, 0, picw, 0, 0, picw, pich);
+                    cPimageView.setImageBitmap(bmpFilter);*/
+                }
+            };
+            previewFlag = true;
+            Runnable runable = new Runnable() {
+                @Override
+                public void run() {
+                    //while (previewFlag)
+                    {
+                        try {
+                            Thread.sleep(100);
+                            mHandler.sendMessage(mHandler.obtainMessage());
+                            /*byte[] pixs = mUSBCameraHelper.cameraSensorGetImg();
+                            for (int i=0; i<640; i++){
+                                for(int j=0; j<640; j++){
+                                    Log.d("pixFilter tag", pixs[i*640 + j] + "");
+                                }
+                            }*/
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            };
+            new Thread(runable).start();
 
         } else if (id == R.id.action_usbinfo) {
             builder = new AlertDialog.Builder(MainActivity.this);
@@ -142,6 +183,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         mUSBCameraHelper.destory();
+        previewFlag = false;
         super.onDestroy();
     }
 

@@ -207,9 +207,9 @@ public class USBCameraHelper {
         }
     }
 
-    public synchronized byte[] cameraSensorGetImg() {
+    public synchronized int[] cameraSensorGetImg() {
         synchronized (mSync) {
-            byte[] pixs = new byte[640 * 640];
+            int[] pixs = new int[656 * 1024 * 4];
             int ret = mUVCCamera.nativeSensorReadImg(pixs);
             //Toast.makeText(mContext, "ret = " + ret, Toast.LENGTH_LONG).show();
             return  pixs;

@@ -76,10 +76,10 @@ int FingerAPI::sensor_getExp(){
 return result;
 }
 
-int FingerAPI::sensor_readimg(unsigned char* buf){
+int FingerAPI::sensor_readimg(uint8_t *buf){
         UVCCamera *camera1 = reinterpret_cast<UVCCamera *>(camera);
 
-        unsigned char inputData[656 * 1024];
+        /*unsigned char inputData[656 * 1024];
         int result = camera1->getCurFrame(inputData);
 
         unsigned char outputData[640 * 640];
@@ -92,6 +92,10 @@ int FingerAPI::sensor_readimg(unsigned char* buf){
                 //LOGE("capture ing %d " , (*buf));
             }
         }
+        //delete inputData;
+        //delete outputData;
+        */
+        int result = camera1->getCurFrame(buf);
 
     return result;
 }

@@ -231,7 +231,6 @@ int UVCPreview::setFrameCallback(JNIEnv *env, jobject frame_callback_obj, int pi
 					iframecallback_fields.onFrame = env->GetMethodID(clazz,
 						"onFrame",	"(Ljava/nio/ByteBuffer;)V");
 				} else {
-					LOGW("failed to get object class");
 				}
 				env->ExceptionClear();
 				if (!iframecallback_fields.onFrame) {
@@ -511,63 +510,6 @@ int UVCPreview::prepare_preview(uvc_stream_ctrl_t *ctrl) {
 	RETURN(result, int);
 }
 
-void UVCPreview::do_preview(uvc_stream_ctrl_t *ctrl) {
-	ENTER();
-
-	uvc_frame_t *frame = NULL;
-	uvc_frame_t *frame_mjpeg = NULL;
-	uvc_error_t result = uvc_start_streaming_bandwidth(
-		mDeviceHandle, ctrl, uvc_preview_frame_callback, (void *)this, requestBandwidth, 0);
-
-	if (LIKELY(!result)) {
-		clearPreviewFrame();
-		pthread_create(&capture_thread, NULL, capture_thread_func, (void *)this);
-
-#if LOCAL_DEBUG
-		LOGI("Streaming...");
-#endif
-		if (frameMode) {
-			// MJPEG mode
-			for ( ; LIKELY(isRunning()) ; ) {
-				frame_mjpeg = waitPreviewFrame();
-				if (LIKELY(frame_mjpeg)) {
-					frame = get_frame(frame_mjpeg->width * frame_mjpeg->height * 2);
-					result = uvc_mjpeg2yuyv(frame_mjpeg, frame);   // MJPEG => yuyv
-					recycle_frame(frame_mjpeg);
-					if (LIKELY(!result)) {
-						//LOGE("draw_preview_one running...");
-
-						frame = draw_preview_one(frame, &mPreviewWindow, uvc_any2rgbx, 4);
-						addCaptureFrame(frame);
-					} else {
-						recycle_frame(frame);
-					}
-				}
-			}
-		} else {
-			// yuvyv mode
-			for ( ; LIKELY(isRunning()) ; ) {
-				frame = waitPreviewFrame();
-				if (LIKELY(frame)) {
-					frame = draw_preview_one(frame, &mPreviewWindow, uvc_any2rgbx, 4);
-					addCaptureFrame(frame);
-				}
-			}
-		}
-		pthread_cond_signal(&capture_sync);
-#if LOCAL_DEBUG
-		LOGI("preview_thread_func:wait for all callbacks complete");
-#endif
-		uvc_stop_streaming(mDeviceHandle);
-#if LOCAL_DEBUG
-		LOGI("Streaming finished");
-#endif
-	} else {
-		uvc_perror(result, "failed start_streaming");
-	}
-
-	EXIT();
-}
 
 static void copyFrame(const uint8_t *src, uint8_t *dest, const int width, int height, const int stride_src, const int stride_dest) {
 	const int h8 = height % 8;
@@ -594,6 +536,139 @@ static void copyFrame(const uint8_t *src, uint8_t *dest, const int width, int he
 		dest += stride_dest; src += stride_src;
 	}
 }
+
+void UVCPreview::do_preview(uvc_stream_ctrl_t *ctrl) {
+	ENTER();
+
+	uvc_frame_t *frame = NULL;
+	uvc_frame_t *frame_mjpeg = NULL;
+	uvc_error_t result = uvc_start_streaming_bandwidth(
+		mDeviceHandle, ctrl, uvc_preview_frame_callback, (void *)this, requestBandwidth, 0);
+
+	if (LIKELY(!result)) {
+		clearPreviewFrame();
+		pthread_create(&capture_thread, NULL, capture_thread_func, (void *)this);
+
+#if LOCAL_DEBUG
+		LOGI("Streaming...");
+#endif
+		if (frameMode) {
+			// MJPEG mode
+			for ( ; LIKELY(isRunning()) ; )
+			{
+				frame_mjpeg = waitPreviewFrame();
+				if (LIKELY(frame_mjpeg)) {
+					frame = get_frame(frame_mjpeg->width * frame_mjpeg->height * 2);
+					result = uvc_mjpeg2yuyv(frame_mjpeg, frame);   // MJPEG => yuyv
+					recycle_frame(frame_mjpeg);
+					if (LIKELY(!result))
+					{
+						//LOGE("MJPEG draw_preview_one running...");
+						frame = draw_preview_one(frame, &mPreviewWindow, uvc_any2rgbx, 4);
+						addCaptureFrame(frame);
+					} else {
+						recycle_frame(frame);
+					}
+				}
+			}
+		} else {
+			// yuvyv mode
+			for ( ; LIKELY(isRunning()) ; ) {
+				frame = waitPreviewFrame();
+				if (LIKELY(frame)) {
+				    //LOGE("yuvyv draw_preview_one running...");
+
+					frame = draw_preview_one(frame, &mPreviewWindow, uvc_any2rgbx, 4);
+					addCaptureFrame(frame);
+				}
+			}
+		}
+		pthread_cond_signal(&capture_sync);
+#if LOCAL_DEBUG
+		LOGI("preview_thread_func:wait for all callbacks complete");
+#endif
+		uvc_stop_streaming(mDeviceHandle);
+#if LOCAL_DEBUG
+		LOGI("Streaming finished");
+#endif
+	} else {
+		uvc_perror(result, "failed start_streaming");
+	}
+
+	EXIT();
+}
+
+
+//获取这一帧图像
+int UVCPreview::getPreviewFrame(uint8_t *cameraData){
+	int result;
+
+	ENTER();
+	UVCPreview *preview = reinterpret_cast<UVCPreview *>(vptr_args);
+	if (LIKELY(preview)) {
+		uvc_stream_ctrl_t ctrl;
+		result = preview->prepare_preview(&ctrl);
+		if (LIKELY(!result)) {
+			preview->do_preview(&ctrl);
+		}
+	}
+	PRE_EXIT();
+	pthread_exit(NULL);
+
+          //int b = 0;
+          //uvc_frame_t *converted;
+
+          while (isRunning())
+          {
+                if(!captureQueu)
+                continue;
+                //LOGI("captureing-->  %d, %d", captureQueu->height, captureQueu->width);
+                //uint8_t dest[656 * 1024]; //*dest = new uint8_t[656 * 1024];
+                //b = uvc_any2rgbx(captureQueu, converted);
+                //if (!b)
+                {
+                    memcpy(cameraData, captureQueu->data, 656 * 1024* PREVIEW_PIXEL_BYTES);
+                }
+                //按行存储[h][w] inputData[656 * 1024]
+                /*int h = 0;
+                int w = 0;
+                for (h = 0; h < 656; h++) {
+                    for (w = 0; w < 10; w++) {
+                        //cameraData[h * 1024 + w] = dest[h * 1024 + w] & 0xFF;
+                        //(*cameraData) = (*src) &0xFF;
+                        //(*cameraData) = (w / 50) &0xFF;
+                        //cameraData  = cameraData + 1;
+                        LOGI("cameraData = %d", cameraData[h * 10 + w]);
+                    }
+                }*/
+                //delete []dest;
+			/*// source = frame data
+			const uint8_t *src = (uint8_t *)captureQueu->data;
+			const int src_w = captureQueu->width * PREVIEW_PIXEL_BYTES;
+			const int src_step = captureQueu->width * PREVIEW_PIXEL_BYTES;
+			// destination = Surface(ANativeWindow)
+			uint8_t *dest = (uint8_t *)cameraData;
+			const int dest_w = captureQueu->width * PREVIEW_PIXEL_BYTES;
+			const int dest_step = 1 * PREVIEW_PIXEL_BYTES;
+			// use lower transfer bytes
+			const int w = captureQueu->width; //src_w < dest_w ? src_w : dest_w;
+			// use lower height
+			const int h = captureQueu->height; //frame->height < buffer.height ? frame->height : buffer.height;
+			// transfer from frame data to the Surface
+			copyFrame(src, dest, w, h, src_step, dest_step);*/
+
+            break;
+        }
+        /*if(captureQueu){
+            return captureQueu->height;
+        }else{
+            return -1;
+        }*/
+
+
+        return 1;
+}
+
 
 
 // transfer specific frame data to the Surface(ANativeWindow)
@@ -628,77 +703,6 @@ int copyToSurface(uvc_frame_t *frame, ANativeWindow **window) {
 }
 
 
-//获取这一帧图像
-int UVCPreview::getPreviewFrame(unsigned char *cameraData){
-          //if (captureQueu)
-          /*{
-            //LOGE("capture ing");
-            //uint8_t *src = (uint8_t *)captureQueu->data;
-            //按行存储[h][w] inputData[656 * 1024]
-            int h = 0;
-            int w = 0;
-            for (h = 0; h < 656; h++) {
-                for (w = 0; w < 1024; w++) {
-                    //cameraData[h * 1024 + w] = w &0xFF;
-                    //(*cameraData) = (*src) &0xFF;
-                    (*cameraData) = (w / 50) &0xFF;
-                    cameraData  = cameraData + 1;
-                    //src = src + 1;
-                }
-            }
-        }*/
-        /*if(captureQueu){
-            return captureQueu->height;
-        }else{
-            return -1;
-        }*/
-
-    ENTER();
-
-	uvc_frame_t *frame = NULL;
-	uvc_frame_t *converted = NULL;
-
-	mIsCapturing = true;
-    LOGE("isCapturing  -->");
-
-	for (; isRunning() && isCapturing() ;)
-	{
-	    LOGE("isCapturing  0");
-		frame = waitCaptureFrame();
-		if (LIKELY(frame)) {
-
-			// frame data is always YUYV format.
-			if LIKELY(isCapturing()) {
-				if (UNLIKELY(!converted)) {
-				    LOGE("isCapturing...");
-					converted = get_frame(previewBytes);
-				}
-				if (LIKELY(converted)) {
-					int b = uvc_any2rgbx(frame, converted);
-					if (!b) {
-						if (LIKELY(mCaptureWindow)) {
-							copyToSurface(converted, &mCaptureWindow);
-						}
-					}
-				}
-			}
-			//do_capture_callback(env, frame);
-		}
-	}
-	if (converted) {
-		recycle_frame(converted);
-	}
-	if (mCaptureWindow) {
-		ANativeWindow_release(mCaptureWindow);
-		mCaptureWindow = NULL;
-	}
-
-	//EXIT();
-
-
-        return 1;
-}
-
 // changed to return original frame instead of returning converted frame even if convert_func is not null.
 uvc_frame_t *UVCPreview::draw_preview_one(uvc_frame_t *frame, ANativeWindow **window, convFunc_t convert_func, int pixcelBytes) {
 	// ENTER();
@@ -722,6 +726,8 @@ uvc_frame_t *UVCPreview::draw_preview_one(uvc_frame_t *frame, ANativeWindow **wi
 				} else {
 					LOGE("failed converting");
 				}
+				//返回转换后的RGBX
+				//frame = converted;
 				recycle_frame(converted);
 			}
 		} else {

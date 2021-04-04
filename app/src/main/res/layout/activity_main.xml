@@ -36,7 +36,8 @@
         <ImageView
             android:id="@+id/cp_imageView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:scaleType="center" />
     </FrameLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

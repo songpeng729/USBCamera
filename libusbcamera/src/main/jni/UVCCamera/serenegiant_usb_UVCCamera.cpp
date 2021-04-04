@@ -2044,22 +2044,36 @@ static jint nativeSensorSetExp(JNIEnv *env, jobject thiz, jint exp) {
 static jint nativeSensorGetExp(JNIEnv *env, jobject thiz) {
 	return myFingerAPI.sensor_getExp();
 }
-static jint nativeSensorReadImg(JNIEnv *env, jobject thiz, jbyteArray outputBuff) {
-        unsigned char array[640 * 640];
+static jint nativeSensorReadImg(JNIEnv *env, jobject thiz, jintArray outputBuff) {
+        //uint8_t *array = new uint8_t[656 * 1024];
 
         //按行存储[h][w]
-        int ret = myFingerAPI.sensor_readimg(array);
 
-        unsigned char * dscTmp = (unsigned char *)env->GetByteArrayElements(outputBuff, 0);
-
-        int h = 0;
+        /*int h = 0;
         int w = 0;
-        for (h = 0; h < 640; h++) {
-            for (w = 0; w < 640; w++) {
-                (*dscTmp) = (*array);
-                dscTmp ++;
+        for (h = 0; h < 656; h++) {
+            for (w = 0; w < 10; w++) {
+                LOGI("cameraData = %d", array[h * 10 + w]);
             }
-        }
+        }*/
+
+        uint8_t * dscTmp = (uint8_t *)env->GetIntArrayElements(outputBuff, 0);
+        int ret = myFingerAPI.sensor_readimg(dscTmp);
+        //LOGI("%d", (*dscTmp));
+
+        /*int h = 0;
+        int w = 0;
+        for (h = 0; h < 656; h++) {
+            for (w = 0; w < 1024; w++) {
+                //(*dscTmp) = (*array);
+                dscTmp ++;
+                //array ++;
+
+                LOGI("%d", (*dscTmp));
+            }
+        }*/
+
+        //delete []array;
 
 	return ret;
 }
@@ -2275,7 +2289,7 @@ static JNINativeMethod methods[] = {
 	{ "nativeSensorGetGain",               "()I", (void *) nativeSensorGetGain },
 	{ "nativeSensorSetExp",               "(I)I", (void *) nativeSensorSetExp },
 	{ "nativeSensorGetExp",               "()I", (void *) nativeSensorGetExp },
-    { "nativeSensorReadImg",              "([B)I", (void *) nativeSensorReadImg },
+    { "nativeSensorReadImg",              "([I)I", (void *) nativeSensorReadImg },
 };
 
 int register_uvccamera(JNIEnv *env) {

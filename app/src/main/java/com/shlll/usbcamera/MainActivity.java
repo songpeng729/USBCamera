@@ -2,6 +2,7 @@ package com.shlll.usbcamera;
 
 import android.Manifest;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.hardware.usb.UsbDevice;
 import android.os.Bundle;
 
@@ -85,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     int gainCnt = 50, expCnt = 30;
-    int picw = 640, pich = 640;
+    int picw = 1024, pich = 656;
     Bitmap bmpFilter = Bitmap.createBitmap(picw, pich, Bitmap.Config.ARGB_8888);
 
     @Override
@@ -121,17 +122,26 @@ public class MainActivity extends AppCompatActivity {
                 public void handleMessage(Message msg)
                 {
                     super.handleMessage(msg);
+
                     //view.invalidate();//此处更新view内容
-                    byte[] pixs = mUSBCameraHelper.cameraSensorGetImg();
-                    /*for (int i=0; i<640; i++){
-                        for(int j=0; j<640; j++){
-                            Log.d("pixFilter tag", pixs[i*640 + j] + "");
+                    int[] pixs = mUSBCameraHelper.cameraSensorGetImg();
+                    //Log.d("pixFilter tag", pixs[0] + "");
+                    byte[] pixsByte = new byte[picw * pich];
+                    int posA = 0;
+                    int posB = 0;
+                    for(int j=0; j<1024; j++){
+                        for (int i=0; i<656; i++){
+                            //Log.d("pixFilter tag", pixs[i*10 + j] + "");
+                            pixsByte[posA] = (byte) (pixs[posB]&0xFF);
+                            posA ++;
+                            posB = posB + 4;
                         }
                     }
                     //保存图片
-                    int[] pixFilter = BitmapUtil.convToImage(pixs);
+                    int[] pixFilter = BitmapUtil.convToImage(pixsByte);
                     bmpFilter.setPixels(pixFilter, 0, picw, 0, 0, picw, pich);
-                    cPimageView.setImageBitmap(bmpFilter);*/
+                    cPimageView.setImageBitmap(bmpFilter);
+                    //cPimageView.setBackgroundColor(Color.RED);
                 }
             };
             previewFlag = true;

@@ -1303,6 +1303,6 @@ public class UVCCamera {
 	public static final native int nativeSensorSetExp(int exp);
 	public static final native int nativeSensorGetExp();
 
-	public static final native int nativeSensorReadImg(byte[] pixs);
+	public static final native int nativeSensorReadImg(int[] pixs);
 
 }

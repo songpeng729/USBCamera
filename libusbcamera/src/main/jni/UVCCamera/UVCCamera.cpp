@@ -276,7 +276,6 @@ int UVCCamera::setFrameCallback(JNIEnv *env, jobject frame_callback_obj, int pix
 int UVCCamera::getCurFrame(uint8_t *cameraData){
 	int result = EXIT_FAILURE;
 	if (mPreview) {
-		//result = mPreview->setFrameCallback(env, frame_callback_obj, pixel_format);
 		result = mPreview->getPreviewFrame(cameraData);
 	}
     return result;

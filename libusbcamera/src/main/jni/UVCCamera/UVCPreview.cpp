@@ -367,6 +367,10 @@ int UVCPreview::stopPreview() {
 		}
 		clearDisplay();
 	}
+
+	//mIsRunning
+	mIsRunning = false;
+
 	clearPreviewFrame();
 	clearCaptureFrame();
 	pthread_mutex_lock(&preview_mutex);
@@ -603,50 +607,37 @@ void UVCPreview::do_preview(uvc_stream_ctrl_t *ctrl) {
 uint8_t imageData[656 * 1024 * PREVIEW_PIXEL_BYTES];
 //获取这一帧图像
 int UVCPreview::getPreviewFrame(uint8_t *cameraData){
-	int result;
-    //startPreview();
-
-	/*ENTER();
-	UVCPreview *preview = reinterpret_cast<UVCPreview *>(vptr_args);
-	if (LIKELY(preview)) {
-		uvc_stream_ctrl_t ctrl;
-		result = preview->prepare_preview(&ctrl);
-		if (LIKELY(!result)) {
-			preview->do_preview(&ctrl);
-		}
-	}
-
-	PRE_EXIT();*/
-	/*pthread_exit(NULL);*/
-
-          //int b = 0;
-          //uvc_frame_t *converted;
-
-          while (isRunning())
+          int result = 0;
+          for ( ; LIKELY(isRunning()) ; )
           {
-                if((!captureQueu) || (captureQueu == NULL))
-                continue;
+                if(mIsRunning == false){
+                    break;
+                }
+
+                if((!captureQueu) || (captureQueu == NULL)){
+                    if(mIsRunning == false){
+                        break;
+                    }else{
+                        continue;
+                    }
+                }else
                 {
-                	pthread_mutex_lock(&capture_mutex);
+                	//pthread_mutex_lock(&capture_mutex);
                 	//LOGI("----> 1");
                     if(captureQueu != NULL){
+                        //cameraData = &imageData[0];
                         memcpy(cameraData, imageData, 656 * 1024* PREVIEW_PIXEL_BYTES);
+                        result = 1;
                     }else{
-                        LOGE("captureQueu == null ");
+                        //LOGE("captureQueu == null ");
+                        result = 0;
                     }
-                    pthread_mutex_unlock(&capture_mutex);
+                    //pthread_mutex_unlock(&capture_mutex);
 
                 }
             break;
         }
-        /*if(captureQueu){
-            return captureQueu->height;
-        }else{
-            return -1;
-        }*/
-
-
-        return 1;
+        return result;
 }
 
 
@@ -698,7 +689,9 @@ uvc_frame_t *UVCPreview::draw_preview_one(uvc_frame_t *frame, ANativeWindow **wi
 		b = *window != NULL;
 	}
 	pthread_mutex_unlock(&preview_mutex);
-	if (LIKELY(b)) {
+	//窗口非空去除
+	//if (LIKELY(b))
+	{
 		uvc_frame_t *converted;
 		if (convert_func) {
 			converted = get_frame(frame->width * frame->height * pixcelBytes);

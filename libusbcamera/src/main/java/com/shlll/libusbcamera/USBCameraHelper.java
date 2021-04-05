@@ -207,16 +207,15 @@ public class USBCameraHelper {
         }
     }
 
-    public synchronized byte[] cameraSensorGetImg() {
+    public synchronized int cameraSensorGetImg(byte[] pixs) {
         synchronized (mSync) {
             if(camera == null){
                 camera = new UVCCamera();
             }
-            byte[] pixs = new byte[656 * 1024 * 4];
             //int ret = camera.nativeSensorReadImg(pixs);
             //Toast.makeText(mContext, "ret = " + ret, Toast.LENGTH_LONG).show();
             int ret = camera.getImg(pixs);
-            return  pixs;
+            return  ret;
         }
     }
     /**
@@ -335,7 +334,7 @@ public class USBCameraHelper {
                     final SurfaceTexture st = mUVCCameraView.getSurfaceTexture();
                     if (st != null) {
                         mPreviewSurface = new Surface(st);
-                        camera.setPreviewDisplay(mPreviewSurface);
+                        //camera.setPreviewDisplay(mPreviewSurface);
                         camera.startPreview();
                     }
                     synchronized (mSync) {

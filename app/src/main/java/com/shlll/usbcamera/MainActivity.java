@@ -69,7 +69,8 @@ public class MainActivity extends AppCompatActivity {
         fab_capture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mUSBCameraHelper.saveCapturePicture();
+                //mUSBCameraHelper.saveCapturePicture();
+                startCap();
             }
         });
 
@@ -120,60 +121,7 @@ public class MainActivity extends AppCompatActivity {
             dialog.show();
 
         }else if (id == R.id.action_image) {
-            Handler mHandler = new Handler()
-            {
-                public void handleMessage(Message msg)
-                {
-                    super.handleMessage(msg);
-
-                    //view.invalidate();//此处更新view内容
-                    if(pixFilter != null) {
-                        bmpFilter.setPixels(pixFilter, 0, picw, 0, 0, picw, pich);
-                        cPimageView.setImageBitmap(bmpFilter);
-                    }
-                    //cPimageView.setBackgroundColor(Color.RED);
-                }
-            };
-            previewFlag = true;
-            Runnable runable = new Runnable() {
-                @Override
-                public void run() {
-                    while (previewFlag)
-                    {
-                        try {
-                            Thread.sleep(10);
-                            byte[] pixs = mUSBCameraHelper.cameraSensorGetImg();
-                            //int[] pixs = new int [picw * pich * PREVIEW_PIXEL_BYTES];
-                            //Arrays.fill(pixs,0xaf);
-
-                            byte[] pixsByte = new byte[picw * pich];
-                            int posA = 0;
-                            int posB = 0;
-                            for(int j=0; j<1024; j++){
-                                for (int i=0; i<656; i++){
-                                    //Log.d("pixFilter tag", pixs[i*10 + j] + "");
-                                    pixsByte[posA] = (byte) (pixs[posB]&0xFF);
-                                    posA ++;
-                                    posB = posB + PREVIEW_PIXEL_BYTES;
-                                }
-                            }
-                            //保存图片
-                            pixFilter = BitmapUtil.convToImage(pixsByte);
-                            
-                           mHandler.sendMessage(mHandler.obtainMessage());
-                            /*byte[] pixs = mUSBCameraHelper.cameraSensorGetImg();
-                            for (int i=0; i<640; i++){
-                                for(int j=0; j<640; j++){
-                                    Log.d("pixFilter tag", pixs[i*640 + j] + "");
-                                }
-                            }*/
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            };
-            new Thread(runable).start();
+           startCap();
 
         } else if (id == R.id.action_usbinfo) {
             builder = new AlertDialog.Builder(MainActivity.this);
@@ -196,6 +144,71 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return true;
+    }
+
+    private Handler mHandler = new Handler()
+    {
+        public void handleMessage(Message msg)
+        {
+            super.handleMessage(msg);
+
+            //view.invalidate();//此处更新view内容
+            if(pixFilter != null) {
+                bmpFilter.setPixels(pixFilter, 0, picw, 0, 0, picw, pich);
+                cPimageView.setImageBitmap(bmpFilter);
+            }
+            //cPimageView.setBackgroundColor(Color.RED);
+        }
+    };
+    private Runnable runable = new Runnable() {
+        @Override
+        public void run() {
+            while (previewFlag)
+            {
+                try {
+                    Thread.sleep(0, 1);
+                    byte[] pixsOut = new byte[656 * 1024 * 4];
+
+                    int ret = mUSBCameraHelper.cameraSensorGetImg(pixsOut);
+                    //int[] pixs = new int [picw * pich * PREVIEW_PIXEL_BYTES];
+                    //Arrays.fill(pixs,0xaf);
+
+                    byte[] pixsByte = new byte[picw * pich];
+                    int posA = 0;
+                    int posB = 0;
+                    for(int j=0; j<1024; j++){
+                        for (int i=0; i<656; i++){
+                            //Log.d("pixFilter tag", pixs[i*10 + j] + "");
+                            pixsByte[posA] = (byte) (pixsOut[posB]&0xFF);
+                            posA ++;
+                            posB = posB + PREVIEW_PIXEL_BYTES;
+                        }
+                    }
+                    //保存图片
+                    pixFilter = BitmapUtil.convToImage(pixsByte);
+                    if(ret == 1) {
+                        mHandler.sendMessage(mHandler.obtainMessage());
+                    }
+                            /*byte[] pixs = mUSBCameraHelper.cameraSensorGetImg();
+                            for (int i=0; i<640; i++){
+                                for(int j=0; j<640; j++){
+                                    Log.d("pixFilter tag", pixs[i*640 + j] + "");
+                                }
+                            }*/
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    };
+
+    private Thread capThread =  new Thread(runable);
+
+    private void startCap() {
+        previewFlag = true;
+        if(!capThread.isAlive() || previewFlag ==false) {
+            capThread.start();
+        }
     }
 
     @Override

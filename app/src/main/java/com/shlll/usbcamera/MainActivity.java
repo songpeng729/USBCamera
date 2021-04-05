@@ -25,15 +25,18 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import java.util.Arrays;
 import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
+    private static final int PREVIEW_PIXEL_BYTES = 4;
     private UVCCameraTextureView mUVCCameraView;
     private USBCameraHelper mUSBCameraHelper;
     boolean isRightFABOpen = false;
     private ImageView cPimageView;
     private boolean previewFlag = true;
+    private int[] pixFilter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,23 +127,10 @@ public class MainActivity extends AppCompatActivity {
                     super.handleMessage(msg);
 
                     //view.invalidate();//此处更新view内容
-                    int[] pixs = mUSBCameraHelper.cameraSensorGetImg();
-                    //Log.d("pixFilter tag", pixs[0] + "");
-                    byte[] pixsByte = new byte[picw * pich];
-                    int posA = 0;
-                    int posB = 0;
-                    for(int j=0; j<1024; j++){
-                        for (int i=0; i<656; i++){
-                            //Log.d("pixFilter tag", pixs[i*10 + j] + "");
-                            pixsByte[posA] = (byte) (pixs[posB]&0xFF);
-                            posA ++;
-                            posB = posB + 4;
-                        }
+                    if(pixFilter != null) {
+                        bmpFilter.setPixels(pixFilter, 0, picw, 0, 0, picw, pich);
+                        cPimageView.setImageBitmap(bmpFilter);
                     }
-                    //保存图片
-                    int[] pixFilter = BitmapUtil.convToImage(pixsByte);
-                    bmpFilter.setPixels(pixFilter, 0, picw, 0, 0, picw, pich);
-                    cPimageView.setImageBitmap(bmpFilter);
                     //cPimageView.setBackgroundColor(Color.RED);
                 }
             };
@@ -148,11 +138,29 @@ public class MainActivity extends AppCompatActivity {
             Runnable runable = new Runnable() {
                 @Override
                 public void run() {
-                    //while (previewFlag)
+                    while (previewFlag)
                     {
                         try {
-                            Thread.sleep(100);
-                            mHandler.sendMessage(mHandler.obtainMessage());
+                            Thread.sleep(10);
+                            byte[] pixs = mUSBCameraHelper.cameraSensorGetImg();
+                            //int[] pixs = new int [picw * pich * PREVIEW_PIXEL_BYTES];
+                            //Arrays.fill(pixs,0xaf);
+
+                            byte[] pixsByte = new byte[picw * pich];
+                            int posA = 0;
+                            int posB = 0;
+                            for(int j=0; j<1024; j++){
+                                for (int i=0; i<656; i++){
+                                    //Log.d("pixFilter tag", pixs[i*10 + j] + "");
+                                    pixsByte[posA] = (byte) (pixs[posB]&0xFF);
+                                    posA ++;
+                                    posB = posB + PREVIEW_PIXEL_BYTES;
+                                }
+                            }
+                            //保存图片
+                            pixFilter = BitmapUtil.convToImage(pixsByte);
+                            
+                           mHandler.sendMessage(mHandler.obtainMessage());
                             /*byte[] pixs = mUSBCameraHelper.cameraSensorGetImg();
                             for (int i=0; i<640; i++){
                                 for(int j=0; j<640; j++){

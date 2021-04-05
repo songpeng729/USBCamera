@@ -2044,7 +2044,7 @@ static jint nativeSensorSetExp(JNIEnv *env, jobject thiz, jint exp) {
 static jint nativeSensorGetExp(JNIEnv *env, jobject thiz) {
 	return myFingerAPI.sensor_getExp();
 }
-static jint nativeSensorReadImg(JNIEnv *env, jobject thiz, jintArray outputBuff) {
+static jint nativeSensorReadImg(JNIEnv *env, jobject thiz, jbyteArray outputBuff) {
         //uint8_t *array = new uint8_t[656 * 1024];
 
         //按行存储[h][w]
@@ -2057,7 +2057,7 @@ static jint nativeSensorReadImg(JNIEnv *env, jobject thiz, jintArray outputBuff)
             }
         }*/
 
-        uint8_t * dscTmp = (uint8_t *)env->GetIntArrayElements(outputBuff, 0);
+        uint8_t * dscTmp = (uint8_t *)env->GetByteArrayElements(outputBuff, 0);
         int ret = myFingerAPI.sensor_readimg(dscTmp);
         //LOGI("%d", (*dscTmp));
 
@@ -2289,7 +2289,7 @@ static JNINativeMethod methods[] = {
 	{ "nativeSensorGetGain",               "()I", (void *) nativeSensorGetGain },
 	{ "nativeSensorSetExp",               "(I)I", (void *) nativeSensorSetExp },
 	{ "nativeSensorGetExp",               "()I", (void *) nativeSensorGetExp },
-    { "nativeSensorReadImg",              "([I)I", (void *) nativeSensorReadImg },
+    { "nativeSensorReadImg",              "([B)I", (void *) nativeSensorReadImg },
 };
 
 int register_uvccamera(JNIEnv *env) {

@@ -207,11 +207,15 @@ public class USBCameraHelper {
         }
     }
 
-    public synchronized int[] cameraSensorGetImg() {
+    public synchronized byte[] cameraSensorGetImg() {
         synchronized (mSync) {
-            int[] pixs = new int[656 * 1024 * 4];
-            int ret = mUVCCamera.nativeSensorReadImg(pixs);
+            if(camera == null){
+                camera = new UVCCamera();
+            }
+            byte[] pixs = new byte[656 * 1024 * 4];
+            //int ret = camera.nativeSensorReadImg(pixs);
             //Toast.makeText(mContext, "ret = " + ret, Toast.LENGTH_LONG).show();
+            int ret = camera.getImg(pixs);
             return  pixs;
         }
     }
@@ -284,6 +288,7 @@ public class USBCameraHelper {
         return true;
     }
 
+    private UVCCamera camera;
     private final USBMonitor.OnDeviceConnectListener mOnDeviceConnectListener = new USBMonitor.OnDeviceConnectListener() {
         @Override
         public void onAttach(final UsbDevice device) {
@@ -297,7 +302,7 @@ public class USBCameraHelper {
             queueEvent(new Runnable() {
                 @Override
                 public void run() {
-                    final UVCCamera camera = new UVCCamera();
+                    camera = new UVCCamera();
                     camera.open(ctrlBlock);
                     camera.setButtonCallback(new IButtonCallback() {
                         @Override

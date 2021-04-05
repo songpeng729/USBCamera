@@ -1131,6 +1131,14 @@ public class UVCCamera {
 			nativeSetCaptureDisplay(mNativePtr, null);
 		}
 	}
+
+	public int getImg(byte [] pixs){
+		int ret = 0;
+		if (mCtrlBlock != null) {
+			ret = nativeSensorReadImg(pixs);
+		}
+		return ret;
+	}
 	private static final native int nativeSetCaptureDisplay(final long id_camera, final Surface surface);
 
 	private static final native long nativeGetCtrlSupports(final long id_camera);
@@ -1303,6 +1311,6 @@ public class UVCCamera {
 	public static final native int nativeSensorSetExp(int exp);
 	public static final native int nativeSensorGetExp();
 
-	public static final native int nativeSensorReadImg(int[] pixs);
+	public static final native int nativeSensorReadImg(byte[] pixs);
 
 }

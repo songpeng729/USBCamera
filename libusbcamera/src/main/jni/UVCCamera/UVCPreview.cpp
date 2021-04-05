@@ -466,7 +466,7 @@ void *UVCPreview::preview_thread_func(void *vptr_args) {
 		uvc_stream_ctrl_t ctrl;
 		result = preview->prepare_preview(&ctrl);
 		if (LIKELY(!result)) {
-			preview->do_preview(&ctrl);
+		preview->do_preview(&ctrl);
 		}
 	}
 	PRE_EXIT();
@@ -491,12 +491,14 @@ int UVCPreview::prepare_preview(uvc_stream_ctrl_t *ctrl) {
 			frameWidth = frame_desc->wWidth;
 			frameHeight = frame_desc->wHeight;
 			LOGI("frameSize=(%d,%d)@%s", frameWidth, frameHeight, (!requestMode ? "YUYV" : "MJPEG"));
+			//注释窗口相关
 			pthread_mutex_lock(&preview_mutex);
 			if (LIKELY(mPreviewWindow)) {
 				ANativeWindow_setBuffersGeometry(mPreviewWindow,
 					frameWidth, frameHeight, previewFormat);
 			}
 			pthread_mutex_unlock(&preview_mutex);
+
 		} else {
 			frameWidth = requestWidth;
 			frameHeight = requestHeight;
@@ -598,12 +600,13 @@ void UVCPreview::do_preview(uvc_stream_ctrl_t *ctrl) {
 	EXIT();
 }
 
-
+uint8_t imageData[656 * 1024 * PREVIEW_PIXEL_BYTES];
 //获取这一帧图像
 int UVCPreview::getPreviewFrame(uint8_t *cameraData){
 	int result;
+    //startPreview();
 
-	ENTER();
+	/*ENTER();
 	UVCPreview *preview = reinterpret_cast<UVCPreview *>(vptr_args);
 	if (LIKELY(preview)) {
 		uvc_stream_ctrl_t ctrl;
@@ -612,51 +615,28 @@ int UVCPreview::getPreviewFrame(uint8_t *cameraData){
 			preview->do_preview(&ctrl);
 		}
 	}
-	PRE_EXIT();
-	pthread_exit(NULL);
+
+	PRE_EXIT();*/
+	/*pthread_exit(NULL);*/
 
           //int b = 0;
           //uvc_frame_t *converted;
 
           while (isRunning())
           {
-                if(!captureQueu)
+                if((!captureQueu) || (captureQueu == NULL))
                 continue;
-                //LOGI("captureing-->  %d, %d", captureQueu->height, captureQueu->width);
-                //uint8_t dest[656 * 1024]; //*dest = new uint8_t[656 * 1024];
-                //b = uvc_any2rgbx(captureQueu, converted);
-                //if (!b)
                 {
-                    memcpy(cameraData, captureQueu->data, 656 * 1024* PREVIEW_PIXEL_BYTES);
-                }
-                //按行存储[h][w] inputData[656 * 1024]
-                /*int h = 0;
-                int w = 0;
-                for (h = 0; h < 656; h++) {
-                    for (w = 0; w < 10; w++) {
-                        //cameraData[h * 1024 + w] = dest[h * 1024 + w] & 0xFF;
-                        //(*cameraData) = (*src) &0xFF;
-                        //(*cameraData) = (w / 50) &0xFF;
-                        //cameraData  = cameraData + 1;
-                        LOGI("cameraData = %d", cameraData[h * 10 + w]);
+                	pthread_mutex_lock(&capture_mutex);
+                	//LOGI("----> 1");
+                    if(captureQueu != NULL){
+                        memcpy(cameraData, imageData, 656 * 1024* PREVIEW_PIXEL_BYTES);
+                    }else{
+                        LOGE("captureQueu == null ");
                     }
-                }*/
-                //delete []dest;
-			/*// source = frame data
-			const uint8_t *src = (uint8_t *)captureQueu->data;
-			const int src_w = captureQueu->width * PREVIEW_PIXEL_BYTES;
-			const int src_step = captureQueu->width * PREVIEW_PIXEL_BYTES;
-			// destination = Surface(ANativeWindow)
-			uint8_t *dest = (uint8_t *)cameraData;
-			const int dest_w = captureQueu->width * PREVIEW_PIXEL_BYTES;
-			const int dest_step = 1 * PREVIEW_PIXEL_BYTES;
-			// use lower transfer bytes
-			const int w = captureQueu->width; //src_w < dest_w ? src_w : dest_w;
-			// use lower height
-			const int h = captureQueu->height; //frame->height < buffer.height ? frame->height : buffer.height;
-			// transfer from frame data to the Surface
-			copyFrame(src, dest, w, h, src_step, dest_step);*/
+                    pthread_mutex_unlock(&capture_mutex);
 
+                }
             break;
         }
         /*if(captureQueu){
@@ -673,6 +653,10 @@ int UVCPreview::getPreviewFrame(uint8_t *cameraData){
 
 // transfer specific frame data to the Surface(ANativeWindow)
 int copyToSurface(uvc_frame_t *frame, ANativeWindow **window) {
+
+	//复制到数组
+	memcpy(imageData, frame->data, 656 * 1024* PREVIEW_PIXEL_BYTES);
+
 	// ENTER();
 	int result = 0;
 	if (LIKELY(*window)) {
@@ -690,6 +674,7 @@ int copyToSurface(uvc_frame_t *frame, ANativeWindow **window) {
 			const int w = src_w < dest_w ? src_w : dest_w;
 			// use lower height
 			const int h = frame->height < buffer.height ? frame->height : buffer.height;
+			//LOGI("复制 frame");
 			// transfer from frame data to the Surface
 			copyFrame(src, dest, w, h, src_step, dest_step);
 			ANativeWindow_unlockAndPost(*window);

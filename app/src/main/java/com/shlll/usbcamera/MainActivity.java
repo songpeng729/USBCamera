@@ -90,7 +90,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     int gainCnt = 50, expCnt = 30;
-    int picw = 1024, pich = 656;
+    //public static int picw = 1024, pich = 656;
+    public static int picw = 640, pich = 640;
     Bitmap bmpFilter = Bitmap.createBitmap(picw, pich, Bitmap.Config.ARGB_8888);
 
     @Override
@@ -167,13 +168,13 @@ public class MainActivity extends AppCompatActivity {
             {
                 try {
                     Thread.sleep(0, 1);
-                    byte[] pixsOut = new byte[656 * 1024];
+                    byte[] pixsOut = new byte[pich * picw];
 
                     int ret = mUSBCameraHelper.cameraSensorGetImg(pixsOut);
-                    //int[] pixs = new int [picw * pich * PREVIEW_PIXEL_BYTES];
+                    /*//int[] pixs = new int [picw * pich * PREVIEW_PIXEL_BYTES];
                     //Arrays.fill(pixs,0xaf);
 
-                    /*byte[] pixsByte = new byte[picw * pich];
+                    byte[] pixsByte = new byte[picw * pich];
                     int posA = 0;
                     int posB = 0;
                     for(int j=0; j<1024; j++){

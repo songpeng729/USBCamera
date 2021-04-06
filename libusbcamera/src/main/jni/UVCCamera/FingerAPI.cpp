@@ -91,10 +91,10 @@ int FingerAPI::sensor_readimg(uint8_t *buf){
                 buf ++;
                 //LOGE("capture ing %d " , (*buf));
             }
-        }
+        }*/
         //delete inputData;
         //delete outputData;
-        */
+
         int result = camera1->getCurFrame(buf);
 
     return result;

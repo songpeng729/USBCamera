@@ -167,13 +167,13 @@ public class MainActivity extends AppCompatActivity {
             {
                 try {
                     Thread.sleep(0, 1);
-                    byte[] pixsOut = new byte[656 * 1024 * 4];
+                    byte[] pixsOut = new byte[656 * 1024];
 
                     int ret = mUSBCameraHelper.cameraSensorGetImg(pixsOut);
                     //int[] pixs = new int [picw * pich * PREVIEW_PIXEL_BYTES];
                     //Arrays.fill(pixs,0xaf);
 
-                    byte[] pixsByte = new byte[picw * pich];
+                    /*byte[] pixsByte = new byte[picw * pich];
                     int posA = 0;
                     int posB = 0;
                     for(int j=0; j<1024; j++){
@@ -183,9 +183,9 @@ public class MainActivity extends AppCompatActivity {
                             posA ++;
                             posB = posB + PREVIEW_PIXEL_BYTES;
                         }
-                    }
+                    }*/
                     //保存图片
-                    pixFilter = BitmapUtil.convToImage(pixsByte);
+                    pixFilter = BitmapUtil.convToImage(pixsOut);
                     if(ret == 1) {
                         mHandler.sendMessage(mHandler.obtainMessage());
                     }

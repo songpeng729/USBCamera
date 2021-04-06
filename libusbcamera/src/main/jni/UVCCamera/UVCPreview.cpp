@@ -626,7 +626,14 @@ int UVCPreview::getPreviewFrame(uint8_t *cameraData){
                 	//LOGI("----> 1");
                     if(captureQueu != NULL){
                         //cameraData = &imageData[0];
-                        memcpy(cameraData, imageData, 656 * 1024* PREVIEW_PIXEL_BYTES);
+                        //memcpy(cameraData, imageData, 656 * 1024* PREVIEW_PIXEL_BYTES);
+                        uint8_t *p = &imageData[0];
+                        for(unsigned long i = 0; i<656 * 1024; i++)
+                        {
+                            (*cameraData) = (*p);
+                            cameraData ++;
+                            p = p + 4;
+                        }
                         result = 1;
                     }else{
                         //LOGE("captureQueu == null ");

@@ -76,6 +76,7 @@ UVCCamera::UVCCamera()
  */
 UVCCamera::~UVCCamera() {
 	ENTER();
+	LOGE("------> release");
 	release();
 	if (mContext) {
 		uvc_exit(mContext);

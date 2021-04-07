@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private USBCameraHelper mUSBCameraHelper;
     boolean isRightFABOpen = false;
     private ImageView cPimageView;
-    private boolean previewFlag = true;
+    public boolean previewFlag = true;
     private int[] pixFilter;
 
     @Override
@@ -164,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
     private Runnable runable = new Runnable() {
         @Override
         public void run() {
-            while (previewFlag)
+            //while (previewFlag)
             {
                 try {
                     Thread.sleep(0, 1);

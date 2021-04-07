@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    int gainCnt = 50, expCnt = 30;
+    int gainCnt = 0, expCnt = 0;
     //public static int picw = 1024, pich = 656;
     public static int picw = 640, pich = 640;
     Bitmap bmpFilter = Bitmap.createBitmap(picw, pich, Bitmap.Config.ARGB_8888);

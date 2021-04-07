@@ -608,16 +608,23 @@ uint8_t imageData[656 * 1024 * PREVIEW_PIXEL_BYTES];
 //获取这一帧图像
 int UVCPreview::getPreviewFrame(uint8_t *cameraData){
           int result = 0;
+          int errCnt = 20;
           for ( ; LIKELY(isRunning()) ; )
           {
                 if(mIsRunning == false){
+                    usleep(1);
+                    errCnt --;
                     break;
                 }
 
                 if((!captureQueu) || (captureQueu == NULL)){
                     if(mIsRunning == false){
+                        usleep(1);
+                        errCnt --;
                         break;
                     }else{
+                        usleep(1);
+                        errCnt --;
                         continue;
                     }
                 }else
@@ -643,6 +650,11 @@ int UVCPreview::getPreviewFrame(uint8_t *cameraData){
 
                 }
             break;
+
+            if(errCnt <=0){
+                //超时判断
+                break;
+            }
         }
         return result;
 }

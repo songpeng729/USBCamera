@@ -164,38 +164,18 @@ public class MainActivity extends AppCompatActivity {
     private Runnable runable = new Runnable() {
         @Override
         public void run() {
-            //while (previewFlag)
+            while (previewFlag)
             {
                 try {
                     Thread.sleep(0, 1);
                     byte[] pixsOut = new byte[pich * picw];
 
                     int ret = mUSBCameraHelper.cameraSensorGetImg(pixsOut);
-                    /*//int[] pixs = new int [picw * pich * PREVIEW_PIXEL_BYTES];
-                    //Arrays.fill(pixs,0xaf);
-
-                    byte[] pixsByte = new byte[picw * pich];
-                    int posA = 0;
-                    int posB = 0;
-                    for(int j=0; j<1024; j++){
-                        for (int i=0; i<656; i++){
-                            //Log.d("pixFilter tag", pixs[i*10 + j] + "");
-                            pixsByte[posA] = (byte) (pixsOut[posB]&0xFF);
-                            posA ++;
-                            posB = posB + PREVIEW_PIXEL_BYTES;
-                        }
-                    }*/
                     //保存图片
                     pixFilter = BitmapUtil.convToImage(pixsOut);
                     if(ret == 1) {
                         mHandler.sendMessage(mHandler.obtainMessage());
                     }
-                            /*byte[] pixs = mUSBCameraHelper.cameraSensorGetImg();
-                            for (int i=0; i<640; i++){
-                                for(int j=0; j<640; j++){
-                                    Log.d("pixFilter tag", pixs[i*640 + j] + "");
-                                }
-                            }*/
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -209,6 +189,14 @@ public class MainActivity extends AppCompatActivity {
         previewFlag = true;
         if(!capThread.isAlive() || previewFlag ==false) {
             capThread.start();
+        }
+        byte[] pixsOut = new byte[pich * picw];
+
+        int ret = mUSBCameraHelper.cameraSensorGetImg(pixsOut);
+        //保存图片
+        pixFilter = BitmapUtil.convToImage(pixsOut);
+        if(ret == 1) {
+            mHandler.sendMessage(mHandler.obtainMessage());
         }
     }
 

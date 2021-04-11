@@ -1,4 +1,4 @@
-package com.shlll.libusbcamera;
+package com.shlll.usbcamera;
 
 import android.app.Activity;
 import android.content.ContentResolver;
@@ -265,7 +265,7 @@ public class USBCameraHelper {
                 else
                     mVibraotor.vibrate(100);
             }
-            showShortMsg(mContext.getResources().getString(R.string.msg_capturesaved));
+            showShortMsg(mContext.getResources().getString(com.shlll.libusbcamera.R.string.msg_capturesaved));
         } catch (FileNotFoundException e) {
                 e.printStackTrace();
         } catch (IOException e) {
@@ -280,7 +280,7 @@ public class USBCameraHelper {
 
     private boolean checkCameraOpened() {
         if (mUVCCamera == null) {
-            showShortMsg(mContext.getResources().getString(R.string.msg_camera_open_fail));
+            showShortMsg(mContext.getResources().getString(com.shlll.libusbcamera.R.string.msg_camera_open_fail));
             return false;
         }
 
@@ -291,7 +291,7 @@ public class USBCameraHelper {
     private final USBMonitor.OnDeviceConnectListener mOnDeviceConnectListener = new USBMonitor.OnDeviceConnectListener() {
         @Override
         public void onAttach(final UsbDevice device) {
-            showShortMsg(mContext.getResources().getString(R.string.msg_usb_device_attached));
+            showShortMsg(mContext.getResources().getString(com.shlll.libusbcamera.R.string.msg_usb_device_attached));
             requestPermission();
         }
 
@@ -351,7 +351,7 @@ public class USBCameraHelper {
 
         @Override
         public void onDettach(final UsbDevice device) {
-            showShortMsg(mContext.getResources().getString(R.string.msg_usb_device_detached));
+            showShortMsg(mContext.getResources().getString(com.shlll.libusbcamera.R.string.msg_usb_device_detached));
         }
 
         @Override

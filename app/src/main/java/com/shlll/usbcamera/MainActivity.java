@@ -2,13 +2,11 @@ package com.shlll.usbcamera;
 
 import android.Manifest;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.hardware.usb.UsbDevice;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.serenegiant.widget.UVCCameraTextureView;
-import com.shlll.libusbcamera.USBCameraHelper;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -17,7 +15,6 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,16 +22,16 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import java.util.Arrays;
 import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
     private static final int PREVIEW_PIXEL_BYTES = 4;
     private UVCCameraTextureView mUVCCameraView;
-    private USBCameraHelper mUSBCameraHelper;
     boolean isRightFABOpen = false;
     private ImageView cPimageView;
+
+    private USBCameraHelper mUSBCameraHelper;
     public boolean previewFlag = true;
     private int[] pixFilter;
 

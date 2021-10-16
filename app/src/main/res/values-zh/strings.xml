@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">USB摄像头</string>
+    <string name="app_name">FingerUSB2</string>
     <string name="action_about">关于</string>
     <string name="action_usbinfo">USB设备信息</string>
     <string name="diag_about_title">关于</string>
@@ -17,4 +17,43 @@
     <string name="fab_back_left">反面向左</string>
     <string name="fab_back_down">反面向下</string>
     <string name="fab_back_up">反面向上</string>
+
+    <string name="exit">退出</string>
+    <string name="finger_flat">平面指纹</string>
+    <string name="finger_roll">滚动指纹</string>
+    <string name="finger_r_thumb">右拇</string>
+    <string name="finger_r_index">右食</string>
+    <string name="finger_r_middle">右中</string>
+    <string name="finger_r_ring">右环</string>
+    <string name="finger_r_little">右小</string>
+    <string name="finger_l_thumb">左拇</string>
+    <string name="finger_l_index">左食</string>
+    <string name="finger_l_middle">左中</string>
+    <string name="finger_l_ring">左环</string>
+    <string name="finger_l_little">左小</string>
+    <string name="current_finger_pos">当前指位： </string>
+    <string name="finger_status_init">初始状态： </string>
+    <string name="start_collect">开始采集</string>
+    <string name="stop_collect">停止采集</string>
+    <string name="please_select_finger">请选择指纹</string>
+    <string name="collecting">正在采集中</string>
+    <string name="tv_contrast">对比度</string>
+    <string name="tv_light">亮度</string>
+    <string name="tv_dry_finger">干指</string>
+    <string name="tv_gain">GAIN</string>
+    <string name="tv_wet_finger">湿指</string>
+    <string name="tv_exp">EXP</string>
+    <string name="tv_save">保存</string>
+    <string name="btn_dry">保存干指模式</string>
+    <string name="btn_wet">保存湿指模式</string>
+    <string name="tv_setting">设置</string>
+    <string name="finger_opening">指纹扫描启动中...</string>
+    <string name="finger_closeing">指纹扫描关闭中...</string>
+    <string name="save_finger_dry">干指数据已保存</string>
+    <string name="save_finger_wet">湿指数据已保存</string>
+    <string name="dry_wet_setting">干湿指设置</string>
+    <string name="model_normal">正常采集模式</string>
+    <string name="model_dry">干指采集模式</string>
+    <string name="model_wet">湿指采集模式</string>
+
 </resources>

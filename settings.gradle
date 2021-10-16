@@ -1,2 +1,2 @@
 include ':app', ':libusbcamera'
-rootProject.name='USBCamera'
+rootProject.name='FingerUSBCamera'

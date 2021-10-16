@@ -1,0 +1,232 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingBottom="10dp"
+    android:paddingTop="10dp" >
+
+    <LinearLayout
+        android:id="@+id/fingerInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="#FF888888"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="1dip" >
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" >
+
+        <RadioGroup
+            android:id="@+id/finger_type_group"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_alignParentTop="true"
+            android:background="#777777"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/finger_roll_btn"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:background="@drawable/finger_type_background"
+                android:button="@null"
+                android:gravity="center"
+                android:paddingLeft="80dp"
+                android:text="@string/finger_roll"
+                android:textSize="20sp" />
+
+            <RadioButton
+                android:id="@+id/finger_flat_btn"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:background="@drawable/finger_type_background"
+                android:button="@null"
+                android:checked="false"
+                android:gravity="center"
+                android:paddingRight="80dp"
+                android:text="@string/finger_flat"
+                android:textSize="20sp" />
+        </RadioGroup>
+
+        <GridLayout
+            android:id="@+id/gl_finger"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/finger_type_group"
+            android:background="@color/blue_simple"
+            android:columnCount="5"
+            android:rowCount="2" >
+
+            <Button
+                android:id="@+id/finger_r_thumb_btn"
+                style="@style/FingerNameText"
+                android:layout_width="75dp"
+                android:layout_height="wrap_content"
+                android:text="@string/finger_r_thumb"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/finger_r_index_btn"
+                style="@style/FingerNameText"
+                android:layout_width="75dp"
+                android:text="@string/finger_r_index"
+                android:textColor="@color/finger_name"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/finger_r_middle_btn"
+                style="@style/FingerNameText"
+                android:layout_width="75dp"
+                android:text="@string/finger_r_middle"
+                android:textColor="@color/finger_name"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/finger_r_ring_bnt"
+                style="@style/FingerNameText"
+                android:layout_width="75dp"
+                android:layout_height="wrap_content"
+                android:text="@string/finger_r_ring"
+                android:textColor="@color/finger_name"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/finger_r_little_btn"
+                style="@style/FingerNameText"
+                android:layout_width="75dp"
+                android:text="@string/finger_r_little"
+                android:textColor="@color/finger_name"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/finger_l_thumb_btn"
+                style="@style/FingerNameText"
+                android:layout_width="75dp"
+                android:text="@string/finger_l_thumb"
+                android:textColor="@color/finger_name"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/finger_l_index_btn"
+                style="@style/FingerNameText"
+                android:layout_width="75dp"
+                android:text="@string/finger_l_index"
+                android:textColor="@color/finger_name"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/finger_l_middle_btn"
+                style="@style/FingerNameText"
+                android:layout_width="75dp"
+                android:text="@string/finger_l_middle"
+                android:textColor="@color/finger_name"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/finger_l_ring_bnt"
+                style="@style/FingerNameText"
+                android:layout_width="75dp"
+                android:text="@string/finger_r_index"
+                android:textColor="@color/finger_name"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/finger_l_little_btn"
+                style="@style/FingerNameText"
+                android:layout_width="75dp"
+                android:text="@string/finger_l_little"
+                android:textColor="@color/finger_name"
+                android:textSize="18sp" />
+        </GridLayout>
+
+        <TextView
+            android:id="@+id/gather_status_tv"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:layout_below="@id/gl_finger"
+            android:background="@color/blue_light"
+            android:gravity="left"
+            android:padding="5dp"
+            android:paddingTop="10dp"
+            android:text="@string/finger_status_init"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp" />
+
+        <TableLayout
+            android:id="@+id/tl_info"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_below="@id/gather_status_tv"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp" >
+
+            <Spinner
+                android:id="@+id/finger_status_sp"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:entries="@array/finger_status" />
+
+            <TextView
+                android:id="@+id/tv_finger_hint"
+                android:layout_width="80dp"
+                android:layout_height="40dp"
+                android:layout_marginLeft="10dp"
+                android:paddingTop="10dp"
+                android:text="(请选择指纹采集缺省情况)"
+                android:textColor="@color/gray_light"
+                android:textSize="18sp" />
+
+            <Spinner
+                android:id="@+id/finger_model_sp"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:entries="@array/finger_model" />
+
+        </TableLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/gather_status_tv"
+            android:layout_marginLeft="0dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_toRightOf="@+id/tl_info"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/finger_start_gather_btn"
+                android:layout_width="130dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/finger_btn_background"
+                android:text="@string/start_collect"
+                android:textColor="@drawable/finger_text_color" />
+
+            <Button
+                android:id="@+id/finger_dry_wet_setting_btn"
+                android:layout_width="130dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:background="@drawable/finger_btn_background"
+                android:text="@string/dry_wet_setting"
+                android:textColor="@drawable/finger_text_color" />
+
+        </LinearLayout>
+    </RelativeLayout>
+
+</LinearLayout>

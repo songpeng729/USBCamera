@@ -4,7 +4,7 @@ android {
     compileSdkVersion rootProject.ext.versionCompiler
     buildToolsVersion rootProject.ext.buildToolsVersion
     defaultConfig {
-        applicationId "com.shlll.usbcamera"
+        applicationId "com.finger.usbcamera"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.versionTarget
         versionCode rootProject.ext.versionCode
@@ -23,7 +23,7 @@ android {
         sourceCompatibility rootProject.ext.javaSourceCompatibility
         targetCompatibility rootProject.ext.javaTargetCompatibility
     }
-    ndkVersion '21.0.6113669'
+//    ndkVersion '23.0.7344513'
 }
 
 dependencies {

@@ -16,7 +16,7 @@ import java.util.concurrent.*;
  * fetch image from sensor
  */
 public class MosaicFetcher {
-    private final String LOG_TAG = "centipede";
+    private final String LOG_TAG = "MOSAIC_FETCHER";
 
     /**
      * callback interface
@@ -68,7 +68,6 @@ public class MosaicFetcher {
             readFuture = executor.submit(new ReadThread());
             mergeFuture = executor.submit(new MergeThread());
 
-//            mergeFuture.get();
             waitingShutdown();
         } catch (Throwable e) {
             Log.e(LOG_TAG, "fail to start executor", e);
@@ -111,16 +110,24 @@ public class MosaicFetcher {
     class ReadThread implements Runnable {
         @Override
         public void run() {
-            MosaicNative.FastInit(800);
-            if (callback != null)
+            Log.d(LOG_TAG, "ReadThread run");
+            MosaicNative.FastInit(100);
+            Log.d(LOG_TAG, "FastInit ok");
+            if (callback != null){
+                Log.d(LOG_TAG, "callback.initMosaic()");
                 callback.initMosaic();
+            }
             while (threadRunning) {
-                if (MosaicNative.FastInitIsFinger())
+                Log.d(LOG_TAG, "begin fastInitIsFinger ");
+                Boolean fastInitIsFinger = MosaicNative.FastInitIsFinger();
+                Log.d(LOG_TAG, "fastInitIsFinger: "+fastInitIsFinger);
+                if (fastInitIsFinger)
                     break;
             }
             while (threadRunning) {
                 try {
                     Integer dataSeq = waitingRead.poll(1, TimeUnit.SECONDS);
+                    Log.d(LOG_TAG, "run: "+dataSeq);
                     if (dataSeq == null)
                         continue;
                     Log.d(LOG_TAG, "read sensor image");
@@ -140,6 +147,7 @@ public class MosaicFetcher {
     class MergeThread implements Runnable {
         @Override
         public void run() {
+            threadRunning = false;
             while (threadRunning) {
                 try {
                     Integer dataSeq = waitingMerge.poll(1, TimeUnit.SECONDS);

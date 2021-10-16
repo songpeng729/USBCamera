@@ -54,9 +54,9 @@ int FingerAPI::sensor_setGain(int value){
 }
 
 int FingerAPI::sensor_getGain(){
-UVCCamera *camera1 = reinterpret_cast<UVCCamera *>(camera);
-int result = camera1->getGain();
-return result;
+    UVCCamera *camera1 = reinterpret_cast<UVCCamera *>(camera);
+    int result = camera1->getGain();
+    return result;
 }
 
 //曝光
@@ -66,14 +66,14 @@ int FingerAPI::sensor_setExp(int exposure){
 //请注意：是否需要设置曝光模式，这里设置成1
     camera1->setExposureMode(1);
 	int result = camera1->setExposure(exposure);
-return result;
+    return result;
 }
 
 int FingerAPI::sensor_getExp(){
     UVCCamera *camera1 = reinterpret_cast<UVCCamera *>(camera);
     int result = camera1->getExposure();
 
-return result;
+    return result;
 }
 
 int FingerAPI::sensor_readimg(uint8_t *outputData){

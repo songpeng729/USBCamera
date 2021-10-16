@@ -17,4 +17,43 @@
     <string name="fab_back_left">Back to Left</string>
     <string name="fab_back_down">Back to Down</string>
     <string name="fab_back_up">Back to Up</string>
+
+    <string name="exit">exit</string>
+    <string name="finger_flat">flat-finger</string>
+    <string name="finger_roll">roll-finger</string>
+    <string name="finger_r_thumb">right-thumb</string>
+    <string name="finger_r_index">right-index</string>
+    <string name="finger_r_middle">right-middle</string>
+    <string name="finger_r_ring">right-ring</string>
+    <string name="finger_r_little">right-little</string>
+    <string name="finger_l_thumb">left-thumb</string>
+    <string name="finger_l_index">left-index</string>
+    <string name="finger_l_middle">left-middle</string>
+    <string name="finger_l_ring">left-ring</string>
+    <string name="finger_l_little">left-little</string>
+    <string name="current_finger_pos">current finger pos： </string>
+    <string name="finger_status_init">init status： </string>
+    <string name="start_collect">start collect</string>
+    <string name="stop_collect">stop collect</string>
+    <string name="please_select_finger">please select finger</string>
+    <string name="collecting">collecting</string>
+    <string name="tv_contrast">contrast</string>
+    <string name="tv_light">light</string>
+    <string name="tv_dry_finger">dry</string>
+    <string name="tv_gain">GAIN</string>
+    <string name="tv_wet_finger">wet</string>
+    <string name="tv_exp">EXP</string>
+    <string name="tv_save">save</string>
+    <string name="btn_dry">save dry</string>
+    <string name="btn_wet">save wet</string>
+    <string name="tv_setting">setting</string>
+    <string name="finger_opening">opening...</string>
+    <string name="finger_closeing">closeing...</string>
+    <string name="save_finger_dry">dry saved</string>
+    <string name="save_finger_wet">wet saved</string>
+    <string name="dry_wet_setting">dry wet setting</string>
+    <string name="model_normal">model normal</string>
+    <string name="model_dry">model dry</string>
+    <string name="model_wet">model wet</string>
+
 </resources>

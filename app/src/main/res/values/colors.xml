@@ -3,4 +3,19 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+    <color name="white">#FFffffff</color>
+    <color name="gray_light">#FFCDCDCD</color>
+    <color name="green">#FF00ff00</color>
+    <color name="green_light">#FF0BBB0C</color>
+    <color name="green_dark">#FF38A013</color>
+    <color name="blue">#FF2294E5</color>
+    <color name="blue_simple">#FFD0ECFA</color>
+    <color name="black_light">#FF231B18</color>
+    <color name="red_highlight">#FF880000</color>
+    <color name="red_light">#FFF97A7A</color>
+    <color name="red">#FFFF0000</color>
+    <color name="purple">#FFAC58A3</color>
+    <!-- 系统设置 -->
+    <color name="blue_light">#FF1296db</color>
+    <color name="blue_drak">#FF143868</color>
 </resources>

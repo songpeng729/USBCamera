@@ -26,6 +26,10 @@ public class SPINative {
         Log.d(TAG, "start load library");
         try {
 //            System.loadLibrary("usbsensor");
+//            System.loadLibrary("jpeg-turbo1500");
+//            System.loadLibrary("usb100");
+//            System.loadLibrary("uvc");
+//            System.loadLibrary("UVCCamera");
 
         } catch (Exception e) {
             Log.d(TAG, "load library, exception=",e);

@@ -62,11 +62,11 @@ public static native int doMosaicNew(byte[] buffer);
    //18 获得拼接接口的说明 pszDesc 1024 个字节
    public static native int GetDesc(byte[] pszDesc);
    static {
-      System.loadLibrary("centipede-livescan");
 //      System.loadLibrary("usbsensor");
     System.loadLibrary("jpeg-turbo1500");
     System.loadLibrary("usb100");
     System.loadLibrary("uvc");
     System.loadLibrary("UVCCamera");
+    System.loadLibrary("livescan");
    }
 }

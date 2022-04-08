@@ -65,7 +65,7 @@ public final class USBMonitor {
 	private static final boolean DEBUG = false;	// TODO set false on production
 	private static final String TAG = "USBMonitor";
 
-	private static final String ACTION_USB_PERMISSION_BASE = "com.serenegiant.USB_PERMISSION.";
+	private static final String ACTION_USB_PERMISSION_BASE = "com.finger.usbcamera.USB_PERMISSION.";
 	private final String ACTION_USB_PERMISSION = ACTION_USB_PERMISSION_BASE + hashCode();
 
 	public static final String ACTION_USB_DEVICE_ATTACHED = "android.hardware.usb.action.USB_DEVICE_ATTACHED";
@@ -309,30 +309,6 @@ public final class USBMonitor {
 		// get detected devices
 		final HashMap<String, UsbDevice> deviceList = mUsbManager.getDeviceList();
 		// store those devices info before matching filter xml file
-		String fileName = Environment.getExternalStorageDirectory().getAbsolutePath()+ "/USBCamera/failed_devices.txt";
-
-		File logFile = new File(fileName);
-		if(!logFile.getParentFile().exists()) {
-			logFile.getParentFile().mkdirs();
-		}
-
-		if(! logFile.exists()) {
-			try {
-				logFile.createNewFile();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		FileWriter fw = null;
-		PrintWriter pw = null;
-		try {
-			fw = new FileWriter(logFile, true);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		if(fw != null) {
-			pw = new PrintWriter(fw);
-		}
 		final List<UsbDevice> result = new ArrayList<UsbDevice>();
 		if (deviceList != null) {
 			if ((filters == null) || filters.isEmpty()) {
@@ -347,42 +323,12 @@ public final class USBMonitor {
 								result.add(device);
 							}
 							break;
-						} else {
-							// collection failed dev's class and subclass
-							String devModel = android.os.Build.MODEL;
-							String devSystemVersion = android.os.Build.VERSION.RELEASE;
-							String devClass = String.valueOf(device.getDeviceClass());
-							String subClass = String.valueOf(device.getDeviceSubclass());
-							try{
-								if(pw != null) {
-									StringBuilder sb = new StringBuilder();
-									sb.append(devModel);
-									sb.append("/");
-									sb.append(devSystemVersion);
-									sb.append(":");
-									sb.append("class="+devClass+", subclass="+subClass);
-									pw.println(sb.toString());
-									pw.flush();
-									fw.flush();
-								}
-							}catch (IOException e) {
-								e.printStackTrace();
-							}
 						}
 					}
 				}
 			}
 		}
-		if (pw != null) {
-			pw.close();
-		}
-		if (fw != null) {
-			try {
-				fw.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+
 		return result;
 	}
 

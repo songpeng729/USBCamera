@@ -39,7 +39,7 @@ public class USBCameraHelper {
     private UVCCamera mUVCCamera;
     private Context mContext;
     private OnCameraButtonListener mButtonListener = null;
-    private Vibrator mVibraotor = null;
+    private Vibrator mVibraotor = null;//震动器
 
     /** Event Handler */
     private Handler mWorkerHandler;
@@ -201,10 +201,13 @@ public class USBCameraHelper {
 
                     try {
                         camera.setPreviewSize(UVCCamera.DEFAULT_PREVIEW_WIDTH, UVCCamera.DEFAULT_PREVIEW_HEIGHT, UVCCamera.PIXEL_FORMAT_YUV420SP);//FRAME_FORMAT_MJPEG);
+                        Log.i(TAG, "camera.setPreviewSize width:"+ UVCCamera.DEFAULT_PREVIEW_WIDTH + " height:"+ UVCCamera.DEFAULT_PREVIEW_HEIGHT);
                     } catch (final IllegalArgumentException e) {
                         // fallback to YUV mode
                         try {
+                            showShortMsg("UVCCamera.DEFAULT_PREVIEW_MODE");
                             camera.setPreviewSize(UVCCamera.DEFAULT_PREVIEW_WIDTH, UVCCamera.DEFAULT_PREVIEW_HEIGHT, UVCCamera.DEFAULT_PREVIEW_MODE);
+                            Log.w(TAG, "camera.setPreviewSize width:"+ UVCCamera.DEFAULT_PREVIEW_WIDTH + " height:"+ UVCCamera.DEFAULT_PREVIEW_HEIGHT);
                         } catch (final IllegalArgumentException e1) {
                             camera.destroy();
                             return;

@@ -7,15 +7,20 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.hardware.usb.UsbDevice;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.widget.Toast;
 
 import com.finger.usbcamera.listener.MosaicImageListener;
+import com.serenegiant.usb.DeviceFilter;
+import com.serenegiant.usb.USBMonitor;
 
 import java.nio.ByteBuffer;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -41,8 +46,8 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
     private MosaicFetcher mosaicFetcher;//指纹采集类
     private int gain = GAIN_DEFAULT; //当前亮度
     private int exp = EXP_DEFAULT;//当前对比度
-    private int width;
-    private int height;
+    private int width = 640;
+    private int height = 640;
     private byte[] imgDataBuffer;//图像数据
     private byte[] imgDataBufferWhite;//空白图像据
 
@@ -55,15 +60,16 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
 
     private MosaicImageListener mosaicImageListener;//拼接图像监听
 
+    private Context context;
+    private USBMonitor usbMonitor;
 
     public MosaicSurfaceView(Context context){
         super(context);
+        this.context = context;
         init();
     }
     private void init(){
         mosaicFetcher = new MosaicFetcher();
-        width = 640;
-        height = 640;
         Log.i(LOG_TAG, "init width:"+ width +" height:"+ height);
 
         imgDataBuffer = new byte[width * height];
@@ -88,6 +94,48 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
 
         surfaceHolder = getHolder();
         surfaceHolder.addCallback(this);
+
+//        usbMonitor = new USBMonitor(this.context, new USBMonitor.OnDeviceConnectListener(){
+//
+//            @Override
+//            public void onAttach(UsbDevice device) {
+//                Toast.makeText(context,"USB 已连接", Toast.LENGTH_SHORT).show();
+//                requestPermission();
+//            }
+//
+//            @Override
+//            public void onDettach(UsbDevice device) {
+//                Toast.makeText(context,"USB 连接断开", Toast.LENGTH_SHORT).show();
+//            }
+//
+//            @Override
+//            public void onConnect(UsbDevice device, USBMonitor.UsbControlBlock ctrlBlock, boolean createNew) {
+//                Toast.makeText(context,"USB onConnect", Toast.LENGTH_SHORT).show();
+//            }
+//
+//            @Override
+//            public void onDisconnect(UsbDevice device, USBMonitor.UsbControlBlock ctrlBlock) {
+//
+//            }
+//
+//            @Override
+//            public void onCancel(UsbDevice device) {
+//
+//            }
+//        });
+//        usbMonitor.register();
+
+    }
+    private void requestPermission() {
+        final List<DeviceFilter> filter = DeviceFilter.getDeviceFilters(context,
+                com.finger.usbcamera.R.xml.device_filter);
+        final List<UsbDevice> deviceList = usbMonitor.getDeviceList(filter);
+        if (deviceList == null || deviceList.size() == 0) {
+            return;
+        }
+        if (usbMonitor != null) {
+            usbMonitor.requestPermission(deviceList.get(0));
+        }
     }
 
     @Override
@@ -128,6 +176,8 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
         Log.i(LOG_TAG, "startGather");
         //先空画布
         clearImage();
+        //申请USB权限
+
         //采集指纹比较耗时，放到子线程里处理
         executorService.submit(new Runnable() {
             @Override

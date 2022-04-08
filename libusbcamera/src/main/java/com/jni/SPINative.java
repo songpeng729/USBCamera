@@ -3,7 +3,7 @@ package com.jni;
 import android.util.Log;
 
 public class SPINative {
-    private static final String TAG = "sensor_so";
+    private static final String TAG = "SPINative";
     
     public SPINative() {
     }
@@ -25,11 +25,11 @@ public class SPINative {
     static {
         Log.d(TAG, "start load library");
         try {
-//            System.loadLibrary("usbsensor");
-//            System.loadLibrary("jpeg-turbo1500");
-//            System.loadLibrary("usb100");
-//            System.loadLibrary("uvc");
-//            System.loadLibrary("UVCCamera");
+            System.loadLibrary("usbsensor");
+            System.loadLibrary("jpeg-turbo1500");
+            System.loadLibrary("usb100");
+            System.loadLibrary("uvc");
+            System.loadLibrary("livescan");
 
         } catch (Exception e) {
             Log.d(TAG, "load library, exception=",e);

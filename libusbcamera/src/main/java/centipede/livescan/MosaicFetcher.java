@@ -153,6 +153,8 @@ public class MosaicFetcher {
                     Integer dataSeq = waitingMerge.poll(1, TimeUnit.SECONDS);
                     if (dataSeq == null)
                         continue;
+
+                    Log.d(LOG_TAG, "merge FastMosaicNew");
                     int ret = MosaicNative.FastMosaicNew(dataSeq, buffer);
                     waitingRead.put(dataSeq);
                     if (callback != null) {

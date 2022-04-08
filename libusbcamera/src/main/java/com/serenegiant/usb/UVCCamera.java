@@ -120,7 +120,7 @@ public class UVCCamera {
 			System.loadLibrary("jpeg-turbo1500");
 			System.loadLibrary("usb100");
 			System.loadLibrary("uvc");
-			System.loadLibrary("UVCCamera");
+			System.loadLibrary("livescan");
 			isLoaded = true;
 		}
 	}

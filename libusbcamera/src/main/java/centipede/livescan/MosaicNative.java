@@ -66,7 +66,6 @@ public static native int doMosaicNew(byte[] buffer);
     System.loadLibrary("jpeg-turbo1500");
     System.loadLibrary("usb100");
     System.loadLibrary("uvc");
-    System.loadLibrary("UVCCamera");
     System.loadLibrary("livescan");
    }
 }

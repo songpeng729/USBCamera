@@ -23,13 +23,13 @@
 #*/
 
 ######################################################################
-# Make shared library libUVCCamera.so
+# Make shared library liblivescan.so
 ######################################################################
 LOCAL_PATH	:= $(call my-dir)
 include $(CLEAR_VARS)
 
 ######################################################################
-# Make shared library libUVCCamera.so
+# Make shared library liblivescan.so
 ######################################################################
 CFLAGS := -Werror
 
@@ -62,7 +62,13 @@ LOCAL_SRC_FILES := \
 		Parameters.cpp \
 		serenegiant_usb_UVCCamera.cpp \
         Correction.cpp \
-        FingerAPI.cpp
+        FingerAPI.cpp \
+        sensor.cpp \
+        src/mosaicInterface.cpp \
+        src/kernel/FPMosaic.cpp \
+        src/kernel/ImageProcess.cpp \
+        src/kernel/FptQualityAssessment.cpp \
+        src/centipede_livescan_MosaicNative.cc
 
-LOCAL_MODULE    := UVCCamera
+LOCAL_MODULE    := livescan
 include $(BUILD_SHARED_LIBRARY)

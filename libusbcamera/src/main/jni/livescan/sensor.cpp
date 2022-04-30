@@ -10,16 +10,19 @@
 #include "FingerSensorImpl.h"
 #include "FingerAPI.h"
 
-//#define LOG_TAG "SENSOR"
+#define LOG_TAG "SENSOR"
 
 UVCCamera *uvcCamera;
-FingerAPI fingerAPI;
 
-int sensor_int(int nDelay){
+int sensor_int(int vid, int pid, int fd, int busnum, int devaddr, const char *usbfs){
+   __android_log_print(ANDROID_LOG_DEBUG,LOG_TAG,"sensor_int ");
     uvcCamera = new UVCCamera();
-	fingerAPI.camera = uvcCamera;
-	//TODO 链接USB
-	//camera->connect(vid, pid, fd, busNum, devAddr, c_usbfs);
+    if (LIKELY(uvcCamera && (fd > 0))) {
+        int result =  uvcCamera->connect(vid, pid, fd, busnum, devaddr, usbfs);
+        __android_log_print(ANDROID_LOG_DEBUG,LOG_TAG,"connect result %d",result);
+    }
+	uvcCamera->setPreviewSize(1024, 656, 1, 31, 1, 1.0f);
+	uvcCamera->startPreview();
     return 1;
 }
 int sensor_exit(){
@@ -27,8 +30,10 @@ int sensor_exit(){
     return 1;
 }
 int sensor_readimg(unsigned char* buf){
-    int ret = fingerAPI.sensor_readimg(buf);
-    return ret;
+    unsigned char inputData[656 * 1024];
+    int result = uvcCamera->getCurFrame(inputData);
+    CFingerSensor::CImplicit().CorrectDistortion(inputData, buf);
+    return result;
 }
 int sensor_setGain(int value){
     //1-48

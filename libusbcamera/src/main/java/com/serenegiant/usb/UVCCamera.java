@@ -192,6 +192,13 @@ public class UVCCamera {
 		StringBuilder sb = new StringBuilder();
 		try {
 			mCtrlBlock = ctrlBlock.clone();
+			Log.d(TAG, " mNativePtr "+ mNativePtr
+					+ " getVenderId "+ mCtrlBlock.getVenderId()
+					+ " getProductId "+ mCtrlBlock.getProductId()
+					+ " getFileDescriptor " + mCtrlBlock.getFileDescriptor()
+					+ " getBusNum "+ mCtrlBlock.getBusNum()
+					+ " getDevNum " + mCtrlBlock.getDevNum()
+					+ " getUSBFSName "+ getUSBFSName(mCtrlBlock));
 			result = nativeConnect(mNativePtr,
 					mCtrlBlock.getVenderId(), mCtrlBlock.getProductId(),
 					mCtrlBlock.getFileDescriptor(),

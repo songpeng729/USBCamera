@@ -12,7 +12,7 @@ default Sensor is running,LED On
 extern "C" {
 #endif 
 //nDelay [0,2048]
-int sensor_int(int nDelay);
+int sensor_int(int vid, int pid, int fd, int busnum, int devaddr, const char *usbfs);
 int sensor_exit();
 int sensor_readimg(unsigned char* buf);
 int sensor_setGain(int value); //1-48

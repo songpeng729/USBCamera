@@ -161,9 +161,13 @@ static void ThrowJavaException(JNIEnv *jenv,const char *msg) {
  * Signature: (I)V
  */
 JNIEXPORT jint JNICALL Java_centipede_livescan_MosaicNative_ReadInit
-		(JNIEnv *, jclass, jint delay){
+		(JNIEnv *env, jclass, jint vid, jint pid, jint fd, jint busNum, jint devAddr, jstring usbfs_str){
 	__android_log_print(ANDROID_LOG_DEBUG,LOG_TAG,"Begin init sensor ...");
-	int ret = sensor_int(delay);
+	const char *c_usbfs = env->GetStringUTFChars(usbfs_str, JNI_FALSE);
+    //if (LIKELY(camera && (fd > 0))) {
+	    int ret = sensor_int(vid, pid, fd, busNum, devAddr, c_usbfs);
+    //}
+    env->ReleaseStringUTFChars(usbfs_str, c_usbfs);
 	__android_log_print(ANDROID_LOG_DEBUG,LOG_TAG,"init sensor result :%d...",ret);
 	return ret;
 }
@@ -175,6 +179,9 @@ JNIEXPORT jint JNICALL Java_centipede_livescan_MosaicNative_ReadInit
  */
 JNIEXPORT void JNICALL Java_centipede_livescan_MosaicNative_ReadImg
 		(JNIEnv *jenv, jclass, jbyteArray buffer){
+	unsigned char * dscTmp = (unsigned char *)jenv->GetByteArrayElements(buffer, 0);
+	__android_log_print(ANDROID_LOG_DEBUG,LOG_TAG,"sensor_readimg ...");
+    //sensor_readimg(dscTmp);
 	int buffer_size = jenv->GetArrayLength(buffer);
 	unsigned char * buffer_bin = (unsigned char *)jenv->GetByteArrayElements(buffer, JNI_FALSE);
 	sensor_readimg(buffer_bin);
@@ -206,8 +213,8 @@ JNIEXPORT void JNICALL Java_centipede_livescan_MosaicNative_FastInit
    //end by wumin 20161116
 
    __android_log_print(ANDROID_LOG_DEBUG,LOG_TAG,"Begin init sensor ...");
-    int ret = sensor_int(delay);
-	__android_log_print(ANDROID_LOG_DEBUG,LOG_TAG,"init sensor result :%d...",ret);
+   // int ret = sensor_int(delay);
+	// __android_log_print(ANDROID_LOG_DEBUG,LOG_TAG,"init sensor result :%d...",ret);
    __android_log_print(ANDROID_LOG_DEBUG,LOG_TAG,"Begin init mosaic ...");
   	MOSAIC_Init();
    __android_log_print(ANDROID_LOG_DEBUG,LOG_TAG,"Finish init! ");
@@ -260,14 +267,13 @@ JNIEXPORT jint JNICALL Java_centipede_livescan_MosaicNative_FastMosaicNew
   		ret = MOSAIC_DoMosaic(buffer_1, WIDTH, HEIGHT);
     else if(seq == 2)
       ret = MOSAIC_DoMosaic(buffer_2, WIDTH, HEIGHT);
-		if(0 != MOSAIC_GetRollMode() || 0 >= ret)
-		{
+	if(0 != MOSAIC_GetRollMode() || 0 >= ret){
       int buffer_size = jenv->GetArrayLength(buffer);
       unsigned char * buffer_bin = (unsigned char *)jenv->GetByteArrayElements(buffer, JNI_FALSE);
       memcpy(buffer_bin,dest_buffer,buffer_size);
       crack_tmp_img(buffer_bin,ret);
       jenv->ReleaseByteArrayElements(buffer, (jbyte *) buffer_bin, 0);
-		}
+	}
     return ret;
 }
 

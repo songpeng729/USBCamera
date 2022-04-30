@@ -19,7 +19,7 @@ public class MosaicNative{
    * 2. ReadImg 读取图像,传入的数组大小应该为640*640的大小,此方法不断的读取图像数据进行显示
    * 3. ReadEnd 读取终止
    */
-   public static native int ReadInit(int delay);
+   public static native int ReadInit(int venderId, int productId, int fileDescriptor, int busNum, int devAddr, String usbfs);
    public static native void ReadImg(byte[] buffer);
    public static native void ReadEnd();
 

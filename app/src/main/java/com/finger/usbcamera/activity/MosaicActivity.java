@@ -8,6 +8,7 @@ import android.hardware.usb.UsbDevice;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +30,8 @@ import com.serenegiant.usb.UVCCamera;
 import java.util.List;
 
 import centipede.livescan.MosaicNative;
+
+import static android.content.ContentValues.TAG;
 
 
 public class MosaicActivity extends Activity implements View.OnClickListener{
@@ -99,8 +102,31 @@ public class MosaicActivity extends Activity implements View.OnClickListener{
 
             @Override
             public void onConnect(UsbDevice device, USBMonitor.UsbControlBlock ctrlBlock, boolean createNew) {
+                Log.d(TAG, "ReadInit onConnect: "+ctrlBlock.getVenderId());
                 Toast.makeText(mContext, "onConnect", Toast.LENGTH_SHORT);
+                MosaicNative.ReadInit(ctrlBlock.getVenderId(), ctrlBlock.getProductId(),
+                        ctrlBlock.getFileDescriptor(),
+                        ctrlBlock.getBusNum(),
+                        ctrlBlock.getDevNum(),
+                        getUSBFSName(ctrlBlock));
             }
+            private final String getUSBFSName(final USBMonitor.UsbControlBlock ctrlBlock) {
+                String result = null;
+                final String name = ctrlBlock.getDeviceName();
+                final String[] v = !TextUtils.isEmpty(name) ? name.split("/") : null;
+                if ((v != null) && (v.length > 2)) {
+                    final StringBuilder sb = new StringBuilder(v[0]);
+                    for (int i = 1; i < v.length - 2; i++)
+                        sb.append("/").append(v[i]);
+                    result = sb.toString();
+                }
+                if (TextUtils.isEmpty(result)) {
+                    Log.w(TAG, "failed to get USBFS path, try to use default path:" + name);
+                    result = "/dev/bus/usb";
+                }
+                return result;
+            }
+
 
             @Override
             public void onDisconnect(UsbDevice device, USBMonitor.UsbControlBlock ctrlBlock) {
@@ -112,6 +138,7 @@ public class MosaicActivity extends Activity implements View.OnClickListener{
 
             }
         });
+        mUSBMonitor.register();//注册监听
     }
     @Override
     public void onClick(View view) {
@@ -125,9 +152,16 @@ public class MosaicActivity extends Activity implements View.OnClickListener{
                 break;
             case R.id.mosaic_save_btn:
                 //获取图片
-                MosaicNative.ReadInit(100);
+//                MosaicNative.FastInit(800);
+//                MosaicNative.FastMosaicNew(2, imgDataBuffer);//INAFIS
+//                MosaicNative.FastInit(100);
+//                MosaicNative.FastReadSendorImg(2);
                 MosaicNative.ReadImg(imgDataBuffer);
+//                MosaicNative.ReadEnd();
+                Log.d(LOG_TAG, "imgDataBuffer len "+ imgDataBuffer.length);
+
                 int[] pixels = BitmapUtil.convToImage(imgDataBuffer);
+                Log.d(LOG_TAG, "pixels len "+ pixels.length);
                 bitmap.setPixels(pixels, 0, height, 0, 0, width, height);
 
                 mHandler.sendMessage(mHandler.obtainMessage());
@@ -198,4 +232,10 @@ public class MosaicActivity extends Activity implements View.OnClickListener{
 //        }
 //
 //    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mUSBMonitor.destroy();
+    }
 }

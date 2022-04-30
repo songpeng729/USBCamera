@@ -206,7 +206,7 @@ public class USBCameraHelper {
                         // fallback to YUV mode
                         try {
                             showShortMsg("UVCCamera.DEFAULT_PREVIEW_MODE");
-                            camera.setPreviewSize(UVCCamera.DEFAULT_PREVIEW_WIDTH, UVCCamera.DEFAULT_PREVIEW_HEIGHT, UVCCamera.DEFAULT_PREVIEW_MODE);
+//                            camera.setPreviewSize(UVCCamera.DEFAULT_PREVIEW_WIDTH, UVCCamera.DEFAULT_PREVIEW_HEIGHT, UVCCamera.DEFAULT_PREVIEW_MODE);
                             Log.w(TAG, "camera.setPreviewSize width:"+ UVCCamera.DEFAULT_PREVIEW_WIDTH + " height:"+ UVCCamera.DEFAULT_PREVIEW_HEIGHT);
                         } catch (final IllegalArgumentException e1) {
                             camera.destroy();

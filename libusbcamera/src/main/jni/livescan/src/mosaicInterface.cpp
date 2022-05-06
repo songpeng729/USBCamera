@@ -21,7 +21,7 @@ int MOSAIC_Init()
 	int year = timenow->tm_year + 1900;
 	int month = timenow->tm_mon ;
 	
-	if(year > 2020) // || (year == 2016 && month > 1))
+	if(year > 2030) // || (year == 2016 && month > 1))
 	{
 		return MOSAIC_ERROR_NOTAUTHORIZATION;
 	}

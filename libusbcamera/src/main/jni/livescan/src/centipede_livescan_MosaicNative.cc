@@ -179,9 +179,6 @@ JNIEXPORT jint JNICALL Java_centipede_livescan_MosaicNative_ReadInit
  */
 JNIEXPORT void JNICALL Java_centipede_livescan_MosaicNative_ReadImg
 		(JNIEnv *jenv, jclass, jbyteArray buffer){
-	unsigned char * dscTmp = (unsigned char *)jenv->GetByteArrayElements(buffer, 0);
-	__android_log_print(ANDROID_LOG_DEBUG,LOG_TAG,"sensor_readimg ...");
-    //sensor_readimg(dscTmp);
 	int buffer_size = jenv->GetArrayLength(buffer);
 	unsigned char * buffer_bin = (unsigned char *)jenv->GetByteArrayElements(buffer, JNI_FALSE);
 	sensor_readimg(buffer_bin);
@@ -205,7 +202,7 @@ JNIEXPORT void JNICALL Java_centipede_livescan_MosaicNative_ReadEnd
  * Signature: ()V
  */
 JNIEXPORT void JNICALL Java_centipede_livescan_MosaicNative_FastInit
-  (JNIEnv *env, jclass, jint delay){
+		(JNIEnv *env, jclass, jint vid, jint pid, jint fd, jint busNum, jint devAddr, jstring usbfs_str){
 
    //add by wumin 20161116
    memset(buffer_1,0,IMG_SIZE);
@@ -213,11 +210,14 @@ JNIEXPORT void JNICALL Java_centipede_livescan_MosaicNative_FastInit
    //end by wumin 20161116
 
    __android_log_print(ANDROID_LOG_DEBUG,LOG_TAG,"Begin init sensor ...");
-   // int ret = sensor_int(delay);
-	// __android_log_print(ANDROID_LOG_DEBUG,LOG_TAG,"init sensor result :%d...",ret);
+   const char *c_usbfs = env->GetStringUTFChars(usbfs_str, JNI_FALSE);
+   //int ret = sensor_int(delay);
+   int ret = sensor_int(vid, pid, fd, busNum, devAddr, c_usbfs);
+   __android_log_print(ANDROID_LOG_DEBUG,LOG_TAG,"init sensor result :%d...",ret);
    __android_log_print(ANDROID_LOG_DEBUG,LOG_TAG,"Begin init mosaic ...");
-  	MOSAIC_Init();
+   MOSAIC_Init();
    __android_log_print(ANDROID_LOG_DEBUG,LOG_TAG,"Finish init! ");
+   env->ReleaseStringUTFChars(usbfs_str, c_usbfs);
    /*
   	for(;;){
   		ret = sensor_readimg(buffer_1);

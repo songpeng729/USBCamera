@@ -7,24 +7,21 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.hardware.usb.UsbDevice;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.widget.Toast;
 
 import com.finger.usbcamera.listener.MosaicImageListener;
-import com.serenegiant.usb.DeviceFilter;
 import com.serenegiant.usb.USBMonitor;
 
 import java.nio.ByteBuffer;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import centipede.livescan.MosaicFetcher;
+import centipede.livescan.MosaicNative;
 
 import static com.finger.usbcamera.listener.MosaicImageListener.MOSAIC_STATUS_END;
 import static com.finger.usbcamera.listener.MosaicImageListener.MOSAIC_STATUS_FAIL;
@@ -32,22 +29,23 @@ import static com.finger.usbcamera.listener.MosaicImageListener.MOSAIC_STATUS_ST
 import static com.finger.usbcamera.listener.MosaicImageListener.MOSAIC_STATUS_SUCCESS;
 
 /**
- * Created by songpeng on 2018/3/11.
+ * Created by songpeng on 2022/5/6.
  */
-
 public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Callback{
-    private final String LOG_TAG = "MOSAIC_SURFACE_VIEW";
+    private final String LOG_TAG = "MosaicSurfaceView";
     public static final int MODEL_NORMAL = 0; //正常模式
 
     private final int GAIN_DEFAULT = 24; //亮度默认值
     private final int EXP_DEFAULT = 500;//对比度默认值
+    private final int WIDTH_DEFAULT = 640; // 固定宽度640
+    private final int HEIGHT_DEFAULT = 640; // 固定高度640
 
 
     private MosaicFetcher mosaicFetcher;//指纹采集类
     private int gain = GAIN_DEFAULT; //当前亮度
     private int exp = EXP_DEFAULT;//当前对比度
-    private int width = 640;
-    private int height = 640;
+    private int width = WIDTH_DEFAULT; // 宽度
+    private int height = HEIGHT_DEFAULT; // 高度
     private byte[] imgDataBuffer;//图像数据
     private byte[] imgDataBufferWhite;//空白图像据
 
@@ -60,18 +58,18 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
 
     private MosaicImageListener mosaicImageListener;//拼接图像监听
 
-    private Context context;
-    private USBMonitor usbMonitor;
-
     public MosaicSurfaceView(Context context){
         super(context);
-        this.context = context;
         init();
     }
+
+    /**
+     * 初始化数据
+     */
     private void init(){
         mosaicFetcher = new MosaicFetcher();
-        Log.i(LOG_TAG, "init width:"+ width +" height:"+ height);
 
+        // 初始化图像数据
         imgDataBuffer = new byte[width * height];
         imgDataBufferWhite = new byte[width * height];
         for (int i = 0; i < imgDataBuffer.length; i++) {
@@ -94,58 +92,14 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
 
         surfaceHolder = getHolder();
         surfaceHolder.addCallback(this);
-
-//        usbMonitor = new USBMonitor(this.context, new USBMonitor.OnDeviceConnectListener(){
-//
-//            @Override
-//            public void onAttach(UsbDevice device) {
-//                Toast.makeText(context,"USB 已连接", Toast.LENGTH_SHORT).show();
-//                requestPermission();
-//            }
-//
-//            @Override
-//            public void onDettach(UsbDevice device) {
-//                Toast.makeText(context,"USB 连接断开", Toast.LENGTH_SHORT).show();
-//            }
-//
-//            @Override
-//            public void onConnect(UsbDevice device, USBMonitor.UsbControlBlock ctrlBlock, boolean createNew) {
-//                Toast.makeText(context,"USB onConnect", Toast.LENGTH_SHORT).show();
-//            }
-//
-//            @Override
-//            public void onDisconnect(UsbDevice device, USBMonitor.UsbControlBlock ctrlBlock) {
-//
-//            }
-//
-//            @Override
-//            public void onCancel(UsbDevice device) {
-//
-//            }
-//        });
-//        usbMonitor.register();
-
-    }
-    private void requestPermission() {
-        final List<DeviceFilter> filter = DeviceFilter.getDeviceFilters(context,
-                com.finger.usbcamera.R.xml.device_filter);
-        final List<UsbDevice> deviceList = usbMonitor.getDeviceList(filter);
-        if (deviceList == null || deviceList.size() == 0) {
-            return;
-        }
-        if (usbMonitor != null) {
-            usbMonitor.requestPermission(deviceList.get(0));
-        }
     }
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-
     }
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-        Log.i(LOG_TAG, "surfaceChanged");
         Canvas canvas = holder.lockCanvas(null);
         canvas.drawColor(Color.WHITE);
         holder.unlockCanvasAndPost(canvas);
@@ -157,33 +111,45 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
+        stopGather();
     }
 
-    private ExecutorService executorService = Executors.newSingleThreadExecutor();//线程池，只有一个子线程
+    //线程池，只有一个子线程
+    private ExecutorService executorService = Executors.newSingleThreadExecutor();
     /**
-     * 开始采集
-     * @param isFlat 是否平面
+     * 刷新图片，获取瞬时图像
      */
-    public void startGather(boolean isFlat){
-        startGather(isFlat, 1);
+    public void refreshImage(USBMonitor.UsbControlBlock ctrlBlock){
+        MosaicNative.FastInit(ctrlBlock.getVenderId(), ctrlBlock.getProductId(),
+                ctrlBlock.getFileDescriptor(),
+                ctrlBlock.getBusNum(),
+                ctrlBlock.getDevNum(),
+                "/dev/bus/usb");
+        clearImage();
+        MosaicNative.ReadImg(imgDataBuffer);
+        drawImage(imgDataBuffer);
     }
 
     /**
      * 开始采集
-     * @param isFlat 是否平面
      */
-    public void startGather(final boolean isFlat, final int fgp){
+    public void startGather(USBMonitor.UsbControlBlock ctrlBlock){
         Log.i(LOG_TAG, "startGather");
         //先空画布
         clearImage();
-        //申请USB权限
-
         //采集指纹比较耗时，放到子线程里处理
         executorService.submit(new Runnable() {
             @Override
             public void run() {
                 if (!mosaicFetcher.isRunning()) {
                     Log.i(LOG_TAG, "mosaicFetcher.start");
+                    MosaicNative.FastInit(ctrlBlock.getVenderId(), ctrlBlock.getProductId(),
+                            ctrlBlock.getFileDescriptor(),
+                            ctrlBlock.getBusNum(),
+                            ctrlBlock.getDevNum(),
+                            "/dev/bus/usb");
+                    if (callback != null)
+                        callback.initMosaic();
                     mosaicFetcher.start(callback);
                 }
             }
@@ -256,7 +222,6 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
         }
     }
 
-
     /**
      * 当拼接图像状态更改
      * @param status
@@ -264,14 +229,14 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
      */
     private void onMosaicStatusChanged(int status, String message) {
         Log.i(LOG_TAG, "status:"+ status + " message:"+ message);
-        Message msg = fingerSurfaceViewHandler.obtainMessage(status);
+        Message msg = mosaicSurfaceViewHandler.obtainMessage(status);
         msg.arg1 = status;
         msg.obj = message;
-        fingerSurfaceViewHandler.sendMessage(msg);
+        mosaicSurfaceViewHandler.sendMessage(msg);
     }
 
     @SuppressLint("HandlerLeak")
-    Handler fingerSurfaceViewHandler = new Handler(){
+    Handler mosaicSurfaceViewHandler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
             if(mosaicImageListener == null){

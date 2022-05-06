@@ -7,7 +7,7 @@ public class MosaicNative{
    public static native void stop();
    */
 
-   public static native void FastInit(int delay);
+   public static native void FastInit(int venderId, int productId, int fileDescriptor, int busNum, int devAddr, String usbfs);
    public static native boolean FastInitIsFinger();
    public static native void FastReadSendorImg(int seq);
    public static native int FastMosaicNew(int seq,byte[] buffer);

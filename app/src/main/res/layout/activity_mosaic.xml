@@ -14,13 +14,13 @@
         android:gravity="center_horizontal"
         android:orientation="vertical"
         android:padding="1dip" >
-        <ImageView
-            android:id="@+id/finger_imageView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:scaleType="center"
-            android:background="@android:color/black"/>
+<!--        <ImageView-->
+<!--            android:id="@+id/finger_imageView"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:layout_weight="1"-->
+<!--            android:scaleType="center"-->
+<!--            android:background="@android:color/black"/>-->
     </LinearLayout>
 
     <RelativeLayout

@@ -2,33 +2,39 @@ package centipede.livescan;
 
 import android.util.Log;
 
-import java.util.concurrent.*;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 /**
  * MosaicCallback callback = new MosaicCallback{
- * void afterMosaic(int ret,byte[] buffer){
- * //do something
+ *   void afterMosaic(int ret,byte[] buffer){
+ *        //do something
+ *   }
  * }
- * }
- * <p>
+ *
  * MosaicFetcher fetcher = new MosaicFetcher();
  * fetcher.start(callback);
+ *
  * fetch image from sensor
  */
 public class MosaicFetcher {
-    private final String LOG_TAG = "MOSAIC_FETCHER";
+    private final String LOG_TAG = "MosaicFetcher";
 
     /**
      * callback interface
      */
     public static interface MosaicCallback{
-        /**
-        * initialize mosaic
-        */
-        void initMosaic();
+      /**
+       * initialize mosaic
+       */
+      void initMosaic();
         /**
          * called after doing mosaic.
-         * @param ret    mosaic code.if 0 ,finish fetch
+         * @param ret mosaic code.if 0 ,finish fetch
          * @param buffer image buffer
          */
         void afterMosaic(int ret, byte[] buffer);
@@ -52,7 +58,7 @@ public class MosaicFetcher {
      * start fetcher
      */
     public void start(MosaicCallback callback) {
-        if (threadRunning)
+        if(threadRunning)
             throw new IllegalStateException("fetcher already started");
         this.callback = callback;
         threadRunning = true;
@@ -68,11 +74,11 @@ public class MosaicFetcher {
             readFuture = executor.submit(new ReadThread());
             mergeFuture = executor.submit(new MergeThread());
 
+            //mergeFuture.get();
             waitingShutdown();
         } catch (Throwable e) {
-            Log.e(LOG_TAG, "fail to start executor", e);
+            Log.e(LOG_TAG, "fail to start executor",e);
         }
-
     }
 
     /**
@@ -84,8 +90,7 @@ public class MosaicFetcher {
             threadRunning = false;
         }
     }
-
-    public void waitingShutdown() {
+    public void waitingShutdown(){
         Log.e(LOG_TAG, "waiting thread shutdown ");
         try {
             Log.d(LOG_TAG, "waiting read thread shutdown...");
@@ -100,34 +105,24 @@ public class MosaicFetcher {
             Log.d(LOG_TAG, "close mosaic native...");
             MosaicNative.FastEnd();
         }
-
     }
-
-    public boolean isRunning() {
-        return threadRunning;
+    public boolean isRunning(){
+        return  threadRunning;
     }
-
-    class ReadThread implements Runnable {
+    class ReadThread implements Runnable{
         @Override
         public void run() {
-            Log.d(LOG_TAG, "ReadThread run");
-            MosaicNative.FastInit(100);
-            Log.d(LOG_TAG, "FastInit ok");
-            if (callback != null){
-                Log.d(LOG_TAG, "callback.initMosaic()");
-                callback.initMosaic();
-            }
+            // init初始化放到线程外调用
+//            MosaicNative.FastInit(800);
+//            if (callback != null)
+//                callback.initMosaic();
             while (threadRunning) {
-                Log.d(LOG_TAG, "begin fastInitIsFinger ");
-                Boolean fastInitIsFinger = MosaicNative.FastInitIsFinger();
-                Log.d(LOG_TAG, "fastInitIsFinger: "+fastInitIsFinger);
-                if (fastInitIsFinger)
+                if (MosaicNative.FastInitIsFinger())
                     break;
             }
             while (threadRunning) {
                 try {
                     Integer dataSeq = waitingRead.poll(1, TimeUnit.SECONDS);
-                    Log.d(LOG_TAG, "run: "+dataSeq);
                     if (dataSeq == null)
                         continue;
                     Log.d(LOG_TAG, "read sensor image");
@@ -135,7 +130,6 @@ public class MosaicFetcher {
                     waitingMerge.put(dataSeq);
                 } catch (Throwable e) {
                     Log.e(LOG_TAG, "fail to read sensor image", e);
-                    //threadRunning = false;//add by wumin 20161116
                     break;
                 }
             }
@@ -143,30 +137,24 @@ public class MosaicFetcher {
             stop();
         }
     }
-
-    class MergeThread implements Runnable {
+    class MergeThread implements Runnable{
         @Override
         public void run() {
-            threadRunning = false;
             while (threadRunning) {
                 try {
                     Integer dataSeq = waitingMerge.poll(1, TimeUnit.SECONDS);
                     if (dataSeq == null)
                         continue;
-
-                    Log.d(LOG_TAG, "merge FastMosaicNew");
                     int ret = MosaicNative.FastMosaicNew(dataSeq, buffer);
                     waitingRead.put(dataSeq);
                     if (callback != null) {
                         callback.afterMosaic(ret, buffer);
                     }
                     if (ret <= 0) {
-                        //threadRunning = false;//add by wumin 20161116
                         break;
                     }
                 } catch (Throwable e) {
                     Log.e(LOG_TAG, "fail to mosaic", e);
-                    //threadRunning = false;//add by wumin 20161116
                     break;
                 }
             }

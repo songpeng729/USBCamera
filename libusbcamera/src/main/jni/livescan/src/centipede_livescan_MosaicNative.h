@@ -13,7 +13,8 @@ extern "C" {
  * Signature: (I)V
  */
 JNIEXPORT void JNICALL Java_centipede_livescan_MosaicNative_FastInit
-  (JNIEnv *, jclass, jint);
+  (JNIEnv *, jclass, jint vid, jint pid, jint fd, jint busNum, jint devAddr, jstring usbfs_str);
+  //(JNIEnv *, jclass, jint);
 
 JNIEXPORT jboolean JNICALL Java_centipede_livescan_MosaicNative_FastInitIsFinger
   (JNIEnv *, jclass);
@@ -48,7 +49,7 @@ JNIEXPORT void JNICALL Java_centipede_livescan_MosaicNative_FastEnd
  * Signature: (I)V
  */
 JNIEXPORT jint JNICALL Java_centipede_livescan_MosaicNative_ReadInit
-		(JNIEnv *, jclass, jint vid, jint pid, jint fd, jint busNum, jint devAddr, jstring usbfs_str);
+  (JNIEnv *, jclass, jint vid, jint pid, jint fd, jint busNum, jint devAddr, jstring usbfs_str);
   // (JNIEnv *, jclass, jint);
 
 /*

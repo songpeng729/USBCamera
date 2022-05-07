@@ -25,6 +25,7 @@ import centipede.livescan.MosaicNative;
 
 import static com.finger.usbcamera.listener.MosaicImageListener.MOSAIC_STATUS_END;
 import static com.finger.usbcamera.listener.MosaicImageListener.MOSAIC_STATUS_FAIL;
+import static com.finger.usbcamera.listener.MosaicImageListener.MOSAIC_STATUS_MESSAGE;
 import static com.finger.usbcamera.listener.MosaicImageListener.MOSAIC_STATUS_START;
 import static com.finger.usbcamera.listener.MosaicImageListener.MOSAIC_STATUS_SUCCESS;
 
@@ -117,9 +118,9 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
     //线程池，只有一个子线程
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
     /**
-     * 刷新图片，获取瞬时图像
+     * 初始化拼接，链接usb相机，并获取瞬时图像
      */
-    public void refreshImage(USBMonitor.UsbControlBlock ctrlBlock){
+    public void initMosaic(USBMonitor.UsbControlBlock ctrlBlock){
         MosaicNative.FastInit(ctrlBlock.getVenderId(), ctrlBlock.getProductId(),
                 ctrlBlock.getFileDescriptor(),
                 ctrlBlock.getBusNum(),
@@ -135,6 +136,10 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
      */
     public void startGather(USBMonitor.UsbControlBlock ctrlBlock){
         Log.i(LOG_TAG, "startGather");
+        if(ctrlBlock == null){
+            onMosaicStatusChanged(MOSAIC_STATUS_MESSAGE, "usb未连接");
+            return;
+        }
         //先空画布
         clearImage();
         //采集指纹比较耗时，放到子线程里处理
@@ -143,11 +148,7 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
             public void run() {
                 if (!mosaicFetcher.isRunning()) {
                     Log.i(LOG_TAG, "mosaicFetcher.start");
-                    MosaicNative.FastInit(ctrlBlock.getVenderId(), ctrlBlock.getProductId(),
-                            ctrlBlock.getFileDescriptor(),
-                            ctrlBlock.getBusNum(),
-                            ctrlBlock.getDevNum(),
-                            "/dev/bus/usb");
+                    initMosaic(ctrlBlock);
                     if (callback != null)
                         callback.initMosaic();
                     mosaicFetcher.start(callback);
@@ -173,8 +174,10 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
 //                            onMosaicStatusChanged(MOSAIC_STATUS_FAIL, "质量不合格");
 //                        }
                         onMosaicStatusChanged(MOSAIC_STATUS_SUCCESS, "采集完成");
+                        stopGather();
                     }else if (ret < 0){
                         onMosaicStatusChanged(MOSAIC_STATUS_FAIL, "采集异常("+ ret +")");
+                        stopGather();
                     }
                     drawImage(bytes);
                 }

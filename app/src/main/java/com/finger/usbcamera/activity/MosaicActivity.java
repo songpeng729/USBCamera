@@ -3,7 +3,6 @@ package com.finger.usbcamera.activity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.hardware.usb.UsbDevice;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -23,8 +22,6 @@ import com.serenegiant.usb.DeviceFilter;
 import com.serenegiant.usb.USBMonitor;
 
 import java.util.List;
-
-import centipede.livescan.MosaicNative;
 
 import static android.content.ContentValues.TAG;
 
@@ -140,7 +137,7 @@ public class MosaicActivity extends Activity implements View.OnClickListener, Mo
                 }
                 break;
             case R.id.mosaic_save_btn:
-                fingerSurfaceView.refreshImage(usbControlBlock);
+                fingerSurfaceView.initMosaic(usbControlBlock);
                 break;
             case R.id.mosaic_camera_btn:
                 Intent intent = new Intent(this, USBCameraActivity.class);
@@ -182,8 +179,8 @@ public class MosaicActivity extends Activity implements View.OnClickListener, Mo
                 //TODO 使用ThreadPool
                 //获取指纹数据
                 byte[] imageData = fingerSurfaceView.getImgData();
-                Log.i(LOG_TAG, "imageData "+ imageData);
                 Toast.makeText(this, "采集完成", Toast.LENGTH_SHORT).show();
+                stopGather();
                 break;
             case MOSAIC_STATUS_FAIL:
                 Toast.makeText(this, "采集失败"+message, Toast.LENGTH_SHORT).show();

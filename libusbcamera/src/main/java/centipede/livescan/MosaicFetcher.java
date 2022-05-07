@@ -125,7 +125,7 @@ public class MosaicFetcher {
                     Integer dataSeq = waitingRead.poll(1, TimeUnit.SECONDS);
                     if (dataSeq == null)
                         continue;
-                    Log.d(LOG_TAG, "read sensor image");
+                    Log.d(LOG_TAG, "read sensor image dataSeq:"+dataSeq);
                     MosaicNative.FastReadSendorImg(dataSeq);
                     waitingMerge.put(dataSeq);
                 } catch (Throwable e) {

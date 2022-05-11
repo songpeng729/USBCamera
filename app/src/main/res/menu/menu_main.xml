@@ -22,9 +22,4 @@
         android:orderInCategory="100"
         android:title="@string/action_usbinfo"
         app:showAsAction="never" />
-    <item
-        android:id="@+id/action_mosaic"
-        android:orderInCategory="100"
-        android:title="moasic"
-        app:showAsAction="never" />
 </menu>

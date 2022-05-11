@@ -37,21 +37,22 @@ int sensor_readimg(unsigned char* buf){
 }
 int sensor_setGain(int value){
     //1-48
-    return 1;
+    return uvcCamera->setGain(value);
 }
-int sensor_getGain(int * pValue){
-    return 1;
+int sensor_getGain(int* pValue){
+    return uvcCamera->getGain();
 }
 int sensor_setExp(int value){
     //1-1048
-    return 1;
+    //请注意：是否需要设置曝光模式，这里设置成1
+    uvcCamera->setExposureMode(1);
+    return uvcCamera->setExposure(value);
 }
-int sensor_getExp(int *pValue){
-
-    return 1;
+int sensor_getExp(int* pValue){
+    return uvcCamera->getExposure();
 }
 int sensor_getHeight(){
- // 640
+    // 640
     return 640;
 }
 int sensor_getWidth(){

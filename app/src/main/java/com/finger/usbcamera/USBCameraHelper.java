@@ -106,6 +106,35 @@ public class USBCameraHelper {
         }
     }
 
+    public synchronized int cameraSensorGetGain(){
+        synchronized (mSync) {
+            mUVCCamera.updateCameraParams();
+           return mUVCCamera.nativeSensorGetGain();
+        }
+    }
+    public synchronized int cameraSensorGetExp(){
+        synchronized (mSync) {
+            mUVCCamera.updateCameraParams();
+            return mUVCCamera.nativeSensorGetExp();
+        }
+    }
+    public synchronized int cameraSensorSetgain(int gain){
+        synchronized (mSync) {
+            mUVCCamera.updateCameraParams();
+            mUVCCamera.nativeSensorSetGain(gain);
+            return mUVCCamera.nativeSensorGetGain();
+        }
+    }
+
+    public synchronized int cameraSensorSetExp(int Exp){
+        synchronized (mSync) {
+            mUVCCamera.updateCameraParams();
+            mUVCCamera.nativeSensorSetExp(Exp);
+
+            return mUVCCamera.nativeSensorGetExp();
+        }
+    }
+
     public synchronized int cameraSensorGetImg(byte[] pixs) {
         synchronized (mSync) {
             if(camera == null){

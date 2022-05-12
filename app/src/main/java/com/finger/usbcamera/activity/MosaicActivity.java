@@ -179,7 +179,7 @@ public class MosaicActivity extends Activity implements View.OnClickListener, Mo
                 //TODO 使用ThreadPool
                 //获取指纹数据
                 byte[] imageData = fingerSurfaceView.getImgData();
-                Toast.makeText(this, "采集完成", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
                 stopGather();
                 break;
             case MOSAIC_STATUS_FAIL:

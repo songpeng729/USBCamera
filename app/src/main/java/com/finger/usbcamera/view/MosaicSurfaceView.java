@@ -14,6 +14,8 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import com.finger.usbcamera.listener.MosaicImageListener;
+import com.finger.usbcamera.util.FeatureExtractor;
+import com.finger.usbcamera.util.ImageConverter;
 import com.serenegiant.usb.USBMonitor;
 
 import java.nio.ByteBuffer;
@@ -49,6 +51,8 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
     private int height = HEIGHT_DEFAULT; // 高度
     private byte[] imgDataBuffer;//图像数据
     private byte[] imgDataBufferWhite;//空白图像据
+
+    private byte[] featureData;//特征数据
 
     private Bitmap bitmap;
     private Bitmap bitmapRgb;
@@ -166,17 +170,16 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
                     if(ret == 0){
                         imgDataBuffer = bytes;
 //                        //校验图像
-//                        if(ImageConverter.checkImageQuality(isFlat,bytes)){
-//                            //提取特征
-//                            featureData = FeatureExtractor.extractFeature( fgp, isFlat, bytes);
-//                            onMosaicStatusChanged(MOSAIC_STATUS_SUCCESS, "采集完成");
-//                        }else{
-//                            onMosaicStatusChanged(MOSAIC_STATUS_FAIL, "质量不合格");
-//                        }
+                        if(ImageConverter.checkImageQuality(false,bytes)){
+                            //提取特征
+                            featureData = FeatureExtractor.extractFeature( 1, false, bytes);
+                        }else{
+                            onMosaicStatusChanged(MOSAIC_STATUS_FAIL, "质量不合格");
+                        }
                         onMosaicStatusChanged(MOSAIC_STATUS_SUCCESS, "采集完成");
                         stopGather();
                     }else if (ret < 0){
-                        onMosaicStatusChanged(MOSAIC_STATUS_FAIL, "采集异常("+ ret +")");
+                        onMosaicStatusChanged(MOSAIC_STATUS_FAIL, "", ret);
                         stopGather();
                     }
                     drawImage(bytes);
@@ -231,9 +234,13 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
      * @param message
      */
     private void onMosaicStatusChanged(int status, String message) {
+        onMosaicStatusChanged(status, message, 0);
+    }
+    private void onMosaicStatusChanged(int status, String message, int code) {
         Log.i(LOG_TAG, "status:"+ status + " message:"+ message);
         Message msg = mosaicSurfaceViewHandler.obtainMessage(status);
-        msg.arg1 = status;
+        msg.what= status;
+        msg.arg1 = code;
         msg.obj = message;
         mosaicSurfaceViewHandler.sendMessage(msg);
     }
@@ -314,7 +321,6 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
             }
         }
     };
-
 
     public int getGain(){
         return gain;

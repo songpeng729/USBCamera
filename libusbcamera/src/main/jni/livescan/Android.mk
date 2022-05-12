@@ -26,6 +26,14 @@
 # Make shared library liblivescan.so
 ######################################################################
 LOCAL_PATH	:= $(call my-dir)
+
+#libGBFP prebuilt
+include $(CLEAR_VARS)
+GBFP_NAME := GBFP
+LOCAL_MODULE           := $(GBFP_NAME)
+LOCAL_SRC_FILES        := $(PWD)/src/main/jni/libs/$(TARGET_ARCH_ABI)/lib$(GBFP_NAME).so
+include $(PREBUILT_SHARED_LIBRARY)
+
 include $(CLEAR_VARS)
 
 ######################################################################
@@ -48,7 +56,7 @@ LOCAL_LDLIBS := -L$(SYSROOT)/usr/lib -ldl
 LOCAL_LDLIBS += -llog
 LOCAL_LDLIBS += -landroid
 
-LOCAL_SHARED_LIBRARIES += usb100 uvc
+LOCAL_SHARED_LIBRARIES += usb100 uvc GBFP
 
 LOCAL_ARM_MODE := arm
 

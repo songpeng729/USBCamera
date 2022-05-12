@@ -25,6 +25,7 @@ public class USBCameraActivity extends AppCompatActivity {
     private USBCameraHelper usbCameraHelper;
     public boolean previewFlag = false;//是否预览相机
 
+    int gainCnt = 0, expCnt = 0;
     public static int picw = 640, pich = 640;
     //fingerImageView显示的图像数据
     Bitmap bitmap = Bitmap.createBitmap(picw, pich, Bitmap.Config.ARGB_8888);
@@ -59,8 +60,17 @@ public class USBCameraActivity extends AppCompatActivity {
                 .setMessage(getResources().getString(R.string.diag_about_message));
         switch (id){
             case R.id.action_exp:
+                expCnt = usbCameraHelper.cameraSensorGetExp();
+                expCnt = Math.min(1050, Math.max(1, expCnt-100));
+//                expCnt += 100;
+                builder.setMessage("返回值：" + usbCameraHelper.cameraSensorSetExp(expCnt));
+                builder.create().show();
                 break;
             case R.id.action_gain:
+                gainCnt = usbCameraHelper.cameraSensorGetGain();
+                gainCnt = Math.min(128, Math.max(1, gainCnt-10));
+                builder.setMessage("返回值：" + usbCameraHelper.cameraSensorSetgain(gainCnt));
+                builder.create().show();
                 break;
             case R.id.action_usbinfo:
                 builder = new AlertDialog.Builder(USBCameraActivity.this);
@@ -77,11 +87,7 @@ public class USBCameraActivity extends AppCompatActivity {
                 }
 
                 builder.setMessage(diag_str);
-
-                AlertDialog dialog = builder.create();
-                dialog.show();
-                break;
-            case R.id.action_mosaic:
+                builder.create().show();
                 break;
             case R.id.action_image:
                 startCap();

@@ -17,7 +17,7 @@ UVCCamera *uvcCamera;
 int sensor_int(int vid, int pid, int fd, int busnum, int devaddr, const char *usbfs){
    __android_log_print(ANDROID_LOG_DEBUG,LOG_TAG,"sensor_int ");
     uvcCamera = new UVCCamera();
-    if (LIKELY(uvcCamera && (fd > 0))) {
+    if (fd > 0) {
         int result =  uvcCamera->connect(vid, pid, fd, busnum, devaddr, usbfs);
         __android_log_print(ANDROID_LOG_DEBUG,LOG_TAG,"connect result %d",result);
     }
@@ -26,11 +26,12 @@ int sensor_int(int vid, int pid, int fd, int busnum, int devaddr, const char *us
     return 1;
 }
 int sensor_exit(){
+    //uvcCamera->release();
     SAFE_DELETE(uvcCamera);
     return 1;
 }
 int sensor_readimg(unsigned char* buf){
-    unsigned char inputData[656 * 1024];
+    unsigned char inputData[1024 * 656];
     int result = uvcCamera->getCurFrame(inputData);
     CFingerSensor::CImplicit().CorrectDistortion(inputData, buf);
     return result;

@@ -23,6 +23,8 @@ import com.serenegiant.usb.USBMonitor;
 
 import java.util.List;
 
+import centipede.livescan.MosaicNative;
+
 import static android.content.ContentValues.TAG;
 
 public class MosaicActivity extends Activity implements View.OnClickListener, MosaicImageListener{
@@ -90,11 +92,11 @@ public class MosaicActivity extends Activity implements View.OnClickListener, Mo
                 Log.d(TAG, "ReadInit onConnect: "+ctrlBlock.getVenderId());
                 Toast.makeText(mContext, "onConnect", Toast.LENGTH_SHORT);
                 usbControlBlock = ctrlBlock;// 得到UsbControlBlock,用于链接usb设备
-//                MosaicNative.ReadInit(ctrlBlock.getVenderId(), ctrlBlock.getProductId(),
-//                        ctrlBlock.getFileDescriptor(),
-//                        ctrlBlock.getBusNum(),
-//                        ctrlBlock.getDevNum(),
-//                        getUSBFSName(ctrlBlock));
+                MosaicNative.ReadInit(ctrlBlock.getVenderId(), ctrlBlock.getProductId(),
+                        ctrlBlock.getFileDescriptor(),
+                        ctrlBlock.getBusNum(),
+                        ctrlBlock.getDevNum(),
+                        getUSBFSName(ctrlBlock));
             }
             private final String getUSBFSName(final USBMonitor.UsbControlBlock ctrlBlock) {
                 String result = null;
@@ -137,7 +139,11 @@ public class MosaicActivity extends Activity implements View.OnClickListener, Mo
                 }
                 break;
             case R.id.mosaic_save_btn:
-                fingerSurfaceView.initMosaic(usbControlBlock);
+                if(!fingerSurfaceView.isPreview()){
+                    fingerSurfaceView.startPreview(usbControlBlock);
+                }else{
+                    fingerSurfaceView.stopPreview();
+                }
                 break;
             case R.id.mosaic_camera_btn:
                 Intent intent = new Intent(this, USBCameraActivity.class);

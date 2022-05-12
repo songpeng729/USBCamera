@@ -1084,7 +1084,7 @@ public class UVCCamera {
 		}
 	}
 
-	private final String getUSBFSName(final UsbControlBlock ctrlBlock) {
+	public static final String getUSBFSName(final UsbControlBlock ctrlBlock) {
 		String result = null;
 		final String name = ctrlBlock.getDeviceName();
 		final String[] v = !TextUtils.isEmpty(name) ? name.split("/") : null;

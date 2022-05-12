@@ -2,6 +2,9 @@ package centipede.livescan;
 
 import android.util.Log;
 
+import com.serenegiant.usb.USBMonitor;
+import com.serenegiant.usb.UVCCamera;
+
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -57,11 +60,19 @@ public class MosaicFetcher {
     /**
      * start fetcher
      */
-    public void start(MosaicCallback callback) {
+    public void start(MosaicCallback callback, USBMonitor.UsbControlBlock ctrlBlock) {
         if(threadRunning)
             throw new IllegalStateException("fetcher already started");
         this.callback = callback;
         threadRunning = true;
+
+        MosaicNative.FastInit(ctrlBlock.getVenderId(), ctrlBlock.getProductId(),
+                ctrlBlock.getFileDescriptor(),
+                ctrlBlock.getBusNum(),
+                ctrlBlock.getDevNum(),
+                UVCCamera.getUSBFSName(ctrlBlock));
+        if (callback != null)
+           callback.initMosaic();
         try {
 
             waitingMerge.clear();

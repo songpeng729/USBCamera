@@ -209,6 +209,7 @@ public class USBCameraHelper {
                     }
                     synchronized (mSync) {
                         mUVCCamera = camera;
+                        mUVCCamera.updateCameraParams();//更新相机参数!!!总要，否则无法获取到相机亮度和对比度
                     }
                 }
             }, 0);
@@ -296,5 +297,18 @@ public class USBCameraHelper {
 
     private void showShortMsg(String msg) {
         Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show();
+    }
+
+    public int getGain(){
+        return mUVCCamera.nativeGetGain();
+    }
+    public int getExp(){
+        return mUVCCamera.nativeGetExp();
+    }
+    public void setGain(int gain){
+        mUVCCamera.nativeSetGain(gain);
+    }
+    public void setExp(int exp){
+        mUVCCamera.nativeSetExp(exp);
     }
 }

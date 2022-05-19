@@ -133,6 +133,8 @@ public class UVCCamera {
 	protected float mCurrentBandwidthFactor = DEFAULT_BANDWIDTH;
 	protected String mSupportedSize;
 	protected List<Size> mCurrentSizeList;
+	//下面的这些代码可以从本地代码访问，不可以更改名称和删除，
+	// 调用nativeUpdateZoomLimit获取当前相机属性并赋值
 	// these fields from here are accessed from native code and do not change name and remove
 	protected long mNativePtr;
 	protected int mScanningModeMin, mScanningModeMax, mScanningModeDef;
@@ -917,6 +919,10 @@ public class UVCCamera {
 	}
 
 	//================================================================================
+
+	/**
+	 * 该方法更新相机的所有参数，给属性赋值，例如获取亮度和对比度的时候需要先调用该方法
+	 */
 	public synchronized void updateCameraParams() {
 		if (mNativePtr != 0) {
 			if ((mControlSupports == 0) || (mProcSupports == 0)) {
@@ -1236,4 +1242,23 @@ public class UVCCamera {
 	private final native int nativeUpdatePrivacyLimit(final long id_camera);
 	private static final native int nativeSetPrivacy(final long id_camera, final boolean privacy);
 	private static final native int nativeGetPrivacy(final long id_camera);
+
+
+
+	public synchronized int nativeGetGain() {
+//		updateCameraParams();//更新相机属性
+//		nativeUpdateGainLimit(mNativePtr);//
+		return nativeGetGain(mNativePtr);//获取gain原始属性值
+	}
+	public synchronized int nativeSetGain(int gain) {
+//		updateCameraParams();//更新相机属性
+//		nativeUpdateGainLimit(mNativePtr);//
+		return nativeSetGain(mNativePtr, gain);
+	}
+	public synchronized int nativeGetExp() {
+		return nativeGetExposure(mNativePtr);//获取gain原始属性值
+	}
+	public synchronized int nativeSetExp(int exp) {
+		return nativeSetExposure(mNativePtr, exp);
+	}
 }

@@ -45,7 +45,6 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
     private final int WIDTH_DEFAULT = 640; // 固定宽度640
     private final int HEIGHT_DEFAULT = 640; // 固定高度640
 
-    private USBCameraHelper usbCameraHelper;//usb相机帮助类，设置亮度对比度
     private MosaicFetcher mosaicFetcher;//指纹采集类
     private int gain = GAIN_DEFAULT; //当前亮度
     private int exp = EXP_DEFAULT;//当前对比度

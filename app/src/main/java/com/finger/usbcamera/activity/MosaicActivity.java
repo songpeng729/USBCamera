@@ -87,32 +87,9 @@ public class MosaicActivity extends Activity implements View.OnClickListener, Mo
 
             @Override
             public void onConnect(UsbDevice device, USBMonitor.UsbControlBlock ctrlBlock, boolean createNew) {
-                Log.d(ContentValues.TAG, "ReadInit onConnect: "+ctrlBlock.getVenderId());
                 Toast.makeText(mContext, "onConnect", Toast.LENGTH_SHORT);
                 usbControlBlock = ctrlBlock;// 得到UsbControlBlock,用于链接usb设备
-                MosaicNative.ReadInit(ctrlBlock.getVenderId(), ctrlBlock.getProductId(),
-                        ctrlBlock.getFileDescriptor(),
-                        ctrlBlock.getBusNum(),
-                        ctrlBlock.getDevNum(),
-                        getUSBFSName(ctrlBlock));
             }
-            private final String getUSBFSName(final USBMonitor.UsbControlBlock ctrlBlock) {
-                String result = null;
-                final String name = ctrlBlock.getDeviceName();
-                final String[] v = !TextUtils.isEmpty(name) ? name.split("/") : null;
-                if ((v != null) && (v.length > 2)) {
-                    final StringBuilder sb = new StringBuilder(v[0]);
-                    for (int i = 1; i < v.length - 2; i++)
-                        sb.append("/").append(v[i]);
-                    result = sb.toString();
-                }
-                if (TextUtils.isEmpty(result)) {
-                    Log.w(ContentValues.TAG, "failed to get USBFS path, try to use default path:" + name);
-                    result = "/dev/bus/usb";
-                }
-                return result;
-            }
-
 
             @Override
             public void onDisconnect(UsbDevice device, USBMonitor.UsbControlBlock ctrlBlock) {
@@ -126,6 +103,7 @@ public class MosaicActivity extends Activity implements View.OnClickListener, Mo
         });
         mUSBMonitor.register();//注册监听
     }
+
     @Override
     public void onClick(View view) {
         switch (view.getId()){

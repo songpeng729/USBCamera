@@ -8,7 +8,6 @@
 #include "libUVCCamera.h"
 #include "UVCCamera.h"
 #include "FingerSensorImpl.h"
-#include "FingerAPI.h"
 
 #define LOG_TAG "SENSOR"
 

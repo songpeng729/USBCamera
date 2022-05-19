@@ -13,9 +13,8 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import com.finger.usbcamera.USBCameraHelper;
 import com.finger.usbcamera.listener.MosaicImageListener;
-import com.finger.usbcamera.util.FeatureExtractor;
-import com.finger.usbcamera.util.ImageConverter;
 import com.serenegiant.usb.USBMonitor;
 import com.serenegiant.usb.UVCCamera;
 
@@ -36,15 +35,17 @@ import static com.finger.usbcamera.listener.MosaicImageListener.MOSAIC_STATUS_SU
  * Created by songpeng on 2022/5/6.
  */
 public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Callback{
-    private final String LOG_TAG = "MosaicSurfaceView";
+    private final String TAG = "MosaicSurfaceView";
     public static final int MODEL_NORMAL = 0; //正常模式
+    private final int GAIN_MAX = 48; //最大亮度
+    private final int EXP_MAX = 1050;//最大对比度
 
     private final int GAIN_DEFAULT = 24; //亮度默认值
     private final int EXP_DEFAULT = 500;//对比度默认值
     private final int WIDTH_DEFAULT = 640; // 固定宽度640
     private final int HEIGHT_DEFAULT = 640; // 固定高度640
 
-
+    private USBCameraHelper usbCameraHelper;//usb相机帮助类，设置亮度对比度
     private MosaicFetcher mosaicFetcher;//指纹采集类
     private int gain = GAIN_DEFAULT; //当前亮度
     private int exp = EXP_DEFAULT;//当前对比度
@@ -66,6 +67,7 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
 
     public MosaicSurfaceView(Context context){
         super(context);
+//        usbCameraHelper = new USBCameraHelper(context);
         init();
     }
 
@@ -131,7 +133,7 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
         if(isPreview){
             return;
         }
-        Log.i(LOG_TAG, "startGather");
+        Log.i(TAG, "startGather");
         if(ctrlBlock == null){
             onMosaicStatusChanged(MOSAIC_STATUS_MESSAGE, "usb未连接");
             return;
@@ -143,7 +145,7 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
             @Override
             public void run() {
                 if (!mosaicFetcher.isRunning()) {
-                    Log.i(LOG_TAG, "mosaicFetcher.start");
+                    Log.i(TAG, "mosaicFetcher.start");
                     mosaicFetcher.start(callback, ctrlBlock);
                 }
             }
@@ -158,17 +160,17 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
 
                 @Override
                 public void afterMosaic(final int ret, byte[] bytes) {
-                    Log.i(LOG_TAG, "afterMosaic ret "+ ret);
+                    Log.i(TAG, "afterMosaic ret "+ ret);
                     if(ret == 0){
                         imgDataBuffer = bytes;
                         //校验图像
-                        if(ImageConverter.checkImageQuality(false,bytes)){
+//                        if(ImageConverter.checkImageQuality(false,bytes)){
                             //提取特征
-                            featureData = FeatureExtractor.extractFeature( 1, false, bytes);
+//                            featureData = FeatureExtractor.extractFeature( 1, false, bytes);
                             onMosaicStatusChanged(MOSAIC_STATUS_SUCCESS, "采集完成");
-                        }else{
-                            onMosaicStatusChanged(MOSAIC_STATUS_FAIL, "质量不合格");
-                        }
+//                        }else{
+//                            onMosaicStatusChanged(MOSAIC_STATUS_FAIL, "质量不合格");
+//                        }
                         stopGather();
                     }else if (ret < 0){
                         onMosaicStatusChanged(MOSAIC_STATUS_FAIL, "", ret);
@@ -181,7 +183,7 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
 
     }
     public void stopGather(){
-        Log.i(LOG_TAG, "stopGather");
+        Log.i(TAG, "stopGather");
         if(mosaicFetcher != null){
             if(mosaicFetcher.isRunning()){
                 mosaicFetcher.stop();
@@ -205,7 +207,7 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
         //白色背景画布
         Canvas canvas_bg = surfaceHolder.lockCanvas(null);
         if (canvas == null)
-            Log.e(LOG_TAG, "drawImage canvas is null");
+            Log.e(TAG, "drawImage canvas is null");
         else {
             ByteBuffer byteBuffer = ByteBuffer.wrap(buffer);
             byteBuffer.rewind();
@@ -228,7 +230,7 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
         onMosaicStatusChanged(status, message, 0);
     }
     private void onMosaicStatusChanged(int status, String message, int code) {
-        Log.i(LOG_TAG, "status:"+ status + " message:"+ message + " code:"+ code);
+        Log.i(TAG, "status:"+ status + " message:"+ message + " code:"+ code);
         Message msg = mosaicSurfaceViewHandler.obtainMessage(status);
         msg.what= status;
         msg.arg1 = code;
@@ -241,16 +243,16 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
         @Override
         public void handleMessage(Message msg) {
             if(mosaicImageListener == null){
-                Log.w(LOG_TAG, "mosaicImageListener is null");
+                Log.w(TAG, "mosaicImageListener is null");
                 return;
             }
             switch (msg.what){
                 case MOSAIC_STATUS_START:
-                    Log.d(LOG_TAG, "MOSAIC_STATUS_START");
+                    Log.d(TAG, "MOSAIC_STATUS_START");
                     mosaicImageListener.onMosaicStatusChanged(msg.what, msg.obj.toString());
                     break;
                 case MOSAIC_STATUS_FAIL:
-                    Log.i(LOG_TAG, "MOSAIC_STATUS_FAIL:"+ msg.arg1);
+                    Log.i(TAG, "MOSAIC_STATUS_FAIL:"+ msg.arg1);
                     String message = msg.obj.toString();
                     switch (msg.arg1){
                         case -101:
@@ -320,6 +322,14 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
         return exp;
     }
 
+    public void setGain(int gain) {
+        this.gain = Math.min(GAIN_MAX, Math.max(1, gain));
+    }
+
+    public void setExp(int exp) {
+        this.exp = Math.min(EXP_MAX, Math.max(1, gain));
+    }
+
     /**
      * 是否正在采集
      * @return
@@ -353,19 +363,22 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
     public boolean isPreview(){
         return isPreview;
     }
-    /**
-     * 开始预览
-     */
     public void startPreview(USBMonitor.UsbControlBlock ctrlBlock){
-        if(isGathering()){
-            Log.w(LOG_TAG, "startPreview 正在采集");
-            return;
-        }
         MosaicNative.ReadInit(ctrlBlock.getVenderId(), ctrlBlock.getProductId(),
                 ctrlBlock.getFileDescriptor(),
                 ctrlBlock.getBusNum(),
                 ctrlBlock.getDevNum(),
                 UVCCamera.getUSBFSName(ctrlBlock));
+        startPreview();
+    }
+    /**
+     * 开始预览
+     */
+    public void startPreview(){
+        if(isGathering()){
+            Log.w(TAG, "startPreview 正在采集");
+            return;
+        }
         isPreview = true;
         executorService.submit(new Runnable() {
             @Override

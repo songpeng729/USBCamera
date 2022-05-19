@@ -41,7 +41,6 @@
 //#include "serenegiant_usb_UVCCamera.h"
 
 #include "FingerSensorImpl.h"
-#include "FingerAPI.h"
 
 /**
  * set the value into the long field
@@ -122,12 +121,10 @@ jint setField_int(JNIEnv *env, jobject java_obj, const char *field_name, jint va
 }
 
 UVCCamera *camera;
-FingerAPI myFingerAPI;
 static ID_TYPE nativeCreate(JNIEnv *env, jobject thiz) {
 
 	ENTER();
 	camera = new UVCCamera();
-	myFingerAPI.camera = camera;
 	setField_long(env, thiz, "mNativePtr", reinterpret_cast<ID_TYPE>(camera));
 	RETURN(reinterpret_cast<ID_TYPE>(camera), ID_TYPE);
 }
@@ -2001,84 +1998,6 @@ static jint nativeGetPrivacy(JNIEnv *env, jobject thiz,
 	RETURN(result, jint);
 }
 
-//----------------专门用于 Camera 接口-------------------------------------------
-
-static jint nativeSensorInt(JNIEnv *env, jobject thiz, jint nDelay) {
-	return myFingerAPI.sensor_int(nDelay);
-}
-static jint nativeSensorExit(JNIEnv *env, jobject thiz) {
-	return myFingerAPI.sensor_exit();
-}
-
-static jint nativeSensorLedOn(JNIEnv *env, jobject thiz) {
-	return myFingerAPI.sensor_LEDOn();
-}
-static jint nativeSensorLedOff(JNIEnv *env, jobject thiz) {
-	return myFingerAPI.sensor_LEDOff();
-}
-static jint nativeSensorSensorOn(JNIEnv *env, jobject thiz) {
-	return myFingerAPI.sensor_On();
-}
-static jint nativeSensorSensorOff(JNIEnv *env, jobject thiz) {
-	return myFingerAPI.sensor_Off();
-}
-
-static jint nativeSensorGetHeight(JNIEnv *env, jobject thiz) {
-	return myFingerAPI.sensor_getHeight();
-}
-
-static jint nativeSensorGetWidth(JNIEnv *env, jobject thiz) {
-	return myFingerAPI.sensor_getWidth();
-}
-
-//设置参数
-static jint nativeSensorSetGain(JNIEnv *env, jobject thiz, jint gain) {
-	return myFingerAPI.sensor_setGain(gain);
-}
-static jint nativeSensorGetGain(JNIEnv *env, jobject thiz) {
-	return myFingerAPI.sensor_getGain();
-}
-static jint nativeSensorSetExp(JNIEnv *env, jobject thiz, jint exp) {
-	return myFingerAPI.sensor_setExp(exp);
-}
-static jint nativeSensorGetExp(JNIEnv *env, jobject thiz) {
-	return myFingerAPI.sensor_getExp();
-}
-static jint nativeSensorReadImg(JNIEnv *env, jobject thiz, jbyteArray outputBuff) {
-        //uint8_t *array = new uint8_t[656 * 1024];
-
-        //按行存储[h][w]
-
-        /*int h = 0;
-        int w = 0;
-        for (h = 0; h < 656; h++) {
-            for (w = 0; w < 10; w++) {
-                LOGI("cameraData = %d", array[h * 10 + w]);
-            }
-        }*/
-
-        uint8_t * dscTmp = (uint8_t *)env->GetByteArrayElements(outputBuff, 0);
-        int ret = myFingerAPI.sensor_readimg(dscTmp);
-        //LOGI("%d", (*dscTmp));
-
-        /*int h = 0;
-        int w = 0;
-        for (h = 0; h < 656; h++) {
-            for (w = 0; w < 1024; w++) {
-                //(*dscTmp) = (*array);
-                dscTmp ++;
-                //array ++;
-
-                LOGI("%d", (*dscTmp));
-            }
-        }*/
-
-        //delete []array;
-
-	return ret;
-}
-//-------------------------end of camera interfaces-----------
-
 //**********************************************************************
 //
 //**********************************************************************
@@ -2122,7 +2041,7 @@ static JNINativeMethod methods[] = {
 	{ "nativeUpdateScanningModeLimit",	"(J)I", (void *) nativeUpdateScanningModeLimit },
 	{ "nativeSetScanningMode",			"(JI)I", (void *) nativeSetScanningMode },
 	{ "nativeGetScanningMode",			"(J)I", (void *) nativeGetScanningMode },
-			
+
 	{ "nativeUpdateExposureModeLimit",	"(J)I", (void *) nativeUpdateExposureModeLimit },
 	{ "nativeSetExposureMode",			"(JI)I", (void *) nativeSetExposureMode },
 	{ "nativeGetExposureMode",			"(J)I", (void *) nativeGetExposureMode },
@@ -2130,15 +2049,15 @@ static JNINativeMethod methods[] = {
 	{ "nativeUpdateExposurePriorityLimit","(J)I", (void *) nativeUpdateExposurePriorityLimit },
 	{ "nativeSetExposurePriority",		"(JI)I", (void *) nativeSetExposurePriority },
 	{ "nativeGetExposurePriority",		"(J)I", (void *) nativeGetExposurePriority },
-			
+
 	{ "nativeUpdateExposureLimit",		"(J)I", (void *) nativeUpdateExposureLimit },
 	{ "nativeSetExposure",				"(JI)I", (void *) nativeSetExposure },
 	{ "nativeGetExposure",				"(J)I", (void *) nativeGetExposure },
-			
+
 	{ "nativeUpdateExposureRelLimit",	"(J)I", (void *) nativeUpdateExposureRelLimit },
 	{ "nativeSetExposureRel",			"(JI)I", (void *) nativeSetExposureRel },
 	{ "nativeGetExposureRel",			"(J)I", (void *) nativeGetExposureRel },
-			
+
 	{ "nativeUpdateAutoFocusLimit",		"(J)I", (void *) nativeUpdateAutoFocusLimit },
 	{ "nativeSetAutoFocus",				"(JZ)I", (void *) nativeSetAutoFocus },
 	{ "nativeGetAutoFocus",				"(J)I", (void *) nativeGetAutoFocus },
@@ -2150,43 +2069,43 @@ static JNINativeMethod methods[] = {
 	{ "nativeUpdateFocusRelLimit",		"(J)I", (void *) nativeUpdateFocusRelLimit },
 	{ "nativeSetFocusRel",				"(JI)I", (void *) nativeSetFocusRel },
 	{ "nativeGetFocusRel",				"(J)I", (void *) nativeGetFocusRel },
-	
+
 //	{ "nativeUpdateFocusSimpleLimit",	"(J)I", (void *) nativeUpdateFocusSimpleLimit },
 //	{ "nativeSetFocusSimple",			"(JI)I", (void *) nativeSetFocusSimple },
 //	{ "nativeGetFocusSimple",			"(J)I", (void *) nativeGetFocusSimple },
-			
+
 	{ "nativeUpdateIrisLimit",			"(J)I", (void *) nativeUpdateIrisLimit },
 	{ "nativeSetIris",					"(JI)I", (void *) nativeSetIris },
 	{ "nativeGetIris",					"(J)I", (void *) nativeGetIris },
-	
+
 	{ "nativeUpdateIrisRelLimit",		"(J)I", (void *) nativeUpdateIrisRelLimit },
 	{ "nativeSetIrisRel",				"(JI)I", (void *) nativeSetIrisRel },
 	{ "nativeGetIrisRel",				"(J)I", (void *) nativeGetIrisRel },
-	
+
 	{ "nativeUpdatePanLimit",			"(J)I", (void *) nativeUpdatePanLimit },
 	{ "nativeSetPan",					"(JI)I", (void *) nativeSetPan },
 	{ "nativeGetPan",					"(J)I", (void *) nativeGetPan },
-	
+
 	{ "nativeUpdateTiltLimit",			"(J)I", (void *) nativeUpdateTiltLimit },
 	{ "nativeSetTilt",					"(JI)I", (void *) nativeSetTilt },
 	{ "nativeGetTilt",					"(J)I", (void *) nativeGetTilt },
-	
+
 	{ "nativeUpdateRollLimit",			"(J)I", (void *) nativeUpdateRollLimit },
 	{ "nativeSetRoll",					"(JI)I", (void *) nativeSetRoll },
 	{ "nativeGetRoll",					"(J)I", (void *) nativeGetRoll },
-	
+
 	{ "nativeUpdatePanRelLimit",		"(J)I", (void *) nativeUpdatePanRelLimit },
 	{ "nativeSetPanRel",				"(JI)I", (void *) nativeSetPanRel },
 	{ "nativeGetPanRel",				"(J)I", (void *) nativeGetPanRel },
-	
+
 	{ "nativeUpdateTiltRelLimit",		"(J)I", (void *) nativeUpdateTiltRelLimit },
 	{ "nativeSetTiltRel",				"(JI)I", (void *) nativeSetTiltRel },
 	{ "nativeGetTiltRel",				"(J)I", (void *) nativeGetTiltRel },
-	
+
 	{ "nativeUpdateRollRelLimit",		"(J)I", (void *) nativeUpdateRollRelLimit },
 	{ "nativeSetRollRel",				"(JI)I", (void *) nativeSetRollRel },
 	{ "nativeGetRollRel",				"(J)I", (void *) nativeGetRollRel },
-	
+
 	{ "nativeUpdateAutoWhiteBlanceLimit","(J)I", (void *) nativeUpdateAutoWhiteBlanceLimit },
 	{ "nativeSetAutoWhiteBlance",		"(JZ)I", (void *) nativeSetAutoWhiteBlance },
 	{ "nativeGetAutoWhiteBlance",		"(J)I", (void *) nativeGetAutoWhiteBlance },
@@ -2194,7 +2113,7 @@ static JNINativeMethod methods[] = {
 	{ "nativeUpdateAutoWhiteBlanceCompoLimit","(J)I", (void *) nativeUpdateAutoWhiteBlanceCompoLimit },
 	{ "nativeSetAutoWhiteBlanceCompo",		"(JZ)I", (void *) nativeSetAutoWhiteBlanceCompo },
 	{ "nativeGetAutoWhiteBlanceCompo",		"(J)I", (void *) nativeGetAutoWhiteBlanceCompo },
-	
+
 	{ "nativeUpdateWhiteBlanceLimit",	"(J)I", (void *) nativeUpdateWhiteBlanceLimit },
 	{ "nativeSetWhiteBlance",			"(JI)I", (void *) nativeSetWhiteBlance },
 	{ "nativeGetWhiteBlance",			"(J)I", (void *) nativeGetWhiteBlance },
@@ -2202,7 +2121,7 @@ static JNINativeMethod methods[] = {
 	{ "nativeUpdateWhiteBlanceCompoLimit","(J)I", (void *) nativeUpdateWhiteBlanceCompoLimit },
 	{ "nativeSetWhiteBlanceCompo",		"(JI)I", (void *) nativeSetWhiteBlanceCompo },
 	{ "nativeGetWhiteBlanceCompo",		"(J)I", (void *) nativeGetWhiteBlanceCompo },
-	
+
 	{ "nativeUpdateBacklightCompLimit",	"(J)I", (void *) nativeUpdateBacklightCompLimit },
 	{ "nativeSetBacklightComp",			"(JI)I", (void *) nativeSetBacklightComp },
 	{ "nativeGetBacklightComp",			"(J)I", (void *) nativeGetBacklightComp },
@@ -2242,7 +2161,7 @@ static JNINativeMethod methods[] = {
 	{ "nativeUpdateAutoHueLimit",		"(J)I", (void *) nativeUpdateAutoHueLimit },
 	{ "nativeSetAutoHue",				"(JZ)I", (void *) nativeSetAutoHue },
 	{ "nativeGetAutoHue",				"(J)I", (void *) nativeGetAutoHue },
-			
+
 	{ "nativeUpdatePowerlineFrequencyLimit","(J)I", (void *) nativeUpdatePowerlineFrequencyLimit },
 	{ "nativeSetPowerlineFrequency",	"(JI)I", (void *) nativeSetPowerlineFrequency },
 	{ "nativeGetPowerlineFrequency",	"(J)I", (void *) nativeGetPowerlineFrequency },
@@ -2250,46 +2169,30 @@ static JNINativeMethod methods[] = {
 	{ "nativeUpdateZoomLimit",			"(J)I", (void *) nativeUpdateZoomLimit },
 	{ "nativeSetZoom",					"(JI)I", (void *) nativeSetZoom },
 	{ "nativeGetZoom",					"(J)I", (void *) nativeGetZoom },
-	
+
 	{ "nativeUpdateZoomRelLimit",		"(J)I", (void *) nativeUpdateZoomRelLimit },
 	{ "nativeSetZoomRel",				"(JI)I", (void *) nativeSetZoomRel },
 	{ "nativeGetZoomRel",				"(J)I", (void *) nativeGetZoomRel },
-	
+
 	{ "nativeUpdateDigitalMultiplierLimit","(J)I", (void *) nativeUpdateDigitalMultiplierLimit },
 	{ "nativeSetDigitalMultiplier","(JI)I", (void *) nativeSetDigitalMultiplier },
 	{ "nativeGetDigitalMultiplier","(J)I", (void *) nativeGetDigitalMultiplier },
-	
+
 	{ "nativeUpdateDigitalMultiplierLimitLimit","(J)I", (void *) nativeUpdateDigitalMultiplierLimitLimit },
 	{ "nativeSetDigitalMultiplierLimit","(JI)I", (void *) nativeSetDigitalMultiplierLimit },
 	{ "nativeGetDigitalMultiplierLimit","(J)I", (void *) nativeGetDigitalMultiplierLimit },
-	
+
 	{ "nativeUpdateAnalogVideoStandardLimit","(J)I", (void *) nativeUpdateAnalogVideoStandardLimit },
 	{ "nativeSetAnalogVideoStandard",		"(JI)I", (void *) nativeSetAnalogVideoStandard },
 	{ "nativeGetAnalogVideoStandard",		"(J)I", (void *) nativeGetAnalogVideoStandard },
-	
+
 	{ "nativeUpdateAnalogVideoLockStateLimit","(J)I", (void *) nativeUpdateAnalogVideoLockStateLimit },
 	{ "nativeSetAnalogVideoLoackState",	"(JI)I", (void *) nativeSetAnalogVideoLockState },
 	{ "nativeGetAnalogVideoLoackState",	"(J)I", (void *) nativeGetAnalogVideoLockState },
-	
+
 	{ "nativeUpdatePrivacyLimit",		"(J)I", (void *) nativeUpdatePrivacyLimit },
 	{ "nativeSetPrivacy",				"(JZ)I", (void *) nativeSetPrivacy },
 	{ "nativeGetPrivacy",				"(J)I", (void *) nativeGetPrivacy },
-
-	{ "nativeSensorInt",				"(I)I", (void *) nativeSensorInt },
-	{ "nativeSensorExit",               "()I", (void *) nativeSensorExit },
-
-	{ "nativeSensorLedOn",               "()I", (void *) nativeSensorLedOn },
-	{ "nativeSensorLedOff",               "()I", (void *) nativeSensorLedOff },
-	{ "nativeSensorSensorOn",               "()I", (void *) nativeSensorSensorOn },
-	{ "nativeSensorSensorOff",               "()I", (void *) nativeSensorSensorOff },
-	{ "nativeSensorGetHeight",               "()I", (void *) nativeSensorGetHeight },
-	{ "nativeSensorGetWidth",               "()I", (void *) nativeSensorGetWidth },
-
-	{ "nativeSensorSetGain",               "(I)I", (void *) nativeSensorSetGain },
-	{ "nativeSensorGetGain",               "()I", (void *) nativeSensorGetGain },
-	{ "nativeSensorSetExp",               "(I)I", (void *) nativeSensorSetExp },
-	{ "nativeSensorGetExp",               "()I", (void *) nativeSensorGetExp },
-    { "nativeSensorReadImg",              "([B)I", (void *) nativeSensorReadImg },
 };
 
 int register_uvccamera(JNIEnv *env) {

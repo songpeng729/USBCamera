@@ -192,13 +192,6 @@ public class UVCCamera {
 		StringBuilder sb = new StringBuilder();
 		try {
 			mCtrlBlock = ctrlBlock.clone();
-			Log.d(TAG, " mNativePtr "+ mNativePtr
-					+ " getVenderId "+ mCtrlBlock.getVenderId()
-					+ " getProductId "+ mCtrlBlock.getProductId()
-					+ " getFileDescriptor " + mCtrlBlock.getFileDescriptor()
-					+ " getBusNum "+ mCtrlBlock.getBusNum()
-					+ " getDevNum " + mCtrlBlock.getDevNum()
-					+ " getUSBFSName "+ getUSBFSName(mCtrlBlock));
 			result = nativeConnect(mNativePtr,
 					mCtrlBlock.getVenderId(), mCtrlBlock.getProductId(),
 					mCtrlBlock.getFileDescriptor(),
@@ -218,9 +211,6 @@ public class UVCCamera {
 		}
 
 		if (result != 0) {
-			if(mCtrlBlock == null){
-				return;
-			}
 			throw new UnsupportedOperationException("open failed:result=" + result+"----->" +
 					"id_camera="+mNativePtr+";venderId="+mCtrlBlock.getVenderId()
 					+";productId="+mCtrlBlock.getProductId()+";fileDescriptor="+mCtrlBlock.getFileDescriptor()
@@ -720,54 +710,6 @@ public class UVCCamera {
 		}
 	}
 
-	public synchronized int sensorInt(final int delay) {
-		if (mNativePtr != 0) {
-				return nativeSensorInt(delay);
-		}
-		return 0;
-	}
-
-//==================================曝光==============================================
-	/**
-	 * @param contrast [%]
-	 */
-	public synchronized void setExposure(final int contrast) {
-		if (mNativePtr != 0) {
-			nativeSetExposureMode(mNativePtr,1);	 //设置模式才有效
-			nativeUpdateExposureLimit(mNativePtr);
-			final float range = Math.abs(mExposureMax - mExposureMin);
-			if (range > 0)
-				nativeSetExposure(mNativePtr, (int)(contrast / 100.f * range) + mExposureMin);
-		}
-	}
-
-	public synchronized int getExposure() {
-
-		return getExposure(nativeGetExposure(mNativePtr));
-	}
-
-	/**
-	 * @param contrast_abs
-	 * @return contrast[%]
-	 */
-	public synchronized int getExposure(final int exposure_abs) {
-		int result = 0;
-		if (mNativePtr != 0) {
-			final float range = Math.abs(mExposureMax - mExposureMin);
-			if (range > 0) {
-				result = (int)((exposure_abs - mExposureMin) * 100.f / range);
-			}
-		}
-		return result;
-	}
-
-	public synchronized void resetExposure() {
-		if (mNativePtr != 0) {
-			nativeSetExposure(mNativePtr, mExposureDef);
-		}
-	}
-
-//================================================================================
 	/**
 	 * @param gain_abs
 	 * @return gain[%]
@@ -1138,14 +1080,6 @@ public class UVCCamera {
 			nativeSetCaptureDisplay(mNativePtr, null);
 		}
 	}
-
-	public int getImg(byte [] pixs){
-		int ret = 0;
-		if (mCtrlBlock != null) {
-			ret = nativeSensorReadImg(pixs);
-		}
-		return ret;
-	}
 	private static final native int nativeSetCaptureDisplay(final long id_camera, final Surface surface);
 
 	private static final native long nativeGetCtrlSupports(final long id_camera);
@@ -1302,22 +1236,4 @@ public class UVCCamera {
 	private final native int nativeUpdatePrivacyLimit(final long id_camera);
 	private static final native int nativeSetPrivacy(final long id_camera, final boolean privacy);
 	private static final native int nativeGetPrivacy(final long id_camera);
-
-	//专用接口
-	public static final native int nativeSensorInt(final int delay);
-	public static final native int nativeSensorExit();
-	public static final native int nativeSensorLedOn();
-	public static final native int nativeSensorLedOff();
-	public static final native int nativeSensorSensorOn();
-	public static final native int nativeSensorSensorOff();
-	public static final native int nativeSensorGetHeight();
-	public static final native int nativeSensorGetWidth();
-
-	public static final native int nativeSensorSetGain(int gain);
-	public static final native int nativeSensorGetGain();
-	public static final native int nativeSensorSetExp(int exp);
-	public static final native int nativeSensorGetExp();
-
-	public static final native int nativeSensorReadImg(byte[] pixs);
-
 }

@@ -1,6 +1,7 @@
 package com.finger.usbcamera.activity;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.usb.UsbDevice;
@@ -13,7 +14,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.finger.usbcamera.USBCameraActivity;
 import com.serenegiant.annotation.Nullable;
 import com.finger.usbcamera.R;
 import com.finger.usbcamera.listener.MosaicImageListener;
@@ -25,15 +25,13 @@ import java.util.List;
 
 import centipede.livescan.MosaicNative;
 
-import static android.content.ContentValues.TAG;
-
 public class MosaicActivity extends Activity implements View.OnClickListener, MosaicImageListener{
 
-    private String LOG_TAG = "MosaicActivity";
+    private String TAG = "MosaicActivity";
     private MosaicSurfaceView fingerSurfaceView;//指纹显示
-    private LinearLayout fingerInfo;
+    private LinearLayout fingerViewLayout;
     private boolean isGathering = false;
-    private Button startGatherBtn,saveBtn, cameraBtn;//操作按钮
+    private Button startGatherBtn, previewBtn, dryWetBtn;//操作按钮
 
     private USBMonitor mUSBMonitor;
     private USBMonitor.UsbControlBlock usbControlBlock;
@@ -47,22 +45,22 @@ public class MosaicActivity extends Activity implements View.OnClickListener, Mo
         bindListener();
     }
     private void bindView() {
-        fingerInfo = findViewById(R.id.finger_view_layout);
+        fingerViewLayout = findViewById(R.id.mosaic_finger_view_layout);
         startGatherBtn = findViewById(R.id.mosaic_gather_btn);
-        saveBtn = findViewById(R.id.mosaic_save_btn);
-        cameraBtn = findViewById(R.id.mosaic_camera_btn);
+        previewBtn = findViewById(R.id.mosaic_preview_btn);
+        dryWetBtn = findViewById(R.id.dry_wet_btn);
 
         fingerSurfaceView = new MosaicSurfaceView(this);
         fingerSurfaceView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, -1));
-        fingerSurfaceView.setMosaicImageListener(this);
-        fingerInfo.addView(fingerSurfaceView);
+        fingerViewLayout.addView(fingerSurfaceView);
 
     }
 
     public void bindListener(){
+        fingerSurfaceView.setMosaicImageListener(this);
         startGatherBtn.setOnClickListener(this);
-        saveBtn.setOnClickListener(this);
-        cameraBtn.setOnClickListener(this);
+        previewBtn.setOnClickListener(this);
+        dryWetBtn.setOnClickListener(this);
 
         mContext = this;
         mUSBMonitor = new USBMonitor(mContext, new USBMonitor.OnDeviceConnectListener() {
@@ -89,7 +87,7 @@ public class MosaicActivity extends Activity implements View.OnClickListener, Mo
 
             @Override
             public void onConnect(UsbDevice device, USBMonitor.UsbControlBlock ctrlBlock, boolean createNew) {
-                Log.d(TAG, "ReadInit onConnect: "+ctrlBlock.getVenderId());
+                Log.d(ContentValues.TAG, "ReadInit onConnect: "+ctrlBlock.getVenderId());
                 Toast.makeText(mContext, "onConnect", Toast.LENGTH_SHORT);
                 usbControlBlock = ctrlBlock;// 得到UsbControlBlock,用于链接usb设备
                 MosaicNative.ReadInit(ctrlBlock.getVenderId(), ctrlBlock.getProductId(),
@@ -109,7 +107,7 @@ public class MosaicActivity extends Activity implements View.OnClickListener, Mo
                     result = sb.toString();
                 }
                 if (TextUtils.isEmpty(result)) {
-                    Log.w(TAG, "failed to get USBFS path, try to use default path:" + name);
+                    Log.w(ContentValues.TAG, "failed to get USBFS path, try to use default path:" + name);
                     result = "/dev/bus/usb";
                 }
                 return result;
@@ -138,16 +136,16 @@ public class MosaicActivity extends Activity implements View.OnClickListener, Mo
                     startGather();
                 }
                 break;
-            case R.id.mosaic_save_btn:
+            case R.id.mosaic_preview_btn:
                 if(!fingerSurfaceView.isPreview()){
                     fingerSurfaceView.startPreview(usbControlBlock);
                 }else{
                     fingerSurfaceView.stopPreview();
                 }
                 break;
-            case R.id.mosaic_camera_btn:
-                Intent intent = new Intent(this, USBCameraActivity.class);
-                startActivity(intent);
+            case R.id.dry_wet_btn:
+                Log.d(TAG, "onClick: dry_wet_btn");
+                startActivity(new Intent(this, DryWetSettingActivity.class));
                 break;
 
         }
@@ -176,7 +174,7 @@ public class MosaicActivity extends Activity implements View.OnClickListener, Mo
 
     @Override
     public void onMosaicStatusChanged(int status, String message) {
-        Log.i(LOG_TAG, " status:"+ status + " message:"+ message);
+        Log.i(TAG, " status:"+ status + " message:"+ message);
         switch (status){
             case MOSAIC_STATUS_START:
                 Toast.makeText(this, "开始采集", Toast.LENGTH_SHORT).show();

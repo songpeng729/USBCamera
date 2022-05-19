@@ -14,7 +14,6 @@ import android.os.Handler;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.serenegiant.usb.DeviceFilter;
@@ -106,44 +105,6 @@ public class USBCameraHelper {
         }
     }
 
-    public synchronized int cameraSensorGetGain(){
-        synchronized (mSync) {
-            mUVCCamera.updateCameraParams();
-           return mUVCCamera.nativeSensorGetGain();
-        }
-    }
-    public synchronized int cameraSensorGetExp(){
-        synchronized (mSync) {
-            mUVCCamera.updateCameraParams();
-            return mUVCCamera.nativeSensorGetExp();
-        }
-    }
-    public synchronized int cameraSensorSetgain(int gain){
-        synchronized (mSync) {
-            mUVCCamera.updateCameraParams();
-            mUVCCamera.nativeSensorSetGain(gain);
-            return mUVCCamera.nativeSensorGetGain();
-        }
-    }
-
-    public synchronized int cameraSensorSetExp(int Exp){
-        synchronized (mSync) {
-            mUVCCamera.updateCameraParams();
-            mUVCCamera.nativeSensorSetExp(Exp);
-
-            return mUVCCamera.nativeSensorGetExp();
-        }
-    }
-
-    public synchronized int cameraSensorGetImg(byte[] pixs) {
-        synchronized (mSync) {
-            if(camera == null){
-                camera = new UVCCamera();
-            }
-            int ret = camera.getImg(pixs);
-            return  ret;
-        }
-    }
     /**
      * Save current picture to system and add picture to gallery.
      */
@@ -154,7 +115,6 @@ public class USBCameraHelper {
         Uri imageUri = null;
         final ContentResolver resolver = mContext.getContentResolver();
         try {
-
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 String storagePath = Environment.DIRECTORY_PICTURES + File.separator + "USBCamera";
                 ContentValues contentValues = new ContentValues();
@@ -186,9 +146,9 @@ public class USBCameraHelper {
                 else
                     mVibraotor.vibrate(100);
             }
-            showShortMsg(mContext.getResources().getString(com.finger.usbcamera.R.string.msg_capturesaved));
+            showShortMsg(mContext.getResources().getString(R.string.msg_capturesaved));
         } catch (FileNotFoundException e) {
-                e.printStackTrace();
+            e.printStackTrace();
         } catch (IOException e) {
             if (imageUri != null)
             {
@@ -199,11 +159,19 @@ public class USBCameraHelper {
         }
     }
 
-    private UVCCamera camera;
+    private boolean checkCameraOpened() {
+        if (mUVCCamera == null) {
+            showShortMsg(mContext.getResources().getString(R.string.msg_camera_open_fail));
+            return false;
+        }
+
+        return true;
+    }
+
     private final USBMonitor.OnDeviceConnectListener mOnDeviceConnectListener = new USBMonitor.OnDeviceConnectListener() {
         @Override
         public void onAttach(final UsbDevice device) {
-            showShortMsg(mContext.getResources().getString(com.finger.usbcamera.R.string.msg_usb_device_attached));
+            showShortMsg(mContext.getResources().getString(R.string.msg_usb_device_attached));
             requestPermission();
         }
 
@@ -213,7 +181,7 @@ public class USBCameraHelper {
             queueEvent(new Runnable() {
                 @Override
                 public void run() {
-                    camera = new UVCCamera();
+                    final UVCCamera camera = new UVCCamera();
                     camera.open(ctrlBlock);
                     camera.setButtonCallback(new IButtonCallback() {
                         @Override
@@ -229,20 +197,16 @@ public class USBCameraHelper {
                     });
 
                     try {
-                        camera.setPreviewSize(UVCCamera.DEFAULT_PREVIEW_WIDTH, UVCCamera.DEFAULT_PREVIEW_HEIGHT, UVCCamera.PIXEL_FORMAT_YUV420SP);//FRAME_FORMAT_MJPEG);
-                        Log.i(TAG, "camera.setPreviewSize width:"+ UVCCamera.DEFAULT_PREVIEW_WIDTH + " height:"+ UVCCamera.DEFAULT_PREVIEW_HEIGHT);
+                        camera.setPreviewSize(UVCCamera.DEFAULT_PREVIEW_WIDTH, UVCCamera.DEFAULT_PREVIEW_HEIGHT, UVCCamera.FRAME_FORMAT_MJPEG);
                     } catch (final IllegalArgumentException e) {
                         // fallback to YUV mode
                         try {
-                            showShortMsg("UVCCamera.DEFAULT_PREVIEW_MODE");
-//                            camera.setPreviewSize(UVCCamera.DEFAULT_PREVIEW_WIDTH, UVCCamera.DEFAULT_PREVIEW_HEIGHT, UVCCamera.DEFAULT_PREVIEW_MODE);
-                            Log.w(TAG, "camera.setPreviewSize width:"+ UVCCamera.DEFAULT_PREVIEW_WIDTH + " height:"+ UVCCamera.DEFAULT_PREVIEW_HEIGHT);
+                            camera.setPreviewSize(UVCCamera.DEFAULT_PREVIEW_WIDTH, UVCCamera.DEFAULT_PREVIEW_HEIGHT, UVCCamera.DEFAULT_PREVIEW_MODE);
                         } catch (final IllegalArgumentException e1) {
                             camera.destroy();
                             return;
                         }
                     }
-                    camera.startPreview();
                     synchronized (mSync) {
                         mUVCCamera = camera;
                     }
@@ -257,7 +221,7 @@ public class USBCameraHelper {
 
         @Override
         public void onDettach(final UsbDevice device) {
-            showShortMsg(mContext.getResources().getString(com.finger.usbcamera.R.string.msg_usb_device_detached));
+            showShortMsg(mContext.getResources().getString(R.string.msg_usb_device_detached));
         }
 
         @Override

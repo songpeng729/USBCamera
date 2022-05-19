@@ -70,7 +70,6 @@ LOCAL_SRC_FILES := \
 		Parameters.cpp \
 		serenegiant_usb_UVCCamera.cpp \
         Correction.cpp \
-        FingerAPI.cpp \
         sensor.cpp \
         src/mosaicInterface.cpp \
         src/kernel/FPMosaic.cpp \

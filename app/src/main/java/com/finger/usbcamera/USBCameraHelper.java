@@ -6,6 +6,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.SurfaceTexture;
 import android.hardware.usb.UsbDevice;
 import android.net.Uri;
 import android.os.Build;
@@ -14,6 +15,9 @@ import android.os.Handler;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.provider.MediaStore;
+import android.view.Surface;
+import android.view.ViewTreeObserver;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.serenegiant.usb.DeviceFilter;
@@ -21,6 +25,7 @@ import com.serenegiant.usb.IButtonCallback;
 import com.serenegiant.usb.USBMonitor;
 import com.serenegiant.usb.UVCCamera;
 import com.serenegiant.utils.HandlerThreadHandler;
+import com.serenegiant.widget.UVCCameraTextureView;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -36,6 +41,9 @@ public class USBCameraHelper {
     private final Object mSync = new Object();
     private USBMonitor mUSBMonitor;
     private UVCCamera mUVCCamera;
+    private UVCCameraTextureView mUVCCameraView;
+    private FrameLayout mFrameLayout;
+    private Surface mPreviewSurface;
     private Context mContext;
     private OnCameraButtonListener mButtonListener = null;
     private Vibrator mVibraotor = null;//震动器
@@ -50,6 +58,19 @@ public class USBCameraHelper {
 
     public void setOnCameraButtonListener(OnCameraButtonListener listener) {
         mButtonListener = listener;
+    }
+    public USBCameraHelper(final Context context, final UVCCameraTextureView cameraView, final FrameLayout frameLayout) {
+        if (mWorkerHandler == null) {
+            mWorkerHandler = HandlerThreadHandler.createHandler(TAG);
+            mWorkerThreadID = mWorkerHandler.getLooper().getThread().getId();
+        }
+
+        mContext = context;
+        mFrameLayout = frameLayout;
+        mUVCCameraView = cameraView;
+        mUSBMonitor = new USBMonitor(mContext, mOnDeviceConnectListener);
+        mVibraotor = (Vibrator)mContext.getSystemService(Context.VIBRATOR_SERVICE);
+
     }
 
     public USBCameraHelper(final Context context) {
@@ -159,6 +180,66 @@ public class USBCameraHelper {
         }
     }
 
+    /**
+     * Save current picture to system and add picture to gallery.
+     */
+    public void saveCapturePicture() {
+        if (!checkCameraOpened())
+            return;
+
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmssSSS").format(new Date());
+        String imageFileName = timeStamp + ".jpg";
+        OutputStream fos = null;
+        Uri imageUri = null;
+        final ContentResolver resolver = mContext.getContentResolver();
+
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                String storagePath = Environment.DIRECTORY_PICTURES + File.separator + "USBCamera";
+                ContentValues contentValues = new ContentValues();
+                contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, imageFileName);
+                contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/jpg");
+                contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, storagePath);
+
+                imageUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
+                fos = resolver.openOutputStream(imageUri);
+                Bitmap bitmap = mUVCCameraView.getBitmap();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+                fos.close();
+            } else {
+                final String storagePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString() + File.separator + "USBCamera";
+                File storageDir = new File(storagePath);
+                if (!storageDir.exists()) {
+                    storageDir.mkdir();
+                }
+
+                File image = new File(storagePath, imageFileName);
+                fos = new FileOutputStream(image);
+                Bitmap bitmap = mUVCCameraView.getBitmap();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+                fos.close();
+                galleryAddPic(image.toString());
+            }
+
+            if (mVibraotor != null) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                    mVibraotor.vibrate(VibrationEffect.createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE));
+                else
+                    mVibraotor.vibrate(100);
+            }
+            showShortMsg(mContext.getResources().getString(R.string.msg_capturesaved));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            if (imageUri != null)
+            {
+                // Don't leave an orphan entry in the MediaStore
+                resolver.delete(imageUri, null, null);
+            }
+            e.printStackTrace();
+        }
+    }
+
     private boolean checkCameraOpened() {
         if (mUVCCamera == null) {
             showShortMsg(mContext.getResources().getString(R.string.msg_camera_open_fail));
@@ -196,6 +277,10 @@ public class USBCameraHelper {
                         }
                     });
 
+                    if (mPreviewSurface != null) {
+                        mPreviewSurface.release();
+                        mPreviewSurface = null;
+                    }
                     try {
                         camera.setPreviewSize(UVCCamera.DEFAULT_PREVIEW_WIDTH, UVCCamera.DEFAULT_PREVIEW_HEIGHT, UVCCamera.FRAME_FORMAT_MJPEG);
                     } catch (final IllegalArgumentException e) {
@@ -206,6 +291,12 @@ public class USBCameraHelper {
                             camera.destroy();
                             return;
                         }
+                    }
+                    final SurfaceTexture st = mUVCCameraView.getSurfaceTexture();
+                    if (st != null) {
+                        mPreviewSurface = new Surface(st);
+                        camera.setPreviewDisplay(mPreviewSurface);
+                        camera.startPreview();
                     }
                     synchronized (mSync) {
                         mUVCCamera = camera;
@@ -262,6 +353,10 @@ public class USBCameraHelper {
                     //
                 }
                 mUVCCamera = null;
+            }
+            if (mPreviewSurface != null) {
+                mPreviewSurface.release();
+                mPreviewSurface = null;
             }
         }
     }

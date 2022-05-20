@@ -14,6 +14,7 @@ import com.finger.usbcamera.USBCameraHelper;
 import com.finger.usbcamera.view.MosaicSurfaceView;
 import com.serenegiant.annotation.Nullable;
 import com.finger.usbcamera.R;
+import com.serenegiant.widget.UVCCameraTextureView;
 
 /**
  * 指纹干湿指设置
@@ -21,29 +22,25 @@ import com.finger.usbcamera.R;
 public class DryWetSettingActivity extends Activity implements View.OnClickListener{
     private String TAG = "DryWetSettingActivity";
 
-    private FrameLayout fingerViewLayout;
-
-    USBCameraHelper usbCameraHelper;
-    private MosaicSurfaceView fingerSurfaceView;//指纹显示
+    private UVCCameraTextureView uvcCameraView;
+    private USBCameraHelper usbCameraHelper;
+//    private MosaicSurfaceView fingerSurfaceView;//指纹显示
     private SeekBar gainSeekBar, expSeekBar;
     private TextView gainTextView, expTextView, param, dryValue, wetValue;
     private Button startButton,saveDryButton,saveWetButton,exitButton;
 
-    private int gain,exp;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dry_wet_setting);
-        usbCameraHelper = new USBCameraHelper(this);
         bindView();
         bindListener();
     }
 
     private void bindView(){
-        fingerViewLayout = findViewById(R.id.drywet_finger_view_layout);
-        fingerSurfaceView = new MosaicSurfaceView(this);
-        fingerSurfaceView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, -1));
-        fingerViewLayout.addView(fingerSurfaceView);
+        FrameLayout fingerViewLayout = findViewById(R.id.drywet_finger_view_layout);
+        uvcCameraView = findViewById(R.id.camera_view);
+        usbCameraHelper = new USBCameraHelper(this, uvcCameraView, fingerViewLayout);
 
         startButton = findViewById(R.id.drywet_start_btn);
 
@@ -106,15 +103,15 @@ public class DryWetSettingActivity extends Activity implements View.OnClickListe
         switch (v.getId()){
             case R.id.drywet_start_btn:
                 Log.d(TAG, "onClick: drywet_start_btn");
-//                fingerSurfaceView.startPreview();//没有注册链接权限不能预览
+                usbCameraHelper.start();
                 break;
             case  R.id.drywet_dry_save_btn:
-                int gain = usbCameraHelper.getGain();
-                Log.d(TAG, "getGain:"+ gain);
+//                int gain = usbCameraHelper.getGain();
+//                Log.d(TAG, "getGain:"+ gain);
                 break;
             case  R.id.drywet_wet_save_btn:
-                int exp = usbCameraHelper.getExp();
-                Log.d(TAG, "getExp:"+ exp);
+//                int exp = usbCameraHelper.getExp();
+//                Log.d(TAG, "getExp:"+ exp);
                 break;
             case  R.id.drywet_exit_btn:
                 finish();
@@ -126,7 +123,7 @@ public class DryWetSettingActivity extends Activity implements View.OnClickListe
     @Override
     protected void onStart() {
         super.onStart();
-        usbCameraHelper.start();
+//        usbCameraHelper.start();
     }
 
     @Override

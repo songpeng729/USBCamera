@@ -11,10 +11,11 @@
         android:gravity="center_horizontal"
         android:orientation="vertical"
         android:padding="1dip" >
-<!--        <com.finger.usbcamera.view.MosaicSurfaceView-->
-<!--            android:id="@+id/drywet_finger_view"-->
-<!--            android:layout_width="640px"-->
-<!--            android:layout_height="640px" />-->
+        <com.serenegiant.widget.UVCCameraTextureView
+            android:id="@+id/camera_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
     </FrameLayout>
 
 

@@ -16,9 +16,9 @@ int sensor_int(int vid, int pid, int fd, int busnum, int devaddr, const char *us
 int sensor_exit();
 int sensor_readimg(unsigned char* buf);
 int sensor_setGain(int value); //1-48
-int sensor_getGain(int * pValue);
+int sensor_getGain();
 int sensor_setExp(int value);//1-1048
-int sensor_getExp(int *pValue);
+int sensor_getExp();
 int sensor_getHeight(); // 640
 int sensor_getWidth();	// 640
 int sensor_LEDOn();

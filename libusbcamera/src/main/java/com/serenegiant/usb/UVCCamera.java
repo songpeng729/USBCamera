@@ -1243,7 +1243,8 @@ public class UVCCamera {
 	private static final native int nativeSetPrivacy(final long id_camera, final boolean privacy);
 	private static final native int nativeGetPrivacy(final long id_camera);
 
-
+	//新增获取图像方法
+	public static final native int nativeGetCurFrame(final long id_camera, byte[] pixs);
 
 	public synchronized int nativeGetGain() {
 //		updateCameraParams();//更新相机属性

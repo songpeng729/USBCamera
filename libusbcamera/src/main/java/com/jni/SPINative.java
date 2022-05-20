@@ -2,6 +2,7 @@ package com.jni;
 
 import android.util.Log;
 
+@Deprecated
 public class SPINative {
     private static final String TAG = "SPINative";
     

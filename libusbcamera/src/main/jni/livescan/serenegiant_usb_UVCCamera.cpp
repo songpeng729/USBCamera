@@ -38,7 +38,6 @@
 
 #include "libUVCCamera.h"
 #include "UVCCamera.h"
-//#include "serenegiant_usb_UVCCamera.h"
 
 #include "FingerSensorImpl.h"
 
@@ -1998,6 +1997,21 @@ static jint nativeGetPrivacy(JNIEnv *env, jobject thiz,
 	RETURN(result, jint);
 }
 
+//============新增接口，获取preview图像数据
+static jint nativeGetCurFrame(JNIEnv *env, jobject thiz,
+    ID_TYPE id_camera, jbyteArray outputBuff) {
+	jint result = JNI_ERR;
+	ENTER();
+    UVCCamera *camera = reinterpret_cast<UVCCamera *>(id_camera);
+    if (LIKELY(camera)) {
+	    uint8_t * outputData = (uint8_t *)env->GetByteArrayElements(outputBuff, 0);
+        unsigned char inputData[1024 * 656];
+        result = camera->getCurFrame(inputData);
+        CFingerSensor::CImplicit().CorrectDistortion(inputData, outputData);
+	}
+    RETURN(result, jint);
+}
+
 //**********************************************************************
 //
 //**********************************************************************
@@ -2193,6 +2207,9 @@ static JNINativeMethod methods[] = {
 	{ "nativeUpdatePrivacyLimit",		"(J)I", (void *) nativeUpdatePrivacyLimit },
 	{ "nativeSetPrivacy",				"(JZ)I", (void *) nativeSetPrivacy },
 	{ "nativeGetPrivacy",				"(J)I", (void *) nativeGetPrivacy },
+
+	//使用RegisterNatives方法调用C代码层, J：long; [B: byte[]; I: int, 括号里的是参数，外面是返回值
+	{ "nativeGetCurFrame",				"(J[B)I", (void *) nativeGetCurFrame },
 };
 
 int register_uvccamera(JNIEnv *env) {

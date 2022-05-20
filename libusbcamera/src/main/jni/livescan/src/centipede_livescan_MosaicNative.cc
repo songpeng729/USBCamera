@@ -413,3 +413,25 @@ JNIEXPORT jint JNICALL Java_centipede_livescan_MosaicNative_GetDesc
 	return ret;
 }
 
+//设置亮度Gain
+JNIEXPORT jint JNICALL Java_centipede_livescan_MosaicNative_SetGain
+	(JNIEnv * jenv, jclass, jint gain)
+{
+	return sensor_setGain(gain);
+}
+JNIEXPORT jint JNICALL Java_centipede_livescan_MosaicNative_GetGain
+	(JNIEnv * jenv, jclass)
+{
+	return sensor_getGain();
+}
+//设置对比度Exp
+JNIEXPORT jint JNICALL Java_centipede_livescan_MosaicNative_SetExposure
+	(JNIEnv * jenv, jclass, jint exp)
+{
+	return sensor_setExp(exp);
+}
+JNIEXPORT jint JNICALL Java_centipede_livescan_MosaicNative_GetExposure
+	(JNIEnv * jenv, jclass)
+{
+	return sensor_getExp();
+}

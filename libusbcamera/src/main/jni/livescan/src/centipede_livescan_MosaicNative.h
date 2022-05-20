@@ -172,6 +172,38 @@ JNIEXPORT jint JNICALL Java_centipede_livescan_MosaicNative_GetVersion
 JNIEXPORT jint JNICALL Java_centipede_livescan_MosaicNative_GetDesc
   (JNIEnv *, jclass, jbyteArray);
 
+/*
+ * Class:     centipede_livescan_MosaicNative
+ * Method:    SetGain
+ * Signature: (I)I
+ */
+JNIEXPORT jint JNICALL Java_centipede_livescan_MosaicNative_SetGain
+  (JNIEnv *, jclass, jint);
+
+/*
+ * Class:     centipede_livescan_MosaicNative
+ * Method:    GetGain
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL Java_centipede_livescan_MosaicNative_GetGain
+  (JNIEnv *, jclass);
+
+/*
+ * Class:     centipede_livescan_MosaicNative
+ * Method:    SetExposure
+ * Signature: (I)I
+ */
+JNIEXPORT jint JNICALL Java_centipede_livescan_MosaicNative_SetExposure
+  (JNIEnv *, jclass, jint);
+
+/*
+ * Class:     centipede_livescan_MosaicNative
+ * Method:    GetExposure
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL Java_centipede_livescan_MosaicNative_GetExposure
+  (JNIEnv *, jclass);
+
 #ifdef __cplusplus
 }
 #endif

@@ -12,6 +12,7 @@ import android.os.Message;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.widget.Toast;
 
 import com.finger.usbcamera.USBCameraHelper;
 import com.finger.usbcamera.listener.MosaicImageListener;
@@ -315,18 +316,20 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
     };
 
     public int getGain(){
-        return gain;
+        return MosaicNative.GetGain();
     }
     public int getExp(){
-        return exp;
+        return MosaicNative.GetExposure();
     }
 
     public void setGain(int gain) {
         this.gain = Math.min(GAIN_MAX, Math.max(1, gain));
+        MosaicNative.SetGain(this.gain);
     }
 
     public void setExp(int exp) {
-        this.exp = Math.min(EXP_MAX, Math.max(1, gain));
+        this.exp = Math.min(EXP_MAX, Math.max(1, exp));
+        MosaicNative.SetExposure(this.exp);
     }
 
     /**

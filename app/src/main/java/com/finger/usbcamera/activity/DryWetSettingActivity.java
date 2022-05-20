@@ -1,6 +1,8 @@
 package com.finger.usbcamera.activity;
 
 import android.app.Activity;
+import android.content.Context;
+import android.hardware.usb.UsbDevice;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -9,12 +11,17 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.finger.usbcamera.USBCameraHelper;
 import com.finger.usbcamera.view.MosaicSurfaceView;
 import com.serenegiant.annotation.Nullable;
 import com.finger.usbcamera.R;
+import com.serenegiant.usb.DeviceFilter;
+import com.serenegiant.usb.USBMonitor;
 import com.serenegiant.widget.UVCCameraTextureView;
+
+import java.util.List;
 
 /**
  * 指纹干湿指设置
@@ -22,9 +29,11 @@ import com.serenegiant.widget.UVCCameraTextureView;
 public class DryWetSettingActivity extends Activity implements View.OnClickListener{
     private String TAG = "DryWetSettingActivity";
 
-    private UVCCameraTextureView uvcCameraView;
-    private USBCameraHelper usbCameraHelper;
-//    private MosaicSurfaceView fingerSurfaceView;//指纹显示
+    private Context mContext;
+    private USBMonitor mUSBMonitor;
+    private USBMonitor.UsbControlBlock usbControlBlock;
+
+    private MosaicSurfaceView fingerSurfaceView;//指纹显示
     private SeekBar gainSeekBar, expSeekBar;
     private TextView gainTextView, expTextView, param, dryValue, wetValue;
     private Button startButton,saveDryButton,saveWetButton,exitButton;
@@ -39,8 +48,9 @@ public class DryWetSettingActivity extends Activity implements View.OnClickListe
 
     private void bindView(){
         FrameLayout fingerViewLayout = findViewById(R.id.drywet_finger_view_layout);
-        uvcCameraView = findViewById(R.id.camera_view);
-        usbCameraHelper = new USBCameraHelper(this, uvcCameraView, fingerViewLayout);
+        fingerSurfaceView = new MosaicSurfaceView(this);
+        fingerSurfaceView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, -1));
+        fingerViewLayout.addView(fingerSurfaceView);
 
         startButton = findViewById(R.id.drywet_start_btn);
 
@@ -61,12 +71,13 @@ public class DryWetSettingActivity extends Activity implements View.OnClickListe
         startButton.setOnClickListener(this);
         saveDryButton.setOnClickListener(this);
         saveWetButton.setOnClickListener(this);
+        exitButton.setOnClickListener(this);
 
         gainSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 dryValue.setText(""+progress);
-                usbCameraHelper.setGain(progress);
+                fingerSurfaceView.setGain(progress);
             }
 
             @Override
@@ -83,7 +94,7 @@ public class DryWetSettingActivity extends Activity implements View.OnClickListe
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 wetValue.setText(""+progress);
-                usbCameraHelper.setExp(progress);
+                fingerSurfaceView.setExp(progress);
             }
 
             @Override
@@ -96,6 +107,47 @@ public class DryWetSettingActivity extends Activity implements View.OnClickListe
 
             }
         });
+
+        mContext = this;
+        mUSBMonitor = new USBMonitor(mContext, new USBMonitor.OnDeviceConnectListener() {
+            @Override
+            public void onAttach(UsbDevice device) {
+                Toast.makeText(mContext, "onAttach", Toast.LENGTH_SHORT).show();
+                final List<DeviceFilter> filter = DeviceFilter.getDeviceFilters(mContext,
+                        com.finger.usbcamera.R.xml.device_filter);
+                final List<UsbDevice> deviceList = mUSBMonitor.getDeviceList(filter);
+
+                if (deviceList == null || deviceList.size() == 0) {
+                    return;
+                }
+
+                if (mUSBMonitor != null) {
+                    mUSBMonitor.requestPermission(deviceList.get(0));
+                }
+            }
+
+            @Override
+            public void onDettach(UsbDevice device) {
+                Toast.makeText(mContext, "onDettach", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onConnect(UsbDevice device, USBMonitor.UsbControlBlock ctrlBlock, boolean createNew) {
+                Toast.makeText(mContext, "onConnect", Toast.LENGTH_SHORT).show();
+                usbControlBlock = ctrlBlock;// 得到UsbControlBlock,用于链接usb设备
+            }
+
+            @Override
+            public void onDisconnect(UsbDevice device, USBMonitor.UsbControlBlock ctrlBlock) {
+                Toast.makeText(mContext, "onDisconnect", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onCancel(UsbDevice device) {
+
+            }
+        });
+        mUSBMonitor.register();//注册监听
     }
 
     @Override
@@ -103,17 +155,18 @@ public class DryWetSettingActivity extends Activity implements View.OnClickListe
         switch (v.getId()){
             case R.id.drywet_start_btn:
                 Log.d(TAG, "onClick: drywet_start_btn");
-                usbCameraHelper.start();
+                fingerSurfaceView.startPreview(usbControlBlock);
                 break;
             case  R.id.drywet_dry_save_btn:
-//                int gain = usbCameraHelper.getGain();
-//                Log.d(TAG, "getGain:"+ gain);
+                int gain = fingerSurfaceView.getGain();
+                Log.d(TAG, "getGain:"+ gain);
                 break;
             case  R.id.drywet_wet_save_btn:
-//                int exp = usbCameraHelper.getExp();
-//                Log.d(TAG, "getExp:"+ exp);
+                int exp = fingerSurfaceView.getExp();
+                Log.d(TAG, "getExp:"+ exp);
                 break;
             case  R.id.drywet_exit_btn:
+                fingerSurfaceView.stopPreview();
                 finish();
                 break;
         }
@@ -123,18 +176,15 @@ public class DryWetSettingActivity extends Activity implements View.OnClickListe
     @Override
     protected void onStart() {
         super.onStart();
-//        usbCameraHelper.start();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        usbCameraHelper.stop();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        usbCameraHelper.destory();
     }
 }

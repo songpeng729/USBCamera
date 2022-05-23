@@ -12,9 +12,6 @@ import android.os.Message;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.widget.Toast;
-
-import com.finger.usbcamera.USBCameraHelper;
 import com.finger.usbcamera.listener.MosaicImageListener;
 import com.serenegiant.usb.USBMonitor;
 import com.serenegiant.usb.UVCCamera;
@@ -59,7 +56,7 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
     private Bitmap bitmap;
     private Bitmap bitmapRgb;
     private Canvas canvas;
-    private Paint paint;
+    private Paint paint;//白色画笔
     private Matrix matrix;
     private SurfaceHolder surfaceHolder;
 
@@ -95,7 +92,12 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
         paint.setStyle(Paint.Style.STROKE);
 
         matrix = new Matrix();
-        matrix.setScale(1, 1);
+        /*
+         set是直接设置Matrix的值，每调用一次，之前Matrix内的所有变化都重置，整个Matrix的数组都会变掉
+         post是后乘，当前的矩阵乘以参数给出的矩阵。可以连续多次使用post，来完成所需的整个变换
+         pre是前乘，参数给出的矩阵乘以当前的矩阵。所以操作是在当前矩阵的最前面发生的。
+         */
+        matrix.setScale(1.6f, 1.6f);//1.6倍放大1024*1024
         matrix.postScale(1, 1);
 
         surfaceHolder = getHolder();
@@ -214,6 +216,16 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
             bitmap.copyPixelsFromBuffer(byteBuffer);
             canvas.drawColor(Color.BLACK);
             canvas.drawBitmap(bitmap, 0, 0, paint);
+
+            //中心框300*300, 并有十字中心
+            Paint p = new Paint();
+            p.setColor(Color.BLACK);
+            p.setStyle(Paint.Style.STROKE);
+            canvas.drawRect(170,170,470,470, p);
+//            p.setPathEffect(new DashPathEffect(new float[]{4,4},0));
+            canvas.drawLine(300,320, 340, 320, p);
+            canvas.drawLine(320,300, 320, 340, p);
+
             canvas_bg.drawColor(Color.WHITE);
             canvas_bg.drawBitmap(bitmapRgb, matrix, paint);
 

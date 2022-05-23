@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.DashPathEffect;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.os.Handler;
@@ -219,12 +220,13 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
 
             //中心框300*300, 并有十字中心
             Paint p = new Paint();
-            p.setColor(Color.BLACK);
+            p.setColor(Color.BLUE);
             p.setStyle(Paint.Style.STROKE);
+            p.setPathEffect(new DashPathEffect(new float[]{4,4},0));//虚线
             canvas.drawRect(170,170,470,470, p);
-//            p.setPathEffect(new DashPathEffect(new float[]{4,4},0));
-            canvas.drawLine(300,320, 340, 320, p);
-            canvas.drawLine(320,300, 320, 340, p);
+            p.setColor(Color.GREEN);
+            canvas.drawLine(0,320, 640, 320, p);
+            canvas.drawLine(320,0, 320, 640, p);
 
             canvas_bg.drawColor(Color.WHITE);
             canvas_bg.drawBitmap(bitmapRgb, matrix, paint);

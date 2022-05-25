@@ -35,6 +35,8 @@
     <string name="finger_status_init">初始状态： </string>
     <string name="start_collect">开始采集</string>
     <string name="stop_collect">停止采集</string>
+    <string name="start_preview">开始预览</string>
+    <string name="stop_preview">停止预览</string>
     <string name="please_select_finger">请选择指纹</string>
     <string name="collecting">正在采集中</string>
     <string name="tv_contrast">对比度</string>

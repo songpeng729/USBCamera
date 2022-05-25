@@ -300,7 +300,7 @@ public class USBCameraHelper {
                     }
                     synchronized (mSync) {
                         mUVCCamera = camera;
-                        mUVCCamera.updateCameraParams();//更新相机参数!!!总要，否则无法获取到相机亮度和对比度
+                        mUVCCamera.updateCameraParams();//更新相机参数!!!重要，否则无法获取到相机亮度和对比度
                     }
                 }
             }, 0);

@@ -138,11 +138,13 @@ public class DryWetSettingActivity extends Activity implements View.OnClickListe
             public void onConnect(UsbDevice device, USBMonitor.UsbControlBlock ctrlBlock, boolean createNew) {
                 Toast.makeText(mContext, "onConnect", Toast.LENGTH_SHORT).show();
                 usbControlBlock = ctrlBlock;// 得到UsbControlBlock,用于链接usb设备
+                fingerSurfaceView.releaseCamera();
             }
 
             @Override
             public void onDisconnect(UsbDevice device, USBMonitor.UsbControlBlock ctrlBlock) {
                 Toast.makeText(mContext, "onDisconnect", Toast.LENGTH_SHORT).show();
+                fingerSurfaceView.releaseCamera();
             }
 
             @Override

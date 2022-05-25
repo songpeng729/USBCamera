@@ -35,6 +35,8 @@ import static com.finger.usbcamera.listener.MosaicImageListener.MOSAIC_STATUS_SU
  */
 public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Callback{
     private final String TAG = "MosaicSurfaceView";
+    private final Object sync = new Object();//同步锁，当调用MosaicNative方法改变相机状态时使用
+
     public static final int MODEL_NORMAL = 0; //正常模式
     private final int GAIN_MAX = 48; //最大亮度
     private final int EXP_MAX = 1050;//最大对比度
@@ -122,8 +124,18 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-        stopGather();
-        stopPreview();
+        releaseCamera();
+    }
+
+    /**
+     * 释放相机
+     */
+    public synchronized void releaseCamera() {
+        synchronized (sync){
+            stopGather();
+            stopPreview();
+            MosaicNative.ReadEnd();
+        }
     }
 
     //线程池
@@ -132,7 +144,7 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
     /**
      * 开始采集
      */
-    public void startGather(USBMonitor.UsbControlBlock ctrlBlock){
+    public synchronized void startGather(USBMonitor.UsbControlBlock ctrlBlock){
         if(isPreview){
             return;
         }
@@ -185,11 +197,13 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
         });
 
     }
-    public void stopGather(){
+    public synchronized void stopGather(){
         Log.i(TAG, "stopGather");
         if(mosaicFetcher != null){
-            if(mosaicFetcher.isRunning()){
-                mosaicFetcher.stop();
+            synchronized (sync){
+                if(mosaicFetcher.isRunning()){
+                    mosaicFetcher.stop();
+                }
             }
         }
     }
@@ -329,19 +343,19 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
         }
     };
 
-    public int getGain(){
+    public synchronized int getGain(){
         return MosaicNative.GetGain();
     }
-    public int getExp(){
+    public synchronized int getExp(){
         return MosaicNative.GetExposure();
     }
 
-    public void setGain(int gain) {
+    public synchronized void setGain(int gain) {
         this.gain = Math.min(GAIN_MAX, Math.max(1, gain));
         MosaicNative.SetGain(this.gain);
     }
 
-    public void setExp(int exp) {
+    public synchronized void setExp(int exp) {
         this.exp = Math.min(EXP_MAX, Math.max(1, exp));
         MosaicNative.SetExposure(this.exp);
     }
@@ -379,18 +393,23 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
     public boolean isPreview(){
         return isPreview;
     }
-    public void startPreview(USBMonitor.UsbControlBlock ctrlBlock){
+    public synchronized void startPreview(USBMonitor.UsbControlBlock ctrlBlock){
+        if(ctrlBlock == null)
+            return;
+
         MosaicNative.ReadInit(ctrlBlock.getVenderId(), ctrlBlock.getProductId(),
                 ctrlBlock.getFileDescriptor(),
                 ctrlBlock.getBusNum(),
                 ctrlBlock.getDevNum(),
                 UVCCamera.getUSBFSName(ctrlBlock));
-        startPreview();
+        synchronized (sync){
+            startPreview();
+        }
     }
     /**
      * 开始预览
      */
-    public void startPreview(){
+    private synchronized void startPreview(){
         if(isGathering()){
             Log.w(TAG, "startPreview 正在采集");
             return;
@@ -403,7 +422,9 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
                     MosaicNative.ReadImg(imgDataBuffer);
                     drawImage(imgDataBuffer);
                 }
-                MosaicNative.ReadEnd();
+                synchronized (sync){
+                    MosaicNative.ReadEnd();
+                }
             }
         });
     }

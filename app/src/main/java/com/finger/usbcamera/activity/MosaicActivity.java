@@ -1,12 +1,10 @@
 package com.finger.usbcamera.activity;
 
 import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.usb.UsbDevice;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,8 +21,6 @@ import com.serenegiant.usb.DeviceFilter;
 import com.serenegiant.usb.USBMonitor;
 
 import java.util.List;
-
-import centipede.livescan.MosaicNative;
 
 public class MosaicActivity extends Activity implements View.OnClickListener, MosaicImageListener{
 
@@ -92,11 +88,14 @@ public class MosaicActivity extends Activity implements View.OnClickListener, Mo
             public void onConnect(UsbDevice device, USBMonitor.UsbControlBlock ctrlBlock, boolean createNew) {
                 Toast.makeText(mContext, "onConnect", Toast.LENGTH_SHORT).show();
                 usbControlBlock = ctrlBlock;// 得到UsbControlBlock,用于链接usb设备
+                fingerSurfaceView.releaseCamera();
             }
 
             @Override
             public void onDisconnect(UsbDevice device, USBMonitor.UsbControlBlock ctrlBlock) {
                 Toast.makeText(mContext, "onDisconnect", Toast.LENGTH_SHORT).show();
+                usbControlBlock = null;
+                fingerSurfaceView.releaseCamera();
             }
 
             @Override
@@ -113,14 +112,18 @@ public class MosaicActivity extends Activity implements View.OnClickListener, Mo
             case R.id.mosaic_gather_btn://开始采集
                 if(isGathering){
                     stopGather();
-                }else{
+                }else if(!fingerSurfaceView.isPreview()){
                     startGather();
                 }
                 break;
             case R.id.mosaic_preview_btn:
                 if(!fingerSurfaceView.isPreview()){
+                    previewBtn.setBackgroundResource(R.drawable.finger_btn_background3);
+                    previewBtn.setText(getString(R.string.stop_preview));
                     fingerSurfaceView.startPreview(usbControlBlock);
                 }else{
+                    previewBtn.setBackgroundResource(R.drawable.finger_btn_background);
+                    previewBtn.setText(getString(R.string.start_preview));
                     fingerSurfaceView.stopPreview();
                 }
                 break;
@@ -161,7 +164,6 @@ public class MosaicActivity extends Activity implements View.OnClickListener, Mo
                 Toast.makeText(this, "开始采集", Toast.LENGTH_SHORT).show();
                 break;
             case MOSAIC_STATUS_SUCCESS:
-                //TODO 使用ThreadPool
                 //获取指纹数据
                 byte[] imageData = fingerSurfaceView.getImgData();
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show();

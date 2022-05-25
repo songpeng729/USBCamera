@@ -49,7 +49,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
                 android:background="@drawable/finger_btn_background"
-                android:text="preview"
+                android:text="@string/start_preview"
                 android:textColor="@drawable/finger_text_color" />
             <Button
                 android:id="@+id/dry_wet_btn"

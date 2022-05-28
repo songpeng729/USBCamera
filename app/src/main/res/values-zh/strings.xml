@@ -37,6 +37,7 @@
     <string name="stop_collect">停止采集</string>
     <string name="start_preview">开始预览</string>
     <string name="stop_preview">停止预览</string>
+<!--    <string name="save_preview_img">保存预览图片</string>-->
     <string name="please_select_finger">请选择指纹</string>
     <string name="collecting">正在采集中</string>
     <string name="tv_contrast">对比度</string>

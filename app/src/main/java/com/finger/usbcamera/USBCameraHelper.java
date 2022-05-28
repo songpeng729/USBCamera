@@ -127,7 +127,7 @@ public class USBCameraHelper {
     }
 
     /**
-     * Save current picture to system and add picture to gallery.
+     * Save Bitmap to system and add picture to gallery.
      */
     public void saveBitmap2Picture(Bitmap bitmap) {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmssSSS").format(new Date());

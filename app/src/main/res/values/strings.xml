@@ -37,6 +37,7 @@
     <string name="stop_collect">stop collect</string>
     <string name="start_preview">start preview</string>
     <string name="stop_preview">stop preview</string>
+<!--    <string name="save_preview_img">save preview image</string>-->
     <string name="please_select_finger">please select finger</string>
     <string name="collecting">collecting</string>
     <string name="tv_contrast">contrast</string>

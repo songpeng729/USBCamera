@@ -39,16 +39,19 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
 
     public static final int MODEL_NORMAL = 0; //正常模式
     private final int GAIN_MAX = 48; //最大亮度
-    private final int EXP_MAX = 1050;//最大对比度
+    private final int EXP_MAX = 1050;//最大曝光度
+    private final int CONTRAST_MAX = 100;//最大对比度
 
     private final int GAIN_DEFAULT = 24; //亮度默认值
-    private final int EXP_DEFAULT = 500;//对比度默认值
+    private final int EXP_DEFAULT = 500;//曝光度默认值
+    private final int CONTRAST_DEFAULT = 50;//对比度默认值
     private final int WIDTH_DEFAULT = 640; // 固定宽度640
     private final int HEIGHT_DEFAULT = 640; // 固定高度640
 
     private MosaicFetcher mosaicFetcher;//指纹采集类
     private int gain = GAIN_DEFAULT; //当前亮度
-    private int exp = EXP_DEFAULT;//当前对比度
+    private int exp = EXP_DEFAULT;//当前曝光度
+    private int contrast =  CONTRAST_DEFAULT; //对比度
     private int width = WIDTH_DEFAULT; // 宽度
     private int height = HEIGHT_DEFAULT; // 高度
     private byte[] imgDataBuffer;//图像数据
@@ -349,6 +352,9 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
     public synchronized int getExp(){
         return MosaicNative.GetExposure();
     }
+    public synchronized int getContrast(){
+        return MosaicNative.GetContrast();
+    }
 
     public synchronized void setGain(int gain) {
         this.gain = Math.min(GAIN_MAX, Math.max(1, gain));
@@ -358,6 +364,11 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
     public synchronized void setExp(int exp) {
         this.exp = Math.min(EXP_MAX, Math.max(1, exp));
         MosaicNative.SetExposure(this.exp);
+    }
+
+    public synchronized void setContrast(int contrast) {
+        this.contrast = Math.min(CONTRAST_MAX, Math.max(1, contrast));
+        MosaicNative.SetContrast(this.contrast);
     }
 
     /**

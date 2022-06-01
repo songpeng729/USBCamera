@@ -204,6 +204,22 @@ JNIEXPORT jint JNICALL Java_centipede_livescan_MosaicNative_SetExposure
 JNIEXPORT jint JNICALL Java_centipede_livescan_MosaicNative_GetExposure
   (JNIEnv *, jclass);
 
+/*
+ * Class:     centipede_livescan_MosaicNative
+ * Method:    SetContrast
+ * Signature: (I)I
+ */
+JNIEXPORT jint JNICALL Java_centipede_livescan_MosaicNative_SetContrast
+  (JNIEnv *, jclass, jint);
+
+/*
+ * Class:     centipede_livescan_MosaicNative
+ * Method:    GetContrast
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL Java_centipede_livescan_MosaicNative_GetContrast
+  (JNIEnv *, jclass);
+
 #ifdef __cplusplus
 }
 #endif

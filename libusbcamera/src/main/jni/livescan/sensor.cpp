@@ -29,7 +29,12 @@ int sensor_int(int vid, int pid, int fd, int busnum, int devaddr, const char *us
     uvcCamera->getProcSupports(&supports);
     int min, max, def;
     uvcCamera->updateGainLimit(min, max, def);//亮度的控制权
+   __android_log_print(ANDROID_LOG_DEBUG,LOG_TAG,"updateGainLimit min %d max %d def %d",min, max, def);
     uvcCamera->updateExposureLimit(min, max, def);//对比度
+   __android_log_print(ANDROID_LOG_DEBUG,LOG_TAG,"updateExposureLimit min %d max %d def %d",min, max, def);
+    //uvcCamera->setExposureMode(1);
+    uvcCamera->updateContrastLimit(min, max, def);
+   __android_log_print(ANDROID_LOG_DEBUG,LOG_TAG,"updateContrastLimit min %d max %d def %d",min, max, def);
 
     return 1;
 }
@@ -54,12 +59,17 @@ int sensor_getGain(){
 }
 int sensor_setExp(int value){
     //1-1048
-    //请注意：是否需要设置曝光模式，这里设置成1
-    //uvcCamera->setExposureMode(1);
     return uvcCamera->setExposure(value);
 }
 int sensor_getExp(){
     return uvcCamera->getExposure();
+}
+int sensor_setContrast(int value){
+    //1-100
+    return uvcCamera->setContrast(value);
+}
+int sensor_getContrast(){
+    return uvcCamera->getContrast();
 }
 int sensor_getHeight(){
     // 640

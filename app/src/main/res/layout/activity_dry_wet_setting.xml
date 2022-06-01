@@ -45,25 +45,25 @@
                     android:background="@drawable/finger_btn_background"
                     android:text="@string/start_collect"
                     android:textColor="@drawable/finger_text_color" />
-                <Button
-                    android:id="@+id/drywet_dry_save_btn"
-                    android:layout_width="100dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_margin="10dp"
-                    android:background="@drawable/finger_btn_background"
-                    android:text="@string/btn_dry"
-                    android:textColor="@drawable/finger_text_color" />
-                <Button
-                    android:id="@+id/drywet_wet_save_btn"
-                    android:layout_width="100dp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:layout_alignParentRight="true"
-                    android:layout_gravity="center_horizontal"
-                    android:background="@drawable/finger_btn_background"
-                    android:text="@string/btn_wet"
-                    android:textColor="@drawable/finger_text_color" />
+<!--                <Button-->
+<!--                    android:id="@+id/drywet_dry_save_btn"-->
+<!--                    android:layout_width="100dp"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_gravity="center_horizontal"-->
+<!--                    android:layout_margin="10dp"-->
+<!--                    android:background="@drawable/finger_btn_background"-->
+<!--                    android:text="@string/btn_dry"-->
+<!--                    android:textColor="@drawable/finger_text_color" />-->
+<!--                <Button-->
+<!--                    android:id="@+id/drywet_wet_save_btn"-->
+<!--                    android:layout_width="100dp"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_margin="10dp"-->
+<!--                    android:layout_alignParentRight="true"-->
+<!--                    android:layout_gravity="center_horizontal"-->
+<!--                    android:background="@drawable/finger_btn_background"-->
+<!--                    android:text="@string/btn_wet"-->
+<!--                    android:textColor="@drawable/finger_text_color" />-->
 
 
             </LinearLayout>
@@ -74,22 +74,32 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/drywet_dry_value_tv"
+                    android:id="@+id/drywet_gain_value_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_margin="10dp"
-                    android:text="dry_value"
+                    android:text="@string/tv_gain"
                     android:textSize="20sp"
                     android:textColor="@color/blue" />
 
                 <TextView
-                    android:id="@+id/drywet_wet_value_tv"
+                    android:id="@+id/drywet_exp_value_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_margin="10dp"
-                    android:text="wet_value"
+                    android:text="@string/tv_exp"
+                    android:textSize="20sp"
+                    android:textColor="@color/blue" />
+
+                <TextView
+                    android:id="@+id/drywet_contrast_value_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_margin="10dp"
+                    android:text="@string/tv_contrast"
                     android:textSize="20sp"
                     android:textColor="@color/blue" />
             </LinearLayout>
@@ -159,15 +169,39 @@
                     android:textSize="20sp" />
             </RelativeLayout>
 
-            <TextView
-                android:id="@+id/drywet_gain_exp"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="20dp"
-                android:lines="1"
-                android:text="亮度 24，对比度 500"
-                android:textSize="24sp" />
+                android:layout_height="40dp"
+                android:layout_margin="10dp">
+
+                <TextView
+                    android:id="@+id/drywet_contrast_tv"
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text="@string/tv_contrast"
+                    android:textSize="20sp" />
+
+                <SeekBar
+                    android:id="@+id/drywet_contrast_sb"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toStartOf="@id/drywet_contrast_percent_tv"
+                    android:layout_toEndOf="@id/drywet_contrast_tv"
+                    android:max="100" />
+
+                <TextView
+                    android:id="@+id/drywet_contrast_percent_tv"
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:gravity="end"
+                    android:text="100"
+                    android:textSize="20sp" />
+            </RelativeLayout>
+
 
             <Button
                 android:id="@+id/drywet_exit_btn"

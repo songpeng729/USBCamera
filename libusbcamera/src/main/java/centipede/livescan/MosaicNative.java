@@ -6,6 +6,8 @@ public class MosaicNative {
     public static native int GetGain();
     public static native int SetExposure(int nExp);//1-1048
     public static native int GetExposure();
+    public static native int SetContrast(int nContrast);//1-100
+    public static native int GetContrast();
 
     public static native void FastInit(int venderId, int productId, int fileDescriptor, int busNum, int devAddr, String usbfs);
 

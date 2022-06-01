@@ -19,6 +19,8 @@ int sensor_setGain(int value); //1-48
 int sensor_getGain();
 int sensor_setExp(int value);//1-1048
 int sensor_getExp();
+int sensor_setContrast(int value);//1-100
+int sensor_getContrast();
 int sensor_getHeight(); // 640
 int sensor_getWidth();	// 640
 int sensor_LEDOn();

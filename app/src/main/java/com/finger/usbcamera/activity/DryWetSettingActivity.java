@@ -14,13 +14,11 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.finger.usbcamera.USBCameraHelper;
 import com.finger.usbcamera.view.MosaicSurfaceView;
 import com.serenegiant.annotation.Nullable;
 import com.finger.usbcamera.R;
 import com.serenegiant.usb.DeviceFilter;
 import com.serenegiant.usb.USBMonitor;
-import com.serenegiant.widget.UVCCameraTextureView;
 
 import java.util.List;
 
@@ -35,8 +33,8 @@ public class DryWetSettingActivity extends Activity implements View.OnClickListe
     private USBMonitor.UsbControlBlock usbControlBlock;
 
     private MosaicSurfaceView fingerSurfaceView;//指纹显示
-    private SeekBar gainSeekBar, expSeekBar;
-    private TextView gainTextView, expTextView, param, dryValue, wetValue;
+    private SeekBar gainSeekBar, expSeekBar, contrastSeekBar;
+    private TextView gainTextView, expTextView, gainValue, expValue, contrastValue;
     private Button startButton,saveDryButton,saveWetButton,exitButton;
 
     @Override
@@ -59,56 +57,65 @@ public class DryWetSettingActivity extends Activity implements View.OnClickListe
 
         gainSeekBar = findViewById(R.id.drywet_gain_sb);
         expSeekBar = findViewById(R.id.drywet_exp_sb);
-        saveDryButton = findViewById(R.id.drywet_dry_save_btn);
-        saveWetButton = findViewById(R.id.drywet_wet_save_btn);
+        contrastSeekBar = findViewById(R.id.drywet_contrast_sb);
+//        saveDryButton = findViewById(R.id.drywet_dry_save_btn);
+//        saveWetButton = findViewById(R.id.drywet_wet_save_btn);
         exitButton = findViewById(R.id.drywet_exit_btn);
-        gainTextView = findViewById(R.id.drywet_gain_tv);
-        expTextView = findViewById(R.id.drywet_exp_tv);
-        dryValue = findViewById(R.id.drywet_dry_value_tv);
-        wetValue = findViewById(R.id.drywet_wet_value_tv);
+//        gainTextView = findViewById(R.id.drywet_gain_tv);
+//        expTextView = findViewById(R.id.drywet_exp_tv);
+        gainValue = findViewById(R.id.drywet_gain_value_tv);
+        expValue = findViewById(R.id.drywet_exp_value_tv);
+        contrastValue = findViewById(R.id.drywet_contrast_value_tv);
 
-        gainSeekBar.setProgress(gainSeekBar.getMax() / 2);
-        expSeekBar.setProgress(expSeekBar.getMax() / 2);
     }
     private void bindListener(){
         startButton.setOnClickListener(this);
-        saveDryButton.setOnClickListener(this);
-        saveWetButton.setOnClickListener(this);
         exitButton.setOnClickListener(this);
 
         gainSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                dryValue.setText(""+progress);
-                fingerSurfaceView.setGain(progress);
+                gainValue.setText(""+progress);
+                if(fingerSurfaceView.isPreview()){
+                    fingerSurfaceView.setGain(progress);
+                }
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
+            public void onStartTrackingTouch(SeekBar seekBar) { }
 
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
+            public void onStopTrackingTouch(SeekBar seekBar) { }
         });
         expSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                wetValue.setText(""+progress);
-                fingerSurfaceView.setExp(progress);
+                expValue.setText(""+progress);
+                if(fingerSurfaceView.isPreview()){
+                    fingerSurfaceView.setExp(progress);
+                }
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
+            public void onStartTrackingTouch(SeekBar seekBar) { }
 
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) { }
+        });
+        contrastSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                contrastValue.setText(""+progress);
+                if(fingerSurfaceView.isPreview()){
+                    fingerSurfaceView.setContrast(progress);
+                }
             }
 
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
+            public void onStartTrackingTouch(SeekBar seekBar) { }
 
-            }
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) { }
         });
 
         mContext = this;
@@ -161,14 +168,12 @@ public class DryWetSettingActivity extends Activity implements View.OnClickListe
             case R.id.drywet_start_btn:
                 Log.d(TAG, "onClick: drywet_start_btn");
                 fingerSurfaceView.startPreview(usbControlBlock);
-                break;
-            case  R.id.drywet_dry_save_btn:
-                int gain = fingerSurfaceView.getGain();
-                Log.d(TAG, "getGain:"+ gain);
-                break;
-            case  R.id.drywet_wet_save_btn:
-                int exp = fingerSurfaceView.getExp();
-                Log.d(TAG, "getExp:"+ exp);
+
+                //初始化进度条
+                gainSeekBar.setProgress(fingerSurfaceView.getGain());
+                expSeekBar.setProgress(fingerSurfaceView.getExp());
+                contrastSeekBar.setProgress(fingerSurfaceView.getContrast());
+
                 break;
             case  R.id.drywet_exit_btn:
                 fingerSurfaceView.stopPreview();

@@ -132,7 +132,7 @@
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
                     android:gravity="end"
-                    android:text="48"
+                    android:text="100"
                     android:textSize="20sp" />
             </RelativeLayout>
 
@@ -165,7 +165,7 @@
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
                     android:gravity="end"
-                    android:text="1050"
+                    android:text="100"
                     android:textSize="20sp" />
             </RelativeLayout>
 

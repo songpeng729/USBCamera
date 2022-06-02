@@ -22,6 +22,10 @@ import com.serenegiant.usb.USBMonitor;
 
 import java.util.List;
 
+import static com.finger.usbcamera.view.MosaicSurfaceView.CONTRAST_MAX;
+import static com.finger.usbcamera.view.MosaicSurfaceView.EXP_MAX;
+import static com.finger.usbcamera.view.MosaicSurfaceView.GAIN_MAX;
+
 /**
  * 指纹干湿指设置
  */
@@ -34,8 +38,8 @@ public class DryWetSettingActivity extends Activity implements View.OnClickListe
 
     private MosaicSurfaceView fingerSurfaceView;//指纹显示
     private SeekBar gainSeekBar, expSeekBar, contrastSeekBar;
-    private TextView gainTextView, expTextView, gainValue, expValue, contrastValue;
-    private Button startButton,saveDryButton,saveWetButton,exitButton;
+    private TextView gainPercent, expPercent, contrastPercent, gainValue, expValue, contrastValue;
+    private Button startButton,exitButton;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -54,15 +58,16 @@ public class DryWetSettingActivity extends Activity implements View.OnClickListe
         fingerViewLayout.addView(fingerSurfaceView);
 
         startButton = findViewById(R.id.drywet_start_btn);
+        exitButton = findViewById(R.id.drywet_exit_btn);
 
         gainSeekBar = findViewById(R.id.drywet_gain_sb);
         expSeekBar = findViewById(R.id.drywet_exp_sb);
         contrastSeekBar = findViewById(R.id.drywet_contrast_sb);
-//        saveDryButton = findViewById(R.id.drywet_dry_save_btn);
-//        saveWetButton = findViewById(R.id.drywet_wet_save_btn);
-        exitButton = findViewById(R.id.drywet_exit_btn);
-//        gainTextView = findViewById(R.id.drywet_gain_tv);
-//        expTextView = findViewById(R.id.drywet_exp_tv);
+
+        gainPercent = findViewById(R.id.drywet_gain_percent_tv);
+        expPercent = findViewById(R.id.drywet_exp_percent_tv);
+        contrastPercent = findViewById(R.id.drywet_contrast_percent_tv);
+
         gainValue = findViewById(R.id.drywet_gain_value_tv);
         expValue = findViewById(R.id.drywet_exp_value_tv);
         contrastValue = findViewById(R.id.drywet_contrast_value_tv);
@@ -76,6 +81,7 @@ public class DryWetSettingActivity extends Activity implements View.OnClickListe
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 gainValue.setText(""+progress);
+                gainPercent.setText(""+progress*100/GAIN_MAX);
                 if(fingerSurfaceView.isPreview()){
                     fingerSurfaceView.setGain(progress);
                 }
@@ -91,6 +97,7 @@ public class DryWetSettingActivity extends Activity implements View.OnClickListe
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 expValue.setText(""+progress);
+                expPercent.setText(""+progress*100/EXP_MAX);
                 if(fingerSurfaceView.isPreview()){
                     fingerSurfaceView.setExp(progress);
                 }
@@ -106,6 +113,7 @@ public class DryWetSettingActivity extends Activity implements View.OnClickListe
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 contrastValue.setText(""+progress);
+                contrastPercent.setText(""+progress*100/CONTRAST_MAX);
                 if(fingerSurfaceView.isPreview()){
                     fingerSurfaceView.setContrast(progress);
                 }
@@ -167,12 +175,25 @@ public class DryWetSettingActivity extends Activity implements View.OnClickListe
         switch (v.getId()){
             case R.id.drywet_start_btn:
                 Log.d(TAG, "onClick: drywet_start_btn");
+                if(usbControlBlock == null){
+                    Toast.makeText(mContext, "未连接设备", Toast.LENGTH_SHORT).show();
+                    break;
+                }
                 fingerSurfaceView.startPreview(usbControlBlock);
 
                 //初始化进度条
-                gainSeekBar.setProgress(fingerSurfaceView.getGain());
-                expSeekBar.setProgress(fingerSurfaceView.getExp());
-                contrastSeekBar.setProgress(fingerSurfaceView.getContrast());
+                int gain = fingerSurfaceView.getGain();
+                int exp = fingerSurfaceView.getExp();
+                int contrast = fingerSurfaceView.getContrast();
+                gainSeekBar.setProgress(gain);
+                expSeekBar.setProgress(exp);
+                contrastSeekBar.setProgress(contrast);
+                gainValue.setText(""+gain);
+                expValue.setText(""+exp);
+                contrastValue.setText(""+contrast);
+                gainPercent.setText(""+gain*100/GAIN_MAX);
+                expPercent.setText(""+exp*100/EXP_MAX);
+                contrastPercent.setText(""+contrast*100/CONTRAST_MAX);
 
                 break;
             case  R.id.drywet_exit_btn:

@@ -38,9 +38,9 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
     private final Object sync = new Object();//同步锁，当调用MosaicNative方法改变相机状态时使用
 
     public static final int MODEL_NORMAL = 0; //正常模式
-    private final int GAIN_MAX = 48; //最大亮度
-    private final int EXP_MAX = 1050;//最大曝光度
-    private final int CONTRAST_MAX = 100;//最大对比度
+    public static final int GAIN_MAX = 48; //最大亮度
+    public static final int EXP_MAX = 1050;//最大曝光度
+    public static final int CONTRAST_MAX = 100;//最大对比度
 
     private final int GAIN_DEFAULT = 24; //亮度默认值
     private final int EXP_DEFAULT = 500;//曝光度默认值

@@ -43,9 +43,9 @@
     <string name="tv_contrast">对比度</string>
     <string name="tv_light">亮度</string>
     <string name="tv_dry_finger">干指</string>
-    <string name="tv_gain">GAIN</string>
+    <string name="tv_gain">亮度</string>
     <string name="tv_wet_finger">湿指</string>
-    <string name="tv_exp">EXP</string>
+    <string name="tv_exp">增益</string>
     <string name="tv_save">保存</string>
     <string name="btn_dry">保存干指模式</string>
     <string name="btn_wet">保存湿指模式</string>

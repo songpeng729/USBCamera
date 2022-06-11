@@ -84,12 +84,13 @@ public class MosaicActivity extends Activity implements View.OnClickListener, Mo
         mUSBMonitor = new USBMonitor(mContext, new USBMonitor.OnDeviceConnectListener() {
             @Override
             public void onAttach(UsbDevice device) {
-                Toast.makeText(mContext, "onAttach", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, "onAttach device vid:"+ device.getVendorId() +" pid:"+device.getProductId() , Toast.LENGTH_SHORT).show();
+
                 final List<DeviceFilter> filter = DeviceFilter.getDeviceFilters(mContext,
                         com.finger.usbcamera.R.xml.device_filter);
                 final List<UsbDevice> deviceList = mUSBMonitor.getDeviceList(filter);
 
-                if (deviceList == null || deviceList.size() == 0) {
+                if (deviceList.size() == 0) {
                     return;
                 }
 
@@ -105,7 +106,7 @@ public class MosaicActivity extends Activity implements View.OnClickListener, Mo
 
             @Override
             public void onConnect(UsbDevice device, USBMonitor.UsbControlBlock ctrlBlock, boolean createNew) {
-                Toast.makeText(mContext, "onConnect", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, "onConnect vid:"+ ctrlBlock.getVenderId() + " pid:"+ ctrlBlock.getProductId(), Toast.LENGTH_SHORT).show();
                 usbControlBlock = ctrlBlock;// 得到UsbControlBlock,用于链接usb设备
                 fingerSurfaceView.releaseCamera();
             }

@@ -7,7 +7,7 @@
     android:paddingTop="10dp" >
 
     <LinearLayout
-        android:id="@+id/fingerInfo"
+        android:id="@+id/finger_view"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -38,6 +38,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/finger_type_background"
                 android:button="@null"
+                android:checked="true"
                 android:gravity="center"
                 android:paddingLeft="80dp"
                 android:text="@string/finger_roll"
@@ -51,7 +52,6 @@
                 android:layout_weight="1"
                 android:background="@drawable/finger_type_background"
                 android:button="@null"
-                android:checked="false"
                 android:gravity="center"
                 android:paddingRight="80dp"
                 android:text="@string/finger_flat"
@@ -59,7 +59,7 @@
         </RadioGroup>
 
         <GridLayout
-            android:id="@+id/gl_finger"
+            android:id="@+id/finger_grid_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/finger_type_group"
@@ -153,7 +153,7 @@
             android:id="@+id/gather_status_tv"
             android:layout_width="match_parent"
             android:layout_height="35dp"
-            android:layout_below="@id/gl_finger"
+            android:layout_below="@id/finger_grid_layout"
             android:background="@color/blue_light"
             android:gravity="left"
             android:padding="5dp"
@@ -163,7 +163,7 @@
             android:textSize="18sp" />
 
         <TableLayout
-            android:id="@+id/tl_info"
+            android:id="@+id/finger_info_table"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_below="@id/gather_status_tv"
@@ -206,27 +206,37 @@
             android:layout_marginTop="10dp"
             android:layout_marginRight="10dp"
             android:layout_marginBottom="10dp"
-            android:layout_toRightOf="@+id/tl_info"
+            android:layout_toRightOf="@+id/finger_info_table"
             android:orientation="vertical">
 
             <Button
                 android:id="@+id/finger_start_gather_btn"
-                android:layout_width="130dp"
+                android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:background="@drawable/finger_btn_background"
                 android:text="@string/start_collect"
                 android:textColor="@drawable/finger_text_color" />
 
+<!--            <Button-->
+<!--                android:id="@+id/finger_dry_wet_setting_btn"-->
+<!--                android:layout_width="100dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginTop="10dp"-->
+<!--                android:background="@drawable/finger_btn_background"-->
+<!--                android:text="@string/dry_wet_setting"-->
+<!--                android:textColor="@drawable/finger_text_color" />-->
+
             <Button
-                android:id="@+id/finger_dry_wet_setting_btn"
-                android:layout_width="130dp"
+                android:id="@+id/finger_save_btn"
+                android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="10dp"
                 android:background="@drawable/finger_btn_background"
-                android:text="@string/dry_wet_setting"
+                android:text="@string/tv_save"
                 android:textColor="@drawable/finger_text_color" />
 
         </LinearLayout>
+
     </RelativeLayout>
 
 </LinearLayout>

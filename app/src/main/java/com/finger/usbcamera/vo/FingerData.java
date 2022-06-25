@@ -1,7 +1,7 @@
 package com.finger.usbcamera.vo;
 
 /**
- * Created by songpeng on 2018/3/11.
+ * 单枚指纹数据
  */
 public class FingerData {
     public static final int FINGER_STATUS_NORMAL = 0;//指纹正常
@@ -15,9 +15,9 @@ public class FingerData {
     private byte[] image;//图像数据
     private byte[] feature;//特征数据
 
-    public FingerData(int fgp, boolean isFlat){
+    public FingerData(int fgp){
         this.fgp = fgp;
-        this.isFlat = isFlat;
+        this.isFlat = fgp > 10;
         this.status = FINGER_STATUS_NORMAL;
     }
 

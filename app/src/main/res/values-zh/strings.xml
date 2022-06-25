@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">FingerUSB2</string>
+    <string name="app_name">指纹USB采集</string>
     <string name="action_about">关于</string>
     <string name="action_usbinfo">USB设备信息</string>
     <string name="diag_about_title">关于</string>

@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import com.finger.usbcamera.listener.MosaicImageListener;
+import com.finger.usbcamera.vo.FingerData;
 import com.serenegiant.usb.USBMonitor;
 import com.serenegiant.usb.UVCCamera;
 
@@ -65,6 +66,7 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
     private Paint paint;//白色画笔
     private Matrix matrix;
     private SurfaceHolder surfaceHolder;
+    private boolean drawCrossCenter = true;//是否绘制十字中心
 
     private MosaicImageListener mosaicImageListener;//拼接图像监听
 
@@ -103,11 +105,14 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
          post是后乘，当前的矩阵乘以参数给出的矩阵。可以连续多次使用post，来完成所需的整个变换
          pre是前乘，参数给出的矩阵乘以当前的矩阵。所以操作是在当前矩阵的最前面发生的。
          */
-        matrix.setScale(1.6f, 1.6f);//1.6倍放大1024*1024
+        matrix.setScale(1f, 1f);//1.6倍放大1024*1024
         matrix.postScale(1, 1);
 
         surfaceHolder = getHolder();
         surfaceHolder.addCallback(this);
+    }
+    public void setScale(float sx, float sy){
+        matrix.setScale(sx, sy);
     }
 
     @Override
@@ -226,7 +231,7 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
     private void drawImage(byte[] buffer) {
         //白色背景画布
         Canvas canvas_bg = surfaceHolder.lockCanvas(null);
-        if (canvas == null)
+        if (canvas == null || canvas_bg == null)
             Log.e(TAG, "drawImage canvas is null");
         else {
             ByteBuffer byteBuffer = ByteBuffer.wrap(buffer);
@@ -236,14 +241,16 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
             canvas.drawBitmap(bitmap, 0, 0, paint);
 
             //中心框300*300, 并有十字中心
-            Paint p = new Paint();
-            p.setColor(Color.BLUE);
-            p.setStyle(Paint.Style.STROKE);
-            p.setPathEffect(new DashPathEffect(new float[]{4,4},0));//虚线
-            canvas.drawRect(170,170,470,470, p);
-            p.setColor(Color.GREEN);
-            canvas.drawLine(0,320, 640, 320, p);
-            canvas.drawLine(320,0, 320, 640, p);
+            if(drawCrossCenter){
+                Paint p = new Paint();
+                p.setColor(Color.BLUE);
+                p.setStyle(Paint.Style.STROKE);
+                p.setPathEffect(new DashPathEffect(new float[]{4,4},0));//虚线
+                canvas.drawRect(170,170,470,470, p);
+                p.setColor(Color.GREEN);
+                canvas.drawLine(0,320, 640, 320, p);
+                canvas.drawLine(320,0, 320, 640, p);
+            }
 
             canvas_bg.drawColor(Color.WHITE);
             canvas_bg.drawBitmap(bitmapRgb, matrix, paint);
@@ -397,6 +404,17 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
         return featureData;
     }
 
+    /**
+     * 显示指纹图像
+     * @param fingerData
+     */
+    public void showFingerData(FingerData fingerData){
+        if(fingerData.getImage() != null){
+            drawImage(fingerData.getImage());
+        }else{
+            clearImage();
+        }
+    }
 
     /************以下是预览相机功能************/
 

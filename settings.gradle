@@ -1,2 +1,2 @@
-include ':app', ':libusbcamera'
+include ':app', ':libusbcamera', ':ocr_ui'
 rootProject.name='FingerUSBCamera'

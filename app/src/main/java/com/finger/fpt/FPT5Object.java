@@ -7,8 +7,6 @@ import com.finger.fpt.tp.*;
 import javax.xml.bind.annotation.*;
 import java.util.List;
 
-/**
- */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name="package")
 public class FPT5Object {

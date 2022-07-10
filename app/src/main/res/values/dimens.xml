@@ -18,4 +18,8 @@
     <dimen name="fab_menu_6">335dp</dimen>
     <dimen name="fab_menu_7">390dp</dimen>
     <dimen name="fab_menu_8">445dp</dimen>
+
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="result_pop_padding">2dp</dimen>
 </resources>

@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'org.greenrobot.greendao' // apply plugin greendao
 
 android {
     compileSdkVersion rootProject.ext.versionCompiler
@@ -24,6 +25,14 @@ android {
         targetCompatibility rootProject.ext.javaTargetCompatibility
     }
 //    ndkVersion '23.0.7344513'
+
+    greendao {
+        schemaVersion 1 //数据库版本号
+        daoPackage 'com.finger.usbcamera.db.greendao'//设置DaoMaster、DaoSession、Dao包名
+        targetGenDir 'src/main/java'//设置DaoMaster、DaoSession、Dao目录
+        //targetGenDirTest：设置生成单元测试目录
+        //generateTests：设置自动生成单元测试用例
+    }
 }
 repositories{
     flatDir {
@@ -41,6 +50,8 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
     implementation "ch.acra:acra-notification:$acraVersion"
+    implementation 'org.greenrobot:greendao:3.3.0' // add library greendao
+
     implementation project(':libusbcamera')
     implementation project(':ocr_ui')
     compile(name: 'ocrsdk', ext: 'aar')

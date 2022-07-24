@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -30,8 +31,11 @@ import com.finger.usbcamera.R;
 
 import java.io.File;
 
+/**
+ * 身份证采集
+ */
 public class IDCardActivity extends AppCompatActivity {
-
+    private final String TAG = "IDCardActivity";
 
     private static final int REQUEST_CODE_PICK_IMAGE_FRONT = 201;
     private static final int REQUEST_CODE_PICK_IMAGE_BACK = 202;

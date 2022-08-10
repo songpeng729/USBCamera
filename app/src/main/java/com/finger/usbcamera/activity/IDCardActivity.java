@@ -28,8 +28,16 @@ import com.baidu.ocr.ui.camera.CameraActivity;
 import com.baidu.ocr.ui.camera.CameraNativeHelper;
 import com.baidu.ocr.ui.camera.CameraView;
 import com.finger.usbcamera.R;
+import com.finger.usbcamera.USBCameraAPP;
+import com.finger.usbcamera.db.entity.Person;
+import com.finger.usbcamera.db.greendao.PersonDao;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
+import java.util.Date;
+import java.util.UUID;
 
 /**
  * 身份证采集
@@ -207,6 +215,7 @@ public class IDCardActivity extends AppCompatActivity {
             @Override
             public void onResult(IDCardResult result) {
                 if (result != null) {
+                    saveIDCardResult(result);
                     alertText("", result.toString());
                 }
             }
@@ -216,6 +225,25 @@ public class IDCardActivity extends AppCompatActivity {
                 alertText("", error.getMessage());
             }
         });
+    }
+
+    /**
+     * 保存身份证信息
+     * @param idCardResult
+     */
+    private void saveIDCardResult(IDCardResult idCardResult){
+        Person person = new Person();
+        person.setName(idCardResult.getName().getWords());
+        person.setSex(idCardResult.getGender().getWords());
+        person.setAddress(idCardResult.getAddress().getWords());
+        person.setIdCardNo(idCardResult.getIdNumber().getWords());
+        person.setNation(idCardResult.getEthnic().getWords());
+        person.setBirthday(idCardResult.getBirthday().getWords());
+        person.setId(UUID.randomUUID().toString().replace("-",""));
+        person.setGatherDate(new Date());
+
+        PersonDao personDao = USBCameraAPP.getInstances().getDaoSession().getPersonDao();
+        personDao.insert(person);
     }
 
     @Override

@@ -100,12 +100,12 @@
             android:textSize="18sp"
             android:text="@string/id_card_gender"/>
 
-        <EditText
+        <Spinner
             android:id="@+id/id_card_gender_edit"
             android:layout_width="220dp"
             android:layout_height="wrap_content"
             android:textSize="18sp"
-            android:singleLine="true" />
+            android:entries="@array/gender" />
 
     </LinearLayout>
     <LinearLayout
@@ -193,5 +193,11 @@
             android:layout_height="wrap_content"
             android:textSize="18sp" />
     </LinearLayout>
+    <Button
+        android:text="保存"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/id_card_save"
+        tools:ignore="HardcodedText"/>
 
 </LinearLayout>

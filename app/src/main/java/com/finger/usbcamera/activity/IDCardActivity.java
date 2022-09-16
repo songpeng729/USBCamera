@@ -10,8 +10,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -48,7 +50,9 @@ public class IDCardActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_PICK_IMAGE_BACK = 202;
     private static final int REQUEST_CODE_CAMERA = 102;
 
-    private TextView name, idCardNo, gender, ethnic, nationality, birthday, address;
+    private TextView name, idCardNo, ethnic, birthday, address;
+    private Button saveBtn;
+    private Spinner gender;
 
     private TextView infoTextView;
     private AlertDialog.Builder alertDialog;
@@ -94,6 +98,25 @@ public class IDCardActivity extends AppCompatActivity {
         ethnic = findViewById(R.id.id_card_ethnic_edit);
         address = findViewById(R.id.id_card_address_edit);
         birthday = findViewById(R.id.id_card_birthday_edit);
+        saveBtn = findViewById(R.id.id_card_save);
+
+        saveBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Person person = new Person();
+                person.setName(name.getText().toString());
+                person.setGender(gender.getSelectedItem().toString());
+                person.setAddress(address.getText().toString());
+                person.setIdCardNo(idCardNo.getText().toString());
+                person.setEthnic(ethnic.getText().toString());
+                person.setBirthday(birthday.getText().toString());
+                person.setId(UUID.randomUUID().toString().replace("-",""));
+                person.setGatherDate(new Date());
+
+                PersonDao personDao = USBCameraAPP.getInstances().getDaoSession().getPersonDao();
+                personDao.insert(person);
+            }
+        });
 
         //通过文件方式进行授权
         initAccessTokenLicenseFile();
@@ -257,13 +280,28 @@ public class IDCardActivity extends AppCompatActivity {
         PersonDao personDao = USBCameraAPP.getInstances().getDaoSession().getPersonDao();
         personDao.insert(person);
     }
+
     private void setIDCardResult(IDCardResult idCardResult){
         name.setText(idCardResult.getName().getWords());
-        gender.setText(idCardResult.getGender().getWords());
+        setGender(idCardResult.getGender().getWords());
         address.setText(idCardResult.getAddress().getWords());
         idCardNo.setText(idCardResult.getIdNumber().getWords());
         ethnic.setText(idCardResult.getEthnic().getWords());
         birthday.setText(idCardResult.getBirthday().getWords());
+    }
+
+    /**
+     * 设置性别, 下拉框选中
+     * @param genderString
+     */
+    private void setGender(String genderString){
+        SpinnerAdapter adapter= gender.getAdapter();
+        for(int i = 0; i < adapter.getCount(); i++){
+            if(adapter.getItem(i).toString().equals(genderString)){
+                gender.setSelection(i);
+                break;
+            }
+        }
     }
 
     @Override

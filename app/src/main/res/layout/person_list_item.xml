@@ -18,7 +18,8 @@
             android:id="@+id/person_photo"
             android:layout_width="100dp"
             android:layout_height="125dp"
-            android:layout_gravity="center" />
+            android:layout_gravity="center"
+            android:src="@mipmap/unknown_photo"/>
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -54,7 +55,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="25dp"
                 android:layout_gravity="left"
-                android:text="内容"
+                android:text="地址"
                 android:textSize="20sp" />
             <TextView
                 android:id="@+id/gather_time"

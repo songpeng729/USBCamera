@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.finger.usbcamera.R;
 import com.finger.usbcamera.db.entity.Person;
+import com.finger.usbcamera.util.DateUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,8 +44,8 @@ public class PersonListAdapter extends RecyclerView.Adapter<PersonListAdapter.Pe
         holder.name.setText(person.getName());
         holder.gender.setText(person.getGender());
         holder.idCardNo.setText(person.getIdCardNo());
-        holder.gatherTime.setText("");
         holder.address.setText(person.getAddress());
+        holder.gatherTime.setText(DateUtils.date2DateTimeString(person.getGatherDate()));
 //        holder.personListItemLayout.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View view) {

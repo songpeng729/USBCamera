@@ -27,10 +27,17 @@ public class Person {
      */
     @Property(nameInDb = "idcardno")
     private String idCardNo;
-    @Property(nameInDb = "sex")
-    private String sex;
-    @Property(nameInDb = "nation")
-    private String nation;
+
+    /**
+     * 性别
+     */
+    @Property(nameInDb = "gender")
+    private String gender;
+    /**
+     * 民族
+     */
+    @Property(nameInDb = "ethnic")
+    private String ethnic;
     @Property(nameInDb = "nationality")
     private String nationality;
     @Property(nameInDb = "birthday")
@@ -40,17 +47,16 @@ public class Person {
     @Property(nameInDb = "gather_date")
     private Date gatherDate;
 
-
-    @Generated(hash = 1404527497)
+    @Generated(hash = 1670348414)
     public Person(String id, String personId, String name, String idCardNo,
-            String sex, String nation, String nationality, String birthday,
+            String gender, String ethnic, String nationality, String birthday,
             String address, Date gatherDate) {
         this.id = id;
         this.personId = personId;
         this.name = name;
         this.idCardNo = idCardNo;
-        this.sex = sex;
-        this.nation = nation;
+        this.gender = gender;
+        this.ethnic = ethnic;
         this.nationality = nationality;
         this.birthday = birthday;
         this.address = address;
@@ -60,7 +66,6 @@ public class Person {
     @Generated(hash = 1024547259)
     public Person() {
     }
-
 
     public String getId() {
         return id;
@@ -94,20 +99,20 @@ public class Person {
         this.idCardNo = idCardNo;
     }
 
-    public String getSex() {
-        return sex;
+    public String getGender() {
+        return gender;
     }
 
-    public void setSex(String sex) {
-        this.sex = sex;
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 
-    public String getNation() {
-        return nation;
+    public String getEthnic() {
+        return ethnic;
     }
 
-    public void setNation(String nation) {
-        this.nation = nation;
+    public void setEthnic(String ethnic) {
+        this.ethnic = ethnic;
     }
 
     public String getNationality() {

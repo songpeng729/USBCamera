@@ -33,14 +33,17 @@ public class PersonManagerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_person_manager, container, false);
+        personDao = USBCameraAPP.getInstances().getDaoSession().getPersonDao();
+        view = inflater.inflate(R.layout.fragment_person_manager, container, false);
+
+        initRecyclerView();
+        initData();
+
+        return view;
     }
 
     private void initData(){
-        personDao = USBCameraAPP.getInstances().getDaoSession().getPersonDao();
         QueryBuilder<Person> queryBuilder = personDao.queryBuilder();
-        long count = queryBuilder.count();
         personList = queryBuilder.list();
     }
     private void initRecyclerView () {

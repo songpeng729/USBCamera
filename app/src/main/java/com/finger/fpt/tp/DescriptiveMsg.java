@@ -53,7 +53,7 @@ public class DescriptiveMsg {
      * 性别代码
      */
     @XmlElement(name = "xbdm")
-    private String  sex = "";
+    private String  gender = "";
     /**
      * 出生日期
      */
@@ -68,7 +68,7 @@ public class DescriptiveMsg {
      * 民族代码
      */
     @XmlElement(name = "mzdm")
-    private String  nation = "";
+    private String  ethnic= "";
     /**
      * 常用证件代码
      */
@@ -83,7 +83,7 @@ public class DescriptiveMsg {
      * 户籍地址_行政区划代码
      */
     @XmlElement(name = "hjdz_xzqhdm")
-    private String  hukouAdministrativeDivisionCode = "";
+    private String  hukouAddressCode = "";
     /**
      * 户籍地址_地址名称
      */
@@ -93,7 +93,7 @@ public class DescriptiveMsg {
      * 现住址_行政区划代码
      */
     @XmlElement(name = "xzz_xzqhdm")
-    private String  houseAdministrativeDivisionCode = "";
+    private String  houseAddressCode = "";
     /**
      * 现住址_地址名称
      */
@@ -161,14 +161,6 @@ public class DescriptiveMsg {
         this.alias = alias;
     }
 
-    public String getSex() {
-        return sex;
-    }
-
-    public void setSex(String sex) {
-        this.sex = sex;
-    }
-
     public String getBirthday() {
         return birthday;
     }
@@ -185,12 +177,20 @@ public class DescriptiveMsg {
         this.nationality = nationality;
     }
 
-    public String getNation() {
-        return nation;
+    public String getGender() {
+        return gender;
     }
 
-    public void setNation(String nation) {
-        this.nation = nation;
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getEthnic() {
+        return ethnic;
+    }
+
+    public void setEthnic(String ethnic) {
+        this.ethnic = ethnic;
     }
 
     public String getCredentialsCode() {
@@ -209,14 +209,6 @@ public class DescriptiveMsg {
         this.credentialsNo = credentialsNo;
     }
 
-    public String getHukouAdministrativeDivisionCode() {
-        return hukouAdministrativeDivisionCode;
-    }
-
-    public void setHukouAdministrativeDivisionCode(String hukouAdministrativeDivisionCode) {
-        this.hukouAdministrativeDivisionCode = hukouAdministrativeDivisionCode;
-    }
-
     public String getHukouAddress() {
         return hukouAddress;
     }
@@ -225,12 +217,20 @@ public class DescriptiveMsg {
         this.hukouAddress = hukouAddress;
     }
 
-    public String getHouseAdministrativeDivisionCode() {
-        return houseAdministrativeDivisionCode;
+    public String getHukouAddressCode() {
+        return hukouAddressCode;
     }
 
-    public void setHouseAdministrativeDivisionCode(String houseAdministrativeDivisionCode) {
-        this.houseAdministrativeDivisionCode = houseAdministrativeDivisionCode;
+    public void setHukouAddressCode(String hukouAddressCode) {
+        this.hukouAddressCode = hukouAddressCode;
+    }
+
+    public String getHouseAddressCode() {
+        return houseAddressCode;
+    }
+
+    public void setHouseAddressCode(String houseAddressCode) {
+        this.houseAddressCode = houseAddressCode;
     }
 
     public String getHouseAddress() {

@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.finger.usbcamera.R;
 import com.finger.usbcamera.db.entity.Person;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,7 +22,7 @@ import java.util.List;
  */
 public class PersonListAdapter extends RecyclerView.Adapter<PersonListAdapter.PersonListViewHolder>{
     private Context context;
-    private List<Person> personList;
+    private List<Person> personList = new ArrayList<Person>();
 
     public PersonListAdapter(Context context, List<Person> personList){
         this.context = context;
@@ -40,7 +41,7 @@ public class PersonListAdapter extends RecyclerView.Adapter<PersonListAdapter.Pe
     public void onBindViewHolder(@NonNull PersonListViewHolder holder, int position) {
         Person person = personList.get(position);
         holder.name.setText(person.getName());
-        holder.sex.setText(person.getSex());
+        holder.gender.setText(person.getGender());
         holder.idCardNo.setText(person.getIdCardNo());
         holder.gatherTime.setText("");
         holder.address.setText(person.getAddress());
@@ -54,14 +55,14 @@ public class PersonListAdapter extends RecyclerView.Adapter<PersonListAdapter.Pe
 
     @Override
     public int getItemCount() {
-        return personList.size();
+        return personList != null ? personList.size() : 0;
     }
 
     public class PersonListViewHolder extends RecyclerView.ViewHolder{
 
         ImageView photo;
         TextView name;
-        TextView sex;
+        TextView gender;
         TextView idCardNo;
         TextView gatherTime;
         TextView address;
@@ -70,7 +71,7 @@ public class PersonListAdapter extends RecyclerView.Adapter<PersonListAdapter.Pe
             super(itemView);
             photo = itemView.findViewById(R.id.person_photo);
             name = itemView.findViewById(R.id.person_name);
-            sex = itemView.findViewById(R.id.person_sex);
+            gender = itemView.findViewById(R.id.person_gender);
             idCardNo = itemView.findViewById(R.id.person_idcardno);
             gatherTime = itemView.findViewById(R.id.gather_time);
             address = itemView.findViewById(R.id.person_address);

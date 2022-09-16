@@ -44,10 +44,11 @@ import java.util.UUID;
  */
 public class IDCardActivity extends AppCompatActivity {
     private final String TAG = "IDCardActivity";
-
     private static final int REQUEST_CODE_PICK_IMAGE_FRONT = 201;
     private static final int REQUEST_CODE_PICK_IMAGE_BACK = 202;
     private static final int REQUEST_CODE_CAMERA = 102;
+
+    private TextView name, idCardNo, gender, ethnic, nationality, birthday, address;
 
     private TextView infoTextView;
     private AlertDialog.Builder alertDialog;
@@ -87,6 +88,12 @@ public class IDCardActivity extends AppCompatActivity {
         setContentView(R.layout.activity_idcard);
         alertDialog = new AlertDialog.Builder(this);
         infoTextView = (TextView) findViewById(R.id.info_text_view);
+        name = findViewById(R.id.id_card_name_edit);
+        idCardNo = findViewById(R.id.id_card_idcard_edit);
+        gender = findViewById(R.id.id_card_gender_edit);
+        ethnic = findViewById(R.id.id_card_ethnic_edit);
+        address = findViewById(R.id.id_card_address_edit);
+        birthday = findViewById(R.id.id_card_birthday_edit);
 
         //通过文件方式进行授权
         initAccessTokenLicenseFile();
@@ -201,6 +208,11 @@ public class IDCardActivity extends AppCompatActivity {
 
     }
 
+    /**
+     *
+     * @param idCardSide 身份证正反面
+     * @param filePath 身份证照片路径
+     */
     private void recIDCard(String idCardSide, String filePath) {
         IDCardParams param = new IDCardParams();
         param.setImageFile(new File(filePath));
@@ -216,7 +228,7 @@ public class IDCardActivity extends AppCompatActivity {
             public void onResult(IDCardResult result) {
                 if (result != null) {
                     saveIDCardResult(result);
-                    alertText("", result.toString());
+                    setIDCardResult(result);
                 }
             }
 
@@ -234,16 +246,24 @@ public class IDCardActivity extends AppCompatActivity {
     private void saveIDCardResult(IDCardResult idCardResult){
         Person person = new Person();
         person.setName(idCardResult.getName().getWords());
-        person.setSex(idCardResult.getGender().getWords());
+        person.setGender(idCardResult.getGender().getWords());
         person.setAddress(idCardResult.getAddress().getWords());
         person.setIdCardNo(idCardResult.getIdNumber().getWords());
-        person.setNation(idCardResult.getEthnic().getWords());
+        person.setEthnic(idCardResult.getEthnic().getWords());
         person.setBirthday(idCardResult.getBirthday().getWords());
         person.setId(UUID.randomUUID().toString().replace("-",""));
         person.setGatherDate(new Date());
 
         PersonDao personDao = USBCameraAPP.getInstances().getDaoSession().getPersonDao();
         personDao.insert(person);
+    }
+    private void setIDCardResult(IDCardResult idCardResult){
+        name.setText(idCardResult.getName().getWords());
+        gender.setText(idCardResult.getGender().getWords());
+        address.setText(idCardResult.getAddress().getWords());
+        idCardNo.setText(idCardResult.getIdNumber().getWords());
+        ethnic.setText(idCardResult.getEthnic().getWords());
+        birthday.setText(idCardResult.getBirthday().getWords());
     }
 
     @Override

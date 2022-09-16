@@ -173,7 +173,7 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
 //        if(intent != null){
 //            String name = intent.getStringExtra("name");
 //            String idcardno = intent.getStringExtra("idcardno");
-//            String sex = intent.getStringExtra("sex");
+//            String gender = intent.getStringExtra("gender");
 //        }
     }
 

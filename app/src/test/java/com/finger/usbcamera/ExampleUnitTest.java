@@ -31,11 +31,11 @@ public class ExampleUnitTest {
             JSONObject object = new JSONObject(jsonStr);
             JSONObject wordsResult= object.getJSONObject("words_result");
             String name = wordsResult.getJSONObject("姓名").getString("words");
-            String nation = wordsResult.getJSONObject("民族").getString("words");
+            String ethnic = wordsResult.getJSONObject("民族").getString("words");
             String address = wordsResult.getJSONObject("住址").getString("words");
             String idcardno = wordsResult.getJSONObject("公民身份号码").getString("words");
             String birthday = wordsResult.getJSONObject("出生").getString("words");
-            String sex = wordsResult.getJSONObject("性别").getString("words");
+            String gender = wordsResult.getJSONObject("性别").getString("words");
             Person person = new Person();
 
 

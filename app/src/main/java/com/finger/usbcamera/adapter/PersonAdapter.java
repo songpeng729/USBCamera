@@ -43,7 +43,7 @@ public class PersonAdapter extends ArrayAdapter<Person> {
             viewHolder = new PersonInfoViewHolder();
             convertView = inflater.inflate(R.layout.person_list_item, parent,false);
             viewHolder.name = (TextView) convertView.findViewById(R.id.person_name);
-            viewHolder.sex= (TextView) convertView.findViewById(R.id.person_sex);
+            viewHolder.gender= (TextView) convertView.findViewById(R.id.person_gender);
             viewHolder.idCardNo= (TextView) convertView.findViewById(R.id.person_idcardno);
             viewHolder.address= (TextView) convertView.findViewById(R.id.person_address);
             convertView.setTag(viewHolder);
@@ -53,7 +53,7 @@ public class PersonAdapter extends ArrayAdapter<Person> {
 
         if(person != null){
             viewHolder.name.setText(person.getName());
-            viewHolder.sex.setText(person.getSex());
+            viewHolder.gender.setText(person.getGender());
             viewHolder.idCardNo.setText(person.getIdCardNo());
             viewHolder.address.setText(person.getAddress());
         }
@@ -62,7 +62,7 @@ public class PersonAdapter extends ArrayAdapter<Person> {
     class PersonInfoViewHolder{
         TextView name;
         TextView idCardNo;
-        TextView sex;
+        TextView gender;
         TextView address;
     }
 }

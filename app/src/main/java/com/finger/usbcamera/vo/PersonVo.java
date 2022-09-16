@@ -7,8 +7,8 @@ public class PersonVo {
     private Long id;
     private String idCardNo;
     private String name;
-    private String sex;
-    private String nation;
+    private String gender;
+    private String ethnic;
     private String nationality;
     private String birthday;
     private String address;
@@ -37,20 +37,20 @@ public class PersonVo {
         this.name = name;
     }
 
-    public String getSex() {
-        return sex;
+    public String getGender() {
+        return gender;
     }
 
-    public void setSex(String sex) {
-        this.sex = sex;
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 
-    public String getNation() {
-        return nation;
+    public String getEthnic() {
+        return ethnic;
     }
 
-    public void setNation(String nation) {
-        this.nation = nation;
+    public void setEthnic(String ethnic) {
+        this.ethnic = ethnic;
     }
 
     public String getNationality() {

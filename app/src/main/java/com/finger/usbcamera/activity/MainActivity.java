@@ -17,22 +17,18 @@ import android.widget.TextView;
 import com.finger.usbcamera.R;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
-    private PersonGatherFragment personGatherFragment = new PersonGatherFragment(this);
-    private Fragment personManagerFragment = new PersonManagerFragment();
-    private Fragment settingFragment = new SettingFragment();
-
     private FragmentManager fragmentManager;
-
+    private Fragment personGatherFragment,personManagerFragment,settingFragment;
     private LinearLayout personGatherLayout, personManagerLayout, systemSettingLayout;
     private ImageView personGatherImg,personManagerImg,systemSettingImg;
-
-
-    private RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        personGatherFragment = new PersonGatherFragment(this);
+        personManagerFragment = new PersonManagerFragment();
+        settingFragment = new SettingFragment();
 
         personGatherLayout = findViewById(R.id.person_gather);
         personManagerLayout = findViewById(R.id.person_manager);

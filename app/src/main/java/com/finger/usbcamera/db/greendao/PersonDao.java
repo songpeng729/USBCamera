@@ -28,8 +28,8 @@ public class PersonDao extends AbstractDao<Person, String> {
         public final static Property PersonId = new Property(1, String.class, "personId", false, "personid");
         public final static Property Name = new Property(2, String.class, "name", false, "name");
         public final static Property IdCardNo = new Property(3, String.class, "idCardNo", false, "idcardno");
-        public final static Property Sex = new Property(4, String.class, "sex", false, "sex");
-        public final static Property Nation = new Property(5, String.class, "nation", false, "nation");
+        public final static Property Gender = new Property(4, String.class, "gender", false, "gender");
+        public final static Property Ethnic = new Property(5, String.class, "ethnic", false, "ethnic");
         public final static Property Nationality = new Property(6, String.class, "nationality", false, "nationality");
         public final static Property Birthday = new Property(7, String.class, "birthday", false, "birthday");
         public final static Property Address = new Property(8, String.class, "address", false, "address");
@@ -53,8 +53,8 @@ public class PersonDao extends AbstractDao<Person, String> {
                 "\"personid\" TEXT," + // 1: personId
                 "\"name\" TEXT," + // 2: name
                 "\"idcardno\" TEXT," + // 3: idCardNo
-                "\"sex\" TEXT," + // 4: sex
-                "\"nation\" TEXT," + // 5: nation
+                "\"gender\" TEXT," + // 4: gender
+                "\"ethnic\" TEXT," + // 5: ethnic
                 "\"nationality\" TEXT," + // 6: nationality
                 "\"birthday\" TEXT," + // 7: birthday
                 "\"address\" TEXT," + // 8: address
@@ -91,14 +91,14 @@ public class PersonDao extends AbstractDao<Person, String> {
             stmt.bindString(4, idCardNo);
         }
  
-        String sex = entity.getSex();
-        if (sex != null) {
-            stmt.bindString(5, sex);
+        String gender = entity.getGender();
+        if (gender != null) {
+            stmt.bindString(5, gender);
         }
  
-        String nation = entity.getNation();
-        if (nation != null) {
-            stmt.bindString(6, nation);
+        String ethnic = entity.getEthnic();
+        if (ethnic != null) {
+            stmt.bindString(6, ethnic);
         }
  
         String nationality = entity.getNationality();
@@ -146,14 +146,14 @@ public class PersonDao extends AbstractDao<Person, String> {
             stmt.bindString(4, idCardNo);
         }
  
-        String sex = entity.getSex();
-        if (sex != null) {
-            stmt.bindString(5, sex);
+        String gender = entity.getGender();
+        if (gender != null) {
+            stmt.bindString(5, gender);
         }
  
-        String nation = entity.getNation();
-        if (nation != null) {
-            stmt.bindString(6, nation);
+        String ethnic = entity.getEthnic();
+        if (ethnic != null) {
+            stmt.bindString(6, ethnic);
         }
  
         String nationality = entity.getNationality();
@@ -189,8 +189,8 @@ public class PersonDao extends AbstractDao<Person, String> {
             cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // personId
             cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // name
             cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // idCardNo
-            cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // sex
-            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // nation
+            cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // gender
+            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // ethnic
             cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6), // nationality
             cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7), // birthday
             cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8), // address
@@ -205,8 +205,8 @@ public class PersonDao extends AbstractDao<Person, String> {
         entity.setPersonId(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
         entity.setName(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
         entity.setIdCardNo(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
-        entity.setSex(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
-        entity.setNation(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
+        entity.setGender(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
+        entity.setEthnic(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
         entity.setNationality(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
         entity.setBirthday(cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7));
         entity.setAddress(cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8));

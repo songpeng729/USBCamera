@@ -3,7 +3,6 @@ package com.finger.usbcamera.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,9 +22,7 @@ import com.finger.usbcamera.db.greendao.PersonDao;
 import org.greenrobot.greendao.query.QueryBuilder;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * 人员采集Fragment
@@ -36,7 +33,7 @@ public class PersonGatherFragment extends Fragment {
     private TextView title;
     private Button addBtn;
     private Button refreshBtn;
-    private View personListView;
+    private View view;
     private RecyclerView recyclerView;
     private PersonListAdapter personListAdapter;
 
@@ -49,10 +46,10 @@ public class PersonGatherFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         personDao = USBCameraAPP.getInstances().getDaoSession().getPersonDao();
-        personListView = inflater.inflate(R.layout.fragment_person_gather, container, false);
-        title = personListView.findViewById(R.id.person_gather_title);
-        addBtn = personListView.findViewById(R.id.person_gather_add);
-        refreshBtn = personListView.findViewById(R.id.person_gather_refresh);
+        view = inflater.inflate(R.layout.fragment_person_gather, container, false);
+        title = view.findViewById(R.id.person_gather_title);
+        addBtn = view.findViewById(R.id.person_gather_add);
+        refreshBtn = view.findViewById(R.id.person_gather_refresh);
 
         initRecyclerView();
         initData();
@@ -71,7 +68,7 @@ public class PersonGatherFragment extends Fragment {
             }
         });
         // Inflate the layout for this fragment
-        return personListView;
+        return view;
     }
 
     private void initData() {
@@ -80,7 +77,7 @@ public class PersonGatherFragment extends Fragment {
         personList.addAll(queryBuilder.list());
     }
     private void initRecyclerView () {
-        recyclerView = personListView.findViewById(R.id.recyclerView);
+        recyclerView = view.findViewById(R.id.recyclerView);
         recyclerView.getItemAnimator().setChangeDuration(500);
         recyclerView.getItemAnimator().setMoveDuration(500);
         personListAdapter = new PersonListAdapter(getActivity(), personList);

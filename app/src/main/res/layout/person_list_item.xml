@@ -36,7 +36,7 @@
                 android:textSize="20sp" />
 
             <TextView
-                android:id="@+id/person_sex"
+                android:id="@+id/person_gender"
                 android:layout_width="match_parent"
                 android:layout_height="25dp"
                 android:layout_gravity="center"

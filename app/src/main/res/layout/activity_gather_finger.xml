@@ -5,7 +5,13 @@
     android:orientation="vertical"
     android:paddingBottom="10dp"
     android:paddingTop="10dp" >
-
+    <TextView
+        android:id="@+id/gather_title"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:padding="5dp"
+        android:text="张三（4127221990xxxx）"
+        android:textSize="18sp" />
     <LinearLayout
         android:id="@+id/finger_view"
         android:layout_width="wrap_content"
@@ -167,7 +173,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_below="@id/gather_status_tv"
-            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
             android:layout_marginTop="10dp" >
 
             <Spinner

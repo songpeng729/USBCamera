@@ -30,6 +30,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.FingerActivity"/>
+        <activity android:name=".activity.MosaicActivity"/>
         <activity android:name=".activity.IDCardActivity"/>
         <activity android:name=".activity.DryWetSettingActivity"/>
     </application>

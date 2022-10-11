@@ -2,6 +2,7 @@ package com.finger.usbcamera.activity;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.hardware.usb.UsbDevice;
 import android.os.Bundle;
@@ -21,12 +22,16 @@ import androidx.annotation.Nullable;
 
 import com.finger.usbcamera.R;
 import com.finger.usbcamera.listener.MosaicImageListener;
+import com.finger.usbcamera.util.FeatureExtractor;
+import com.finger.usbcamera.util.ImageConverter;
 import com.finger.usbcamera.view.MosaicSurfaceView;
 import com.finger.usbcamera.vo.FingerData;
 import com.serenegiant.usb.DeviceFilter;
 import com.serenegiant.usb.USBMonitor;
 
 import java.util.List;
+
+import gbfp.jni.GBFPNative;
 
 import static com.finger.usbcamera.vo.FingerData.FINGER_STATUS_NORMAL;
 
@@ -35,6 +40,8 @@ import static com.finger.usbcamera.vo.FingerData.FINGER_STATUS_NORMAL;
  */
 public class FingerActivity extends Activity implements View.OnClickListener, MosaicImageListener {
     private final String TAG = "FingerActivity";
+    public static String EXTRA_NAME = "name";
+    public static String EXTRA_IDCARDNO= "idcardno";
 
     private MosaicSurfaceView fingerSurfaceView;//指纹显示
     private LinearLayout fingerViewLayout;
@@ -51,6 +58,7 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
     private String[] fingerButtonNameList;
     private FingerData[] fingerDataList = new FingerData[20];//指纹数据
 
+    private TextView gatherTitle;
     private TextView gatherStatusTextView;//提示信息
 
     private Button startGatherBtn, saveBtn;//操作按钮
@@ -95,6 +103,7 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
         fingerButtonNameList = new String[]{getString(R.string.finger_r_thumb), getString(R.string.finger_r_index), getString(R.string.finger_r_middle), getString(R.string.finger_r_ring), getString(R.string.finger_r_little),
                 getString(R.string.finger_l_thumb), getString(R.string.finger_l_index), getString(R.string.finger_l_middle), getString(R.string.finger_l_ring), getString(R.string.finger_l_little)};
 
+        gatherTitle = findViewById(R.id.gather_title);
         gatherStatusTextView = findViewById(R.id.gather_status_tv);
 
         startGatherBtn = findViewById(R.id.finger_start_gather_btn);
@@ -102,6 +111,7 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
 
     }
     public void bindListener(){
+        fingerSurfaceView.setMosaicImageListener(this);
         startGatherBtn.setOnClickListener(this);
 //        dryWetSettingBtn.setOnClickListener(this);
         saveBtn.setOnClickListener(this);
@@ -169,12 +179,13 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
         for (int i=0; i < 20; i++){
             fingerDataList[i] = new FingerData(i + 1);
         }
-//        Intent intent = getIntent();
-//        if(intent != null){
-//            String name = intent.getStringExtra("name");
-//            String idcardno = intent.getStringExtra("idcardno");
-//            String gender = intent.getStringExtra("gender");
-//        }
+        //设置title信息，姓名+身份证
+        Intent intent = getIntent();
+        if(intent != null){
+            String name = intent.getStringExtra(EXTRA_NAME);
+            String idcardno = intent.getStringExtra(EXTRA_IDCARDNO);
+            gatherTitle.setText(String.format("%s(%s)", name, idcardno));
+        }
     }
 
     @Override
@@ -188,6 +199,7 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
                 }
                 break;
             case R.id.finger_save_btn:
+                //保存指纹信息
                 break;
             case R.id.finger_r_thumb_btn:
             case R.id.finger_r_index_btn:
@@ -209,7 +221,8 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
                 break;
         }
     }
-
+    // 存放特征数据
+    private byte[] tempFeatureData = new byte[2500];
     @Override
     public void onMosaicStatusChanged(int status, String message) {
         Log.i(TAG, " status:"+ status + " message:"+ message);
@@ -222,9 +235,18 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
                 byte[] imageData = fingerSurfaceView.getImgData();
                 FingerData fingerData = getCurrentFingerData();
                 fingerData.setImage(imageData);
+                int fgp = getCurrentFgp();
+                //图像压缩
+                byte[] cpr = ImageConverter.compress(fgp, isFlat, imageData);
+                fingerData.setCprData(cpr);
+                //特征提取
+                byte[] mnt = FeatureExtractor.extractFeature(fgp, isFlat, imageData);
+                fingerData.setFeature(mnt);
+                //采集完成设置背景色green
+                fingerButtonList[fgp-1].setBackgroundColor(Color.GREEN);
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
                 stopGather();
-//                checkNextFinger();
+                checkNextFinger();
                 break;
             case MOSAIC_STATUS_FAIL:
                 Toast.makeText(this, "采集失败"+message, Toast.LENGTH_SHORT).show();

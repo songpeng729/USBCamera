@@ -28,6 +28,9 @@ import org.greenrobot.greendao.query.QueryBuilder;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.finger.usbcamera.activity.FingerActivity.EXTRA_IDCARDNO;
+import static com.finger.usbcamera.activity.FingerActivity.EXTRA_NAME;
+
 /**
  * 人员采集Fragment
  */
@@ -105,10 +108,15 @@ public class PersonGatherFragment extends Fragment {
                                 personListAdapter.notifyItemRemoved(pos);
                                 break;
                             case R.id.person_list_menu_continue:
+                                Person person = personList.get(pos);
                                 //继续采集
-                                Toast.makeText(mContext, "继续采集"+personList.get(pos).getName(), Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(mContext, FingerActivity.class);
+                                intent.putExtra(EXTRA_NAME, person.getName());
+                                intent.putExtra(EXTRA_IDCARDNO, person.getIdCardNo());
+                                startActivity(intent);
                                 break;
                             case R.id.person_list_menu_edit:
+                                startActivity(new Intent(mContext, MosaicActivity.class));
                                 break;
                         }
                         return false;

@@ -13,6 +13,7 @@ public class FingerData {
     private int status; //状态
     private String condition;
     private byte[] image;//图像数据
+    private byte[] cprData;//图像压缩数据
     private byte[] feature;//特征数据
 
     public FingerData(int fgp){
@@ -67,5 +68,13 @@ public class FingerData {
 
     public void setFeature(byte[] feature) {
         this.feature = feature;
+    }
+
+    public byte[] getCprData() {
+        return cprData;
+    }
+
+    public void setCprData(byte[] cprData) {
+        this.cprData = cprData;
     }
 }

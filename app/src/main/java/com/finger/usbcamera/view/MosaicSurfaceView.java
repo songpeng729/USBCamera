@@ -105,7 +105,7 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
          post是后乘，当前的矩阵乘以参数给出的矩阵。可以连续多次使用post，来完成所需的整个变换
          pre是前乘，参数给出的矩阵乘以当前的矩阵。所以操作是在当前矩阵的最前面发生的。
          */
-        matrix.setScale(1f, 1f);//1.6倍放大1024*1024
+        matrix.setScale(1.6f, 1.6f);//1.6倍放大1024*1024
         matrix.postScale(1, 1);
 
         surfaceHolder = getHolder();

@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        personGatherFragment = new PersonGatherFragment(this);
+        personGatherFragment = new PersonGatherFragment();
         personManagerFragment = new PersonManagerFragment();
         settingFragment = new SettingFragment();
 

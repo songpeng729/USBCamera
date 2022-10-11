@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -46,12 +47,29 @@ public class PersonListAdapter extends RecyclerView.Adapter<PersonListAdapter.Pe
         holder.idCardNo.setText(person.getIdCardNo());
         holder.address.setText(person.getAddress());
         holder.gatherTime.setText(DateUtils.date2DateTimeString(person.getGatherDate()));
-//        holder.personListItemLayout.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//            }
-//        });
+        //长按弹出菜单
+        holder.personListItemLayout.setOnLongClickListener(new View.OnLongClickListener(){
+            @Override
+            public boolean onLongClick(View v) {
+                if(onItemClickListener != null){
+                    onItemClickListener.onItemLongClick(holder.itemView, position);
+                }
+                return false;
+            }
+        });
+    }
+
+    private OnItemClickListener onItemClickListener;
+
+    /**
+     * 人员列表监听接口，处理点击事件
+     */
+    public interface OnItemClickListener{
+        void onItemLongClick(View view , int pos);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        this.onItemClickListener = onItemClickListener;
     }
 
     @Override

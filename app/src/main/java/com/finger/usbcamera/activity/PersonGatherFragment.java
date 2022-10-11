@@ -4,12 +4,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -39,14 +43,12 @@ public class PersonGatherFragment extends Fragment {
 
     private PersonDao personDao;
     private Context mContext;
-    public PersonGatherFragment(Context context){
-        mContext = context;
-    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         personDao = USBCameraAPP.getInstances().getDaoSession().getPersonDao();
         view = inflater.inflate(R.layout.fragment_person_gather, container, false);
+        mContext = view.getContext();
         title = view.findViewById(R.id.person_gather_title);
         addBtn = view.findViewById(R.id.person_gather_add);
         refreshBtn = view.findViewById(R.id.person_gather_refresh);
@@ -85,6 +87,36 @@ public class PersonGatherFragment extends Fragment {
         manager.setOrientation(RecyclerView.VERTICAL);
         recyclerView.setAdapter(personListAdapter);
         recyclerView.setLayoutManager(manager);
+        recyclerView.addItemDecoration(new DividerItemDecoration(mContext, LinearLayoutManager.VERTICAL));
+
+        personListAdapter.setOnItemClickListener(new PersonListAdapter.OnItemClickListener() {
+            @Override
+            public void onItemLongClick(View view, int pos) {
+                PopupMenu popupMenu = new PopupMenu(mContext,view);
+                popupMenu.getMenuInflater().inflate(R.menu.person_list_menu,popupMenu.getMenu());
+                //弹出式菜单的菜单项点击事件
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()){
+                            case R.id.person_list_menu_delete:
+                                //删除
+                                personList.remove(pos);
+                                personListAdapter.notifyItemRemoved(pos);
+                                break;
+                            case R.id.person_list_menu_continue:
+                                //继续采集
+                                Toast.makeText(mContext, "继续采集"+personList.get(pos).getName(), Toast.LENGTH_SHORT).show();
+                                break;
+                            case R.id.person_list_menu_edit:
+                                break;
+                        }
+                        return false;
+                    }
+                });
+                popupMenu.show();
+            }
+        });
     }
 
     /**

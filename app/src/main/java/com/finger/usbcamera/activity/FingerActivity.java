@@ -54,6 +54,7 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
     private MosaicSurfaceView fingerSurfaceView;//指纹显示
     private LinearLayout fingerViewLayout;
 
+    private boolean ready = false;//设备链接状态
     private boolean isGathering = false;
     private int currentFingerIndex = 0;//当前选中的指位索引[0-9]
     private int currentFgp(){ return currentFingerIndex + 1; }//当前的指位[1-10]
@@ -170,6 +171,8 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
                 Toast.makeText(mContext, "onConnect vid:"+ ctrlBlock.getVenderId() + " pid:"+ ctrlBlock.getProductId(), Toast.LENGTH_SHORT).show();
                 usbControlBlock = ctrlBlock;// 得到UsbControlBlock,用于链接usb设备
                 fingerSurfaceView.releaseCamera();//释放usb设备
+                showGatherStatus( "设备链接成功可以采集！", false);
+                ready = true;
             }
 
             @Override
@@ -178,6 +181,9 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
                 stopGather();
                 fingerSurfaceView.releaseCamera();
                 usbControlBlock = null;
+                showGatherStatus( "设备断开链接！", true);
+                ready = false;
+                stopGather();
             }
 
             @Override
@@ -199,8 +205,6 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
             String idcardno = intent.getStringExtra(EXTRA_IDCARDNO);
             gatherTitle.setText(String.format("%s(%s)", name, idcardno));
         }
-        //默认选择第一个指位
-        checkFingerIndex(0);
     }
 
     @Override
@@ -209,8 +213,10 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
             case R.id.finger_start_gather_btn:
                 if(isGathering){
                     stopGather();
-                }else{
+                }else if(ready){
                     startGather();
+                }else {
+                    Toast.makeText(mContext, "设备未连接！", Toast.LENGTH_SHORT).show();
                 }
                 break;
             case R.id.finger_save_btn:

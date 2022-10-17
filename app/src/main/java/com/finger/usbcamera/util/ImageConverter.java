@@ -5,7 +5,7 @@ import android.util.Log;
 import gbfp.jni.GBFPNative;
 
 /**
- * Created by songpeng on 2018/4/1.
+ * 图像转换器，压缩和解压缩
  */
 public class ImageConverter {
     private static final String LOG_TAG = "ImageConverter";

@@ -8,9 +8,8 @@ import com.finger.usbcamera.vo.FingerData;
 import gbfp.jni.GBFPNative;
 
 /**
- * Created by songpeng on 2018/3/18.
+ * 特征提取
  */
-
 public class FeatureExtractor {
     static final String LOG_TAG = "FeatureExtractor";
 

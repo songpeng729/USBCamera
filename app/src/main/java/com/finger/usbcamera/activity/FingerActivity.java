@@ -14,7 +14,6 @@ import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +22,7 @@ import androidx.annotation.Nullable;
 import com.finger.usbcamera.R;
 import com.finger.usbcamera.listener.MosaicImageListener;
 import com.finger.usbcamera.util.FeatureExtractor;
+import com.finger.usbcamera.util.FingerMatcher;
 import com.finger.usbcamera.util.ImageConverter;
 import com.finger.usbcamera.view.MosaicSurfaceView;
 import com.finger.usbcamera.vo.FingerData;
@@ -30,8 +30,16 @@ import com.serenegiant.usb.DeviceFilter;
 import com.serenegiant.usb.USBMonitor;
 
 import java.util.List;
-
-import gbfp.jni.GBFPNative;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import static com.finger.usbcamera.vo.FingerData.FINGER_STATUS_NORMAL;
 
@@ -47,7 +55,8 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
     private LinearLayout fingerViewLayout;
 
     private boolean isGathering = false;
-    private int currentFingerIndex = 0;//当前选中的指位[0-9]
+    private int currentFingerIndex = 0;//当前选中的指位索引[0-9]
+    private int currentFgp(){ return currentFingerIndex + 1; }//当前的指位[1-10]
     private boolean isFlat = false;//当前指纹类型是否是平面
     private String fingerTypeName;//当前指纹类型名称
     private RadioButton rollBtn, flatBtn;//平指滚指切换按钮
@@ -56,7 +65,10 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
     private Button fingerRThumbBtn, fingerRIndexBtn, fingerRMiddleBtn, fingerRRingBtn, fingerRLittleBtn, fingerLThumbBtn, fingerLIndexBtn, fingerLMiddleBtn, fingerLRingBtn, fingerLLittleBtn;
     private Button[] fingerButtonList;
     private String[] fingerButtonNameList;
-    private FingerData[] fingerDataList = new FingerData[20];//指纹数据
+    private FingerData[] rollFingerDataList = new FingerData[10];//滚动指纹数据
+    private FingerData[] flatFingerDataList = new FingerData[10];//平面指纹数据
+//    private Map<Integer, FingerData> rollFingerDataMap = new HashMap<>();
+//    private Map<Integer, FingerData> flatFingerDataMap = new HashMap<>();
 
     private TextView gatherTitle;
     private TextView gatherStatusTextView;//提示信息
@@ -176,8 +188,9 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
     }
     private void init(){
         //初始化指纹信息
-        for (int i=0; i < 20; i++){
-            fingerDataList[i] = new FingerData(i + 1);
+        for (int i=0; i < 10; i++){
+            rollFingerDataList[i] = new FingerData(i);
+            flatFingerDataList[i] = new FingerData(i);
         }
         //设置title信息，姓名+身份证
         Intent intent = getIntent();
@@ -186,6 +199,8 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
             String idcardno = intent.getStringExtra(EXTRA_IDCARDNO);
             gatherTitle.setText(String.format("%s(%s)", name, idcardno));
         }
+        //默认选择第一个指位
+        checkFingerIndex(0);
     }
 
     @Override
@@ -221,6 +236,7 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
                 break;
         }
     }
+
     // 存放特征数据
     private byte[] tempFeatureData = new byte[2500];
     @Override
@@ -234,19 +250,24 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
                 //获取指纹数据
                 byte[] imageData = fingerSurfaceView.getImgData();
                 FingerData fingerData = getCurrentFingerData();
-                fingerData.setImage(imageData);
-                int fgp = getCurrentFgp();
-                //图像压缩
-                byte[] cpr = ImageConverter.compress(fgp, isFlat, imageData);
-                fingerData.setCprData(cpr);
+                int fgp = currentFgp();
                 //特征提取
                 byte[] mnt = FeatureExtractor.extractFeature(fgp, isFlat, imageData);
-                fingerData.setFeature(mnt);
-                //采集完成设置背景色green
-                fingerButtonList[fgp-1].setBackgroundColor(Color.GREEN);
-                Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+                //校验特征
+                if(validateCurrentFinger(mnt)){
+                    //图像压缩
+                    byte[] cpr = ImageConverter.compress(fgp, isFlat, imageData);
+                    fingerData.setImage(imageData);
+                    fingerData.setCprData(cpr);
+                    fingerData.setFeature(mnt);
+
+                    //采集完成设置背景色green
+                    fingerButtonList[currentFingerIndex].setBackgroundColor(Color.GREEN);
+
+                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+                    checkNextFinger();
+                }
                 stopGather();
-                checkNextFinger();
                 break;
             case MOSAIC_STATUS_FAIL:
                 Toast.makeText(this, "采集失败"+message, Toast.LENGTH_SHORT).show();
@@ -277,7 +298,7 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
         }
 
         for (int i = 0; i < 10; i++){
-            FingerData fingerData = isFlat ? fingerDataList[i+10] : fingerDataList[i];
+            FingerData fingerData = isFlat ? flatFingerDataList[i] : rollFingerDataList[i];
             if(fingerData.getImage() != null){
                 //如果采集了指纹，背景绿色;
                 fingerButtonList[i].setBackgroundColor(Color.GREEN);
@@ -399,22 +420,132 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
     }
 
     /**
-     * 当前指位[1-20]，根据isFlat和currentFingerIndex计算
-     * @return
-     */
-    private int getCurrentFgp(){
-        if(isFlat){
-            return currentFingerIndex + 11;
-        }else{
-            return currentFingerIndex + 1;
-        }
-    }
-
-    /**
      * 当前选中指纹数据
      * @return
      */
     private FingerData getCurrentFingerData(){
-        return fingerDataList[getCurrentFgp()-1];
+        if(isFlat){
+            return flatFingerDataList[currentFingerIndex];
+        }else{
+            return rollFingerDataList[currentFingerIndex];
+        }
     }
+
+    /**
+     * 当前指位对应的另一枚指纹
+     * @return
+     */
+    private FingerData getCurrentSameFingerData(){
+        if(isFlat){
+            return rollFingerDataList[currentFingerIndex];
+        }else{
+            return flatFingerDataList[currentFingerIndex];
+        }
+    }
+
+    /**
+     * 校验指纹, 同一指位和重复采集
+     * @param mnt
+     * @return
+     */
+    private boolean validateCurrentFinger(byte[] mnt) {
+        //同一指位,平滚指校验
+        byte[] sameMnt = getCurrentSameFingerData().getFeature();
+        if(sameMnt != null){
+            boolean isSame = FingerMatcher.featureMatchGAFIS(mnt, sameMnt);
+            if(!isSame){
+                Toast.makeText(this, "滚动和平面不是同一个指纹!", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        }
+        //重复采集校验
+        //这里使用CountDownLatch Future模式，并发
+        final BlockingQueue<Future<Boolean>> fingerMatchResultQueue = new LinkedBlockingDeque<Future<Boolean>>();
+//        final BlockingQueue<Future<FingerMatchResultFuture<Boolean>>> fingerMatchResultQueue = new LinkedBlockingDeque<>();
+        for (int i = 0; i < 10; i++) {
+            if(i != currentFingerIndex){
+                byte[] destMnt = rollFingerDataList[i].getFeature();
+                if(destMnt == null){
+                    destMnt = flatFingerDataList[i].getFeature();
+                }
+                if(destMnt != null){
+                    Log.i(TAG, "validateCurrentFinger: "+ i);
+                    byte[] finalDestMnt = destMnt;
+                    Future<Boolean> distinctFingerFuture = distinctExecutorService.submit(new Callable<Boolean>() {
+                        @Override
+                        public Boolean call() throws Exception {
+                            return FingerMatcher.featureMatchGAFIS(mnt, finalDestMnt);
+                        }
+                    });
+                   /* Future<FingerMatchResultFuture<Boolean>> distinctFingerFuture = distinctExecutorService.submit(new Callable<FingerMatchResultFuture<Boolean>>() {
+                        @Override
+                        public FingerMatchResultFuture<Boolean> call() throws Exception {
+                            FingerMatchResultFuture<Boolean> future = new FingerMatchResultFuture<Boolean>();
+                            future.setObjectValue(FingerMatcher.featureMatchGAFIS(mnt, finalDestMnt));
+                            return future;
+                        }
+                    });*/
+                    fingerMatchResultQueue.add(distinctFingerFuture);
+                }
+            }
+        }
+        for (int i = 0; i < fingerMatchResultQueue.size(); i++){
+            try {
+                Future<Boolean> future = fingerMatchResultQueue.take();
+                if(future.get()){
+                    Toast.makeText(this, "重复采集,请换一个指纹!", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return true;
+    }
+    //用于指位重复采集校验，10个指位，最多9个线程
+    ExecutorService distinctExecutorService = Executors.newFixedThreadPool(9);
+    /**
+     * Future模式 目前用于统一指位校验，并发比对结果
+     * @param <V>
+     */
+    /*public class FingerMatchResultFuture<V> implements Future<V> {
+        private CountDownLatch countDownLatch = new CountDownLatch(1);
+        private boolean cancelled = false;
+        private V obj;
+        @Override
+        public boolean cancel(boolean mayInterruptIfRunning) {
+            cancelled = true;
+            return cancelled;
+        }
+
+        @Override
+        public boolean isCancelled() {
+            return cancelled;
+        }
+
+        @Override
+        public boolean isDone() {
+            return countDownLatch.getCount() == 0;
+        }
+
+        @Override
+        public V get() throws ExecutionException, InterruptedException {
+            countDownLatch.await();
+            return obj;
+        }
+
+        @Override
+        public V get(long timeout, TimeUnit unit) throws ExecutionException, InterruptedException, TimeoutException {
+            if (countDownLatch.await(timeout, unit)) {
+                return obj;
+            } else {
+                throw new TimeoutException();
+            }
+        }
+        public void setObjectValue(V value){
+            obj = value;
+            countDownLatch.countDown();
+        }
+    }*/
 }

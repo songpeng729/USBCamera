@@ -21,10 +21,16 @@ public class Finger {
     @Property(nameInDb = "PERSON_ID")
     private String personId;
     /**
-     * 指位(1-20)
+     * 指位(1-10)
      */
     @Property(nameInDb = "FGP")
     private int fgp;
+
+    /**
+     * 是否平面
+     */
+    @Property(nameInDb = "IS_FLAT")
+    private int isFlat;
     /**
      * wsq压缩图
      */
@@ -45,12 +51,13 @@ public class Finger {
      */
     @Property(nameInDb = "GATHER_USERID")
     private String gatherUserId;
-    @Generated(hash = 1843057911)
-    public Finger(String id, String personId, int fgp, byte[] imgData,
+    @Generated(hash = 1526037110)
+    public Finger(String id, String personId, int fgp, int isFlat, byte[] imgData,
             byte[] mntData, Date createDate, String gatherUserId) {
         this.id = id;
         this.personId = personId;
         this.fgp = fgp;
+        this.isFlat = isFlat;
         this.imgData = imgData;
         this.mntData = mntData;
         this.createDate = createDate;
@@ -100,5 +107,11 @@ public class Finger {
     }
     public void setGatherUserId(String gatherUserId) {
         this.gatherUserId = gatherUserId;
+    }
+    public int getIsFlat() {
+        return this.isFlat;
+    }
+    public void setIsFlat(int isFlat) {
+        this.isFlat = isFlat;
     }
 }

@@ -16,9 +16,9 @@ public class FingerData {
     private byte[] cprData;//图像压缩数据
     private byte[] feature;//特征数据
 
-    public FingerData(int fgp){
+    public FingerData(int fgp, boolean isFlat){
         this.fgp = fgp;
-        this.isFlat = fgp > 10;
+        this.isFlat = isFlat;
         this.status = FINGER_STATUS_NORMAL;
     }
 

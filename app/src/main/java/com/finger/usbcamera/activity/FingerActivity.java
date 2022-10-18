@@ -20,6 +20,9 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 
 import com.finger.usbcamera.R;
+import com.finger.usbcamera.USBCameraAPP;
+import com.finger.usbcamera.db.entity.Finger;
+import com.finger.usbcamera.db.greendao.FingerDao;
 import com.finger.usbcamera.listener.MosaicImageListener;
 import com.finger.usbcamera.util.FeatureExtractor;
 import com.finger.usbcamera.util.FingerMatcher;
@@ -29,17 +32,17 @@ import com.finger.usbcamera.vo.FingerData;
 import com.serenegiant.usb.DeviceFilter;
 import com.serenegiant.usb.USBMonitor;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import static com.finger.usbcamera.vo.FingerData.FINGER_STATUS_NORMAL;
 
@@ -50,6 +53,9 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
     private final String TAG = "FingerActivity";
     public static String EXTRA_NAME = "name";
     public static String EXTRA_IDCARDNO= "idcardno";
+    public static String EXTRA_PERSONID= "personid";
+    private String personId = "", name = "", idcardno = "";
+    FingerDao fingerDao = USBCameraAPP.getInstances().getDaoSession().getFingerDao();
 
     private MosaicSurfaceView fingerSurfaceView;//指纹显示
     private LinearLayout fingerViewLayout;
@@ -192,19 +198,57 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
         });
         mUSBMonitor.register();//注册监听
     }
+
+    @Override
+    protected void onDestroy() {
+        if(mUSBMonitor.isRegistered()){
+            mUSBMonitor.unregister();
+        }
+        super.onDestroy();
+    }
+
     private void init(){
         //初始化指纹信息
         for (int i=0; i < 10; i++){
-            rollFingerDataList[i] = new FingerData(i);
-            flatFingerDataList[i] = new FingerData(i);
+            rollFingerDataList[i] = new FingerData(i+1, false);
+            flatFingerDataList[i] = new FingerData(i+1, true);
         }
         //设置title信息，姓名+身份证
         Intent intent = getIntent();
         if(intent != null){
-            String name = intent.getStringExtra(EXTRA_NAME);
-            String idcardno = intent.getStringExtra(EXTRA_IDCARDNO);
+            name = intent.getStringExtra(EXTRA_NAME);
+            idcardno = intent.getStringExtra(EXTRA_IDCARDNO);
+            personId = intent.getStringExtra(EXTRA_PERSONID);
             gatherTitle.setText(String.format("%s(%s)", name, idcardno));
+
+            List<Finger> fingerList = fingerDao.queryBuilder().where(FingerDao.Properties.PersonId.eq(personId)).list();
+            Log.i(TAG, "init: fingerList size" + fingerList.size() );
+            for (Finger finger: fingerList){
+                int isFlat = finger.getIsFlat();
+                byte[] cprData = finger.getImgData();
+                byte[] imgData = ImageConverter.decompress(cprData);
+                FingerData fingerData;
+                if(isFlat == 1){
+                    fingerData = flatFingerDataList[finger.getFgp()-1];
+                }else{
+                    fingerData = rollFingerDataList[finger.getFgp()-1];
+                }
+                fingerData.setImage(imgData);
+                fingerData.setFeature(finger.getMntData());
+            }
         }
+        checkFingerType(false);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(100);  //线程休眠200毫秒执行
+                    checkFingerIndex(0);//这里需要延时加载才能显示出图像
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
     @Override
@@ -221,6 +265,7 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
                 break;
             case R.id.finger_save_btn:
                 //保存指纹信息
+                saveFingerDataList();
                 break;
             case R.id.finger_r_thumb_btn:
             case R.id.finger_r_index_btn:
@@ -243,8 +288,8 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
         }
     }
 
-    // 存放特征数据
-    private byte[] tempFeatureData = new byte[2500];
+    // 存放特征数据 FPFeatureExtractGBFPUCAS使用
+//    private byte[] tempFeatureData = new byte[2500];
     @Override
     public void onMosaicStatusChanged(int status, String message) {
         Log.i(TAG, " status:"+ status + " message:"+ message);
@@ -271,8 +316,11 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
                     fingerButtonList[currentFingerIndex].setBackgroundColor(Color.GREEN);
 
                     Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-                    checkNextFinger();
+
+                    //TODO 如果下一枚指纹已经采集不再跳转下一枚继续采集
+                    toNextFinger();
                 }
+                //TODO 暂时采集一次都退出采集
                 stopGather();
                 break;
             case MOSAIC_STATUS_FAIL:
@@ -291,7 +339,7 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
      * @param isFlat
      */
     private void checkFingerType(boolean isFlat){
-        if(this.isFlat == isFlat || isGathering)
+        if(isGathering)
             return;
 
         Log.i(TAG, "changeFingerType isPlain:"+ isFlat);
@@ -324,9 +372,6 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
      * @param fingerIndex 指纹索引[0-9]
      */
     private void checkFingerIndex(int fingerIndex){
-        if(this.currentFingerIndex == fingerIndex){
-            return;
-        }
         Log.i(TAG, "checkFingerIndex:"+fingerIndex);
         this.currentFingerIndex = fingerIndex;
         for (int i = 0; i < fingerButtonList.length; i++){
@@ -341,22 +386,12 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
         showGatherStatus(fingerTypeName + "-->"+ fingerButtonNameList[currentFingerIndex], false);
 
         fingerSurfaceView.showFingerData(getCurrentFingerData());
-//        //如果已经采集了指纹信息，显示指纹图像
-//        if(isGathering){
-//            //采集状态，开始采集指纹
-//            startGather();
-//        }else{
-//            FingerData fingerData = getFingerData(fingerIndex);
-//            //设置状态
-//            fingerStatusSp.setSelection(fingerData.getStatus());
-//            fingerSurfaceView.switchFinger(fingerData);
-//        }
     }
 
     /**
      * 选中下一个指纹
      */
-    private void checkNextFinger(){
+    private void toNextFinger(){
         if(this.currentFingerIndex < 9){
             checkFingerIndex(this.currentFingerIndex + 1);
         }
@@ -511,9 +546,10 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
     }
     //用于指位重复采集校验，10个指位，最多9个线程
     ExecutorService distinctExecutorService = Executors.newFixedThreadPool(9);
+
+
     /**
      * Future模式 目前用于统一指位校验，并发比对结果
-     * @param <V>
      */
     /*public class FingerMatchResultFuture<V> implements Future<V> {
         private CountDownLatch countDownLatch = new CountDownLatch(1);
@@ -554,4 +590,41 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
             countDownLatch.countDown();
         }
     }*/
+
+    /**
+     * 保存指纹数据,存储压缩图和特征, TODO 如果不做比对可不存特征？？？
+     */
+    private void saveFingerDataList(){
+        List<Finger> fingerList = new ArrayList<>();
+        for (FingerData fingerData : flatFingerDataList) {
+            if(fingerData.getImage() != null){
+                Finger finger = new Finger();
+                finger.setFgp(fingerData.getFgp());
+                finger.setId(UUID.randomUUID().toString().replace("-",""));
+                finger.setPersonId(personId);
+                finger.setCreateDate(new Date());
+                finger.setIsFlat(1);
+                finger.setMntData(fingerData.getFeature());
+                finger.setImgData(fingerData.getCprData());
+                finger.setGatherUserId("1");//TODO 获取采集人信息
+                fingerList.add(finger);
+            }
+        }
+        for (FingerData fingerData : rollFingerDataList) {
+            if(fingerData.getImage() != null){
+                Finger finger = new Finger();
+                finger.setFgp(fingerData.getFgp());
+                finger.setId(UUID.randomUUID().toString().replace("-",""));
+                finger.setPersonId(personId);
+                finger.setCreateDate(new Date());
+                finger.setIsFlat(0);
+                finger.setMntData(fingerData.getFeature());
+                finger.setImgData(fingerData.getCprData());
+                finger.setGatherUserId("1");
+                fingerList.add(finger);
+            }
+        }
+        fingerDao.insertInTx(fingerList);
+        Toast.makeText(mContext, "数据保存成功", Toast.LENGTH_SHORT).show();
+    }
 }

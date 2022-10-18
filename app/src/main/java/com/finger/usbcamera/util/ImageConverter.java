@@ -38,6 +38,22 @@ public class ImageConverter {
         return null;
     }
 
+    public static byte[] decompress(byte[] cprData){
+        return decompress(cprData, 640, 640);
+    }
+    public static byte[] decompress(byte[] cprData, int height, int width){
+        if (GBFPNative.FPBegin() != 1){
+            Log.e(LOG_TAG, "GBFPNative.FPBegin() 异常");
+            return null;
+        }
+        byte[] imageData = new byte[height*width];
+        int ret = GBFPNative.FPDecompress(cprData, cprData.length, imageData, new int[]{height},new int[]{width});
+        if(ret > 0){
+            return imageData;
+        }
+        return null;
+    }
+
     public static boolean checkImageQuality(boolean isFlat, byte[] imageData){
         if (GBFPNative.FPBegin() != 1){
             Log.e(LOG_TAG, "GBFPNative.FPBegin() 异常");

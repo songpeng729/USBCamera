@@ -30,6 +30,7 @@ import java.util.List;
 
 import static com.finger.usbcamera.activity.FingerActivity.EXTRA_IDCARDNO;
 import static com.finger.usbcamera.activity.FingerActivity.EXTRA_NAME;
+import static com.finger.usbcamera.activity.FingerActivity.EXTRA_PERSONID;
 
 /**
  * 人员采集Fragment
@@ -113,6 +114,7 @@ public class PersonGatherFragment extends Fragment {
                                 Intent intent = new Intent(mContext, FingerActivity.class);
                                 intent.putExtra(EXTRA_NAME, person.getName());
                                 intent.putExtra(EXTRA_IDCARDNO, person.getIdCardNo());
+                                intent.putExtra(EXTRA_PERSONID, person.getId());
                                 startActivity(intent);
                                 break;
                             case R.id.person_list_menu_edit:

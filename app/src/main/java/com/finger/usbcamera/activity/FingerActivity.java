@@ -38,11 +38,14 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import static com.finger.usbcamera.vo.FingerData.FINGER_STATUS_NORMAL;
 
@@ -189,7 +192,6 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
                 usbControlBlock = null;
                 showGatherStatus( "设备断开链接！", true);
                 ready = false;
-                stopGather();
             }
 
             @Override
@@ -300,32 +302,35 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
             case MOSAIC_STATUS_SUCCESS:
                 //获取指纹数据
                 byte[] imageData = fingerSurfaceView.getImgData();
+                //TODO 图像质量校验
                 FingerData fingerData = getCurrentFingerData();
                 int fgp = currentFgp();
                 //特征提取
                 byte[] mnt = FeatureExtractor.extractFeature(fgp, isFlat, imageData);
                 //校验特征
-                if(validateCurrentFinger(mnt)){
+                boolean validate = validateCurrentFinger(mnt);
+                Log.e(TAG, "FingerMatcher: "+validate);
+                if(validate){
                     //图像压缩
                     byte[] cpr = ImageConverter.compress(fgp, isFlat, imageData);
                     fingerData.setImage(imageData);
                     fingerData.setCprData(cpr);
                     fingerData.setFeature(mnt);
-
                     //采集完成设置背景色green
                     fingerButtonList[currentFingerIndex].setBackgroundColor(Color.GREEN);
 
-                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "采集完成!", Toast.LENGTH_SHORT).show();
 
-                    //TODO 如果下一枚指纹已经采集不再跳转下一枚继续采集
                     toNextFinger();
+                }else{
+                    //重新开始采集
+                    restartGather();
                 }
-                //TODO 暂时采集一次都退出采集
-                stopGather();
                 break;
             case MOSAIC_STATUS_FAIL:
-                Toast.makeText(this, "采集失败"+message, Toast.LENGTH_SHORT).show();
-                stopGather();
+                Toast.makeText(this, "采集失败:"+message, Toast.LENGTH_SHORT).show();
+                //重新开始采集
+                restartGather();
                 break;
             case MOSAIC_STATUS_MESSAGE:
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
@@ -389,11 +394,25 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
     }
 
     /**
-     * 选中下一个指纹
+     * 继续采集下一枚指纹，
      */
     private void toNextFinger(){
         if(this.currentFingerIndex < 9){
-            checkFingerIndex(this.currentFingerIndex + 1);
+            FingerData fingerData;
+            if(isFlat){
+                fingerData = flatFingerDataList[currentFingerIndex+1];
+            }else{
+                fingerData = rollFingerDataList[currentFingerIndex+1];
+            }
+            if(fingerData.getImage() == null){
+                //继续采集下一枚指纹
+                checkFingerIndex(currentFingerIndex+1);
+                restartGather();
+            }else{
+                stopGather();
+            }
+        }else{
+            stopGather();
         }
     }
 
@@ -443,6 +462,14 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
         startGatherBtn.setBackgroundResource(R.drawable.finger_btn_background3);
         startGatherBtn.setText(getString(R.string.stop_collect));
 
+        fingerSurfaceView.startGather(usbControlBlock);
+    }
+
+    /**
+     * 重新开始采集
+     */
+    private void restartGather(){
+        fingerSurfaceView.stopGather();
         fingerSurfaceView.startGather(usbControlBlock);
     }
 
@@ -501,8 +528,7 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
         }
         //重复采集校验
         //这里使用CountDownLatch Future模式，并发
-        final BlockingQueue<Future<Boolean>> fingerMatchResultQueue = new LinkedBlockingDeque<Future<Boolean>>();
-//        final BlockingQueue<Future<FingerMatchResultFuture<Boolean>>> fingerMatchResultQueue = new LinkedBlockingDeque<>();
+        List<Future<Boolean>> fingerMatchResultFutureList = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             if(i != currentFingerIndex){
                 byte[] destMnt = rollFingerDataList[i].getFeature();
@@ -510,7 +536,6 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
                     destMnt = flatFingerDataList[i].getFeature();
                 }
                 if(destMnt != null){
-                    Log.i(TAG, "validateCurrentFinger: "+ i);
                     byte[] finalDestMnt = destMnt;
                     Future<Boolean> distinctFingerFuture = distinctExecutorService.submit(new Callable<Boolean>() {
                         @Override
@@ -518,6 +543,7 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
                             return FingerMatcher.featureMatchGAFIS(mnt, finalDestMnt);
                         }
                     });
+                    fingerMatchResultFutureList.add(distinctFingerFuture);
                    /* Future<FingerMatchResultFuture<Boolean>> distinctFingerFuture = distinctExecutorService.submit(new Callable<FingerMatchResultFuture<Boolean>>() {
                         @Override
                         public FingerMatchResultFuture<Boolean> call() throws Exception {
@@ -525,24 +551,32 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
                             future.setObjectValue(FingerMatcher.featureMatchGAFIS(mnt, finalDestMnt));
                             return future;
                         }
-                    });*/
-                    fingerMatchResultQueue.add(distinctFingerFuture);
+                    });
+                    try {
+                        fingerMatchResultFutureList.add(distinctFingerFuture.get());
+                    } catch (ExecutionException | InterruptedException e) {
+                        e.printStackTrace();
+                    }*/
                 }
             }
         }
-        for (int i = 0; i < fingerMatchResultQueue.size(); i++){
+        boolean isDistinct = true;
+        for (int i = 0; i < fingerMatchResultFutureList.size(); i++){
             try {
-                Future<Boolean> future = fingerMatchResultQueue.take();
-                if(future.get()){
+                Future<Boolean> future = fingerMatchResultFutureList.get(i);
+                boolean isMatch = future.get();
+                if(isMatch){
                     Toast.makeText(this, "重复采集,请换一个指纹!", Toast.LENGTH_SHORT).show();
-                    return false;
+                    isDistinct = false;
+                    break;
                 }
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
+                isDistinct = false;
             }
         }
 
-        return true;
+        return isDistinct;
     }
     //用于指位重复采集校验，10个指位，最多9个线程
     ExecutorService distinctExecutorService = Executors.newFixedThreadPool(9);

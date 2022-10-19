@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -206,8 +207,8 @@ public class IDCardActivity extends AppCompatActivity {
             @Override
             public void onResult(IDCardResult result) {
                 if (result != null) {
-                    saveIDCardResult(result);
                     setIDCardResult(result);
+//                    saveIDCardResult(result);
                 }
             }
 
@@ -236,6 +237,10 @@ public class IDCardActivity extends AppCompatActivity {
         personDao.insert(person);
     }
     private void savePerson(){
+        if(name.getText().toString().isEmpty() || idCardNo.getText().toString().isEmpty()){
+            Toast.makeText(this, "请输入姓名和身份证!", Toast.LENGTH_SHORT).show();
+            return;
+        }
         Person person = new Person();
         person.setId(UUID.randomUUID().toString().replace("-",""));
         person.setName(name.getText().toString());
@@ -245,6 +250,7 @@ public class IDCardActivity extends AppCompatActivity {
         person.setEthnic(ethnic.getText().toString());
         person.setBirthday(birthday.getText().toString());
         person.setGatherDate(new Date());
+
 
         personDao.insert(person);
 
@@ -328,6 +334,7 @@ public class IDCardActivity extends AppCompatActivity {
                 alertDialog.setTitle(title)
                         .setMessage(message)
                         .setPositiveButton("确定", listener)
+                        .setCancelable(false)//不能取消
                         .show();
             }
         });

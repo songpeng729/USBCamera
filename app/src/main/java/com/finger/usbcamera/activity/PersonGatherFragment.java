@@ -1,7 +1,9 @@
 package com.finger.usbcamera.activity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,6 +20,7 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.baidu.ocr.sdk.model.IDCardParams;
 import com.finger.fpt.FPT5Object;
 import com.finger.fpt.PackageHead;
 import com.finger.fpt.tp.FingerprintPackage;
@@ -47,6 +50,8 @@ import static com.finger.usbcamera.activity.FingerActivity.EXTRA_PERSONID;
  * 人员采集Fragment
  */
 public class PersonGatherFragment extends Fragment {
+    private static final int REQUEST_CODE_ADD_PERSON = 101;
+
     private String TAG = "PersonGatherFragment";
     private List<Person> personList = new ArrayList<Person>();
     private TextView title;
@@ -77,7 +82,7 @@ public class PersonGatherFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(mContext, IDCardActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, REQUEST_CODE_ADD_PERSON);
             }
         });
         refreshBtn.setOnClickListener(new View.OnClickListener(){
@@ -170,4 +175,13 @@ public class PersonGatherFragment extends Fragment {
         personListAdapter.notifyDataSetChanged();//刷新
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        Log.e(TAG, "onActivityResult: "+requestCode+" resultCode "+ resultCode);
+        if (requestCode == REQUEST_CODE_ADD_PERSON && resultCode == Activity.RESULT_OK) {
+            refreshPersonList();//添加，刷新列表
+        }
+    }
 }

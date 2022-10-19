@@ -24,14 +24,6 @@
             tools:ignore="HardcodedText"/>
 
     <Button
-            android:text="相册选择 反面"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/gallery_button_back"
-            android:visibility="gone"
-            tools:ignore="HardcodedText"/>
-
-    <Button
             android:text="身份证正面拍照识别"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -43,20 +35,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/id_card_front_button_native"
-            tools:ignore="HardcodedText"/>
-
-    <Button
-            android:text="身份证反面拍照识别"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/id_card_back_button"
-            tools:ignore="HardcodedText"/>
-
-    <Button
-            android:text="身份证反面(嵌入式质量控制+云端识别)"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/id_card_back_button_native"
             tools:ignore="HardcodedText"/>
 
     <TextView

@@ -3,6 +3,8 @@ package com.finger.usbcamera.activity;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -10,6 +12,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Spinner;
@@ -34,12 +37,13 @@ import com.finger.usbcamera.USBCameraAPP;
 import com.finger.usbcamera.db.entity.Person;
 import com.finger.usbcamera.db.greendao.PersonDao;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.File;
 import java.util.Date;
 import java.util.UUID;
+
+import static com.finger.usbcamera.activity.FingerActivity.EXTRA_IDCARDNO;
+import static com.finger.usbcamera.activity.FingerActivity.EXTRA_NAME;
+import static com.finger.usbcamera.activity.FingerActivity.EXTRA_PERSONID;
 
 /**
  * 身份证采集
@@ -49,13 +53,16 @@ public class IDCardActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_PICK_IMAGE_FRONT = 201;
     private static final int REQUEST_CODE_PICK_IMAGE_BACK = 202;
     private static final int REQUEST_CODE_CAMERA = 102;
+    private static final int REQUEST_CODE_GATHER_FINGER = 101;
 
     private TextView name, idCardNo, ethnic, birthday, address;
     private Button saveBtn;
     private Spinner gender;
 
     private TextView infoTextView;
-    private AlertDialog.Builder alertDialog;
+    private AlertDialog.Builder alertDialog;//OCR 弹框
+    private PersonDao personDao;
+    private Context mContext;
 
     private boolean checkGalleryPermission() {
         int ret = ActivityCompat.checkSelfPermission(IDCardActivity.this, Manifest.permission
@@ -89,6 +96,8 @@ public class IDCardActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mContext = this;
+        personDao = USBCameraAPP.getInstances().getDaoSession().getPersonDao();
         setContentView(R.layout.activity_idcard);
         alertDialog = new AlertDialog.Builder(this);
         infoTextView = (TextView) findViewById(R.id.info_text_view);
@@ -103,18 +112,7 @@ public class IDCardActivity extends AppCompatActivity {
         saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Person person = new Person();
-                person.setName(name.getText().toString());
-                person.setGender(gender.getSelectedItem().toString());
-                person.setAddress(address.getText().toString());
-                person.setIdCardNo(idCardNo.getText().toString());
-                person.setEthnic(ethnic.getText().toString());
-                person.setBirthday(birthday.getText().toString());
-                person.setId(UUID.randomUUID().toString().replace("-",""));
-                person.setGatherDate(new Date());
-
-                PersonDao personDao = USBCameraAPP.getInstances().getDaoSession().getPersonDao();
-                personDao.insert(person);
+                savePerson();
             }
         });
 
@@ -145,6 +143,7 @@ public class IDCardActivity extends AppCompatActivity {
                     }
                 });
 
+        //相册选择照片
         findViewById(R.id.gallery_button_front).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -152,17 +151,6 @@ public class IDCardActivity extends AppCompatActivity {
                     Intent intent = new Intent(Intent.ACTION_PICK);
                     intent.setType("image/*");
                     startActivityForResult(intent, REQUEST_CODE_PICK_IMAGE_FRONT);
-                }
-            }
-        });
-
-        findViewById(R.id.gallery_button_back).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (checkGalleryPermission()) {
-                    Intent intent = new Intent(Intent.ACTION_PICK);
-                    intent.setType("image/*");
-                    startActivityForResult(intent, REQUEST_CODE_PICK_IMAGE_BACK);
                 }
             }
         });
@@ -197,38 +185,6 @@ public class IDCardActivity extends AppCompatActivity {
                 startActivityForResult(intent, REQUEST_CODE_CAMERA);
             }
         });
-
-        // 身份证反面拍照
-        findViewById(R.id.id_card_back_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(IDCardActivity.this, CameraActivity.class);
-                intent.putExtra(CameraActivity.KEY_OUTPUT_FILE_PATH,
-                        FileUtil.getSaveFile(getApplication()).getAbsolutePath());
-                intent.putExtra(CameraActivity.KEY_CONTENT_TYPE, CameraActivity.CONTENT_TYPE_ID_CARD_BACK);
-                startActivityForResult(intent, REQUEST_CODE_CAMERA);
-            }
-        });
-
-        // 身份证反面扫描
-        findViewById(R.id.id_card_back_button_native).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(IDCardActivity.this, CameraActivity.class);
-                intent.putExtra(CameraActivity.KEY_OUTPUT_FILE_PATH,
-                        FileUtil.getSaveFile(getApplication()).getAbsolutePath());
-                intent.putExtra(CameraActivity.KEY_NATIVE_ENABLE,
-                        true);
-                // KEY_NATIVE_MANUAL设置了之后CameraActivity中不再自动初始化和释放模型
-                // 请手动使用CameraNativeHelper初始化和释放模型
-                // 推荐这样做，可以避免一些activity切换导致的不必要的异常
-                intent.putExtra(CameraActivity.KEY_NATIVE_MANUAL,
-                        true);
-                intent.putExtra(CameraActivity.KEY_CONTENT_TYPE, CameraActivity.CONTENT_TYPE_ID_CARD_BACK);
-                startActivityForResult(intent, REQUEST_CODE_CAMERA);
-            }
-        });
-
     }
 
     /**
@@ -277,8 +233,31 @@ public class IDCardActivity extends AppCompatActivity {
         person.setId(UUID.randomUUID().toString().replace("-",""));
         person.setGatherDate(new Date());
 
-        PersonDao personDao = USBCameraAPP.getInstances().getDaoSession().getPersonDao();
         personDao.insert(person);
+    }
+    private void savePerson(){
+        Person person = new Person();
+        person.setId(UUID.randomUUID().toString().replace("-",""));
+        person.setName(name.getText().toString());
+        person.setGender(gender.getSelectedItem().toString());
+        person.setAddress(address.getText().toString());
+        person.setIdCardNo(idCardNo.getText().toString());
+        person.setEthnic(ethnic.getText().toString());
+        person.setBirthday(birthday.getText().toString());
+        person.setGatherDate(new Date());
+
+        personDao.insert(person);
+
+        alertText("保存成功", "继续采集指纹！", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(mContext, FingerActivity.class);
+                intent.putExtra(EXTRA_NAME, person.getName());
+                intent.putExtra(EXTRA_IDCARDNO, person.getIdCardNo());
+                intent.putExtra(EXTRA_PERSONID, person.getId());
+                startActivityForResult(intent, REQUEST_CODE_GATHER_FINGER);
+            }
+        });
     }
 
     private void setIDCardResult(IDCardResult idCardResult){
@@ -332,15 +311,23 @@ public class IDCardActivity extends AppCompatActivity {
                 }
             }
         }
+
+        if(requestCode == REQUEST_CODE_GATHER_FINGER){
+            setResult(Activity.RESULT_OK);
+            finish();
+        }
     }
 
     private void alertText(final String title, final String message) {
+        alertText(title, message, null);
+    }
+    private void alertText(final String title, final String message, DialogInterface.OnClickListener listener) {
         this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 alertDialog.setTitle(title)
                         .setMessage(message)
-                        .setPositiveButton("确定", null)
+                        .setPositiveButton("确定", listener)
                         .show();
             }
         });

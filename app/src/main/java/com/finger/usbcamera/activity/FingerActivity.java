@@ -302,7 +302,6 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
             case MOSAIC_STATUS_SUCCESS:
                 //获取指纹数据
                 byte[] imageData = fingerSurfaceView.getImgData();
-                //TODO 图像质量校验
                 FingerData fingerData = getCurrentFingerData();
                 int fgp = currentFgp();
                 //特征提取

@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import com.finger.usbcamera.listener.MosaicImageListener;
+import com.finger.usbcamera.util.ImageConverter;
 import com.finger.usbcamera.vo.FingerData;
 import com.serenegiant.usb.USBMonitor;
 import com.serenegiant.usb.UVCCamera;
@@ -186,14 +187,14 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
                     Log.i(TAG, "afterMosaic ret "+ ret);
                     if(ret == 0){
                         imgDataBuffer = bytes;
-                        //校验图像
-//                        if(ImageConverter.checkImageQuality(false,bytes)){
+                        //校验图像,TODO 这里不能区分滚动和平面，放到外层处理
+                        if(ImageConverter.checkImageQuality(false,bytes)){
                             //提取特征
 //                            featureData = FeatureExtractor.extractFeature( 1, false, bytes);
                             onMosaicStatusChanged(MOSAIC_STATUS_SUCCESS, "采集完成");
-//                        }else{
-//                            onMosaicStatusChanged(MOSAIC_STATUS_FAIL, "质量不合格");
-//                        }
+                        }else{
+                            onMosaicStatusChanged(MOSAIC_STATUS_FAIL, "质量不合格");
+                        }
                         stopGather();
                     }else if (ret < 0){
                         onMosaicStatusChanged(MOSAIC_STATUS_FAIL, "", ret);

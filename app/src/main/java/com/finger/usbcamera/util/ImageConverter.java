@@ -2,6 +2,7 @@ package com.finger.usbcamera.util;
 
 import android.util.Log;
 
+import centipede.livescan.MosaicNative;
 import gbfp.jni.GBFPNative;
 
 /**
@@ -62,19 +63,16 @@ public class ImageConverter {
 
         if(isFlat){
             int quality = GBFPNative.FPGetFptQuality(imageData, 640, 640);
+            Log.d(LOG_TAG, "GBFPNative.FPGetFptQuality() "+ quality);
             if(quality >= 60){
                 return true;
             }
         }else{
-            //TODO
-//            int quality = MosaicNative.FingerQuality(imgDataBuffer, width, height);
-//            if(quality < 0){
-//                //滚动采集出现异常，条件多样，这里直接使用handler处理
-//                Message msg = fingerSurfaceViewHandler.obtainMessage(MOSAIC_STATUS_FAIL);
-//                msg.arg1 = quality;
-//                fingerSurfaceViewHandler.sendMessage(msg);
-//            }
-            return true;
+            int quality = MosaicNative.ImageQuality(imageData, 640, 640);
+            Log.d(LOG_TAG, "MosaicNative.ImageQuality() "+ quality);
+            if(quality > 0){
+                return true;
+            }
         }
         return false;
     }

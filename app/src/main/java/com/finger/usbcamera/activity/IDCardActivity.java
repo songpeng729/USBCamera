@@ -38,8 +38,12 @@ import com.finger.usbcamera.USBCameraAPP;
 import com.finger.usbcamera.db.entity.Person;
 import com.finger.usbcamera.db.greendao.PersonDao;
 
+import org.acra.data.StringFormat;
+
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Random;
 import java.util.UUID;
 
 import static com.finger.usbcamera.activity.FingerActivity.EXTRA_IDCARDNO;
@@ -231,10 +235,19 @@ public class IDCardActivity extends AppCompatActivity {
         person.setIdCardNo(idCardResult.getIdNumber().getWords());
         person.setEthnic(idCardResult.getEthnic().getWords());
         person.setBirthday(idCardResult.getBirthday().getWords());
-        person.setId(UUID.randomUUID().toString().replace("-",""));
         person.setGatherDate(new Date());
 
+        person.setId(generatePersonId(person.getIdCardNo()));
         personDao.insert(person);
+    }
+
+    /**
+     * 生成人员编号, 当前使用P+身份证号{18}+随机4位
+     * fpt5 asjxgrybh 正则表达式: |(P[0-9]{6}([0-9]|[A-Z]){6}[0-9]{4}(0[1-9]|1[0-2])([0-9]|[A-Z]){4})
+     * @return
+     */
+    private String generatePersonId(String idcardno){
+        return String.format("P%s%04d", idcardno, (int)(Math.random()*10000));
     }
     private void savePerson(){
         if(name.getText().toString().isEmpty() || idCardNo.getText().toString().isEmpty()){
@@ -242,7 +255,6 @@ public class IDCardActivity extends AppCompatActivity {
             return;
         }
         Person person = new Person();
-        person.setId(UUID.randomUUID().toString().replace("-",""));
         person.setName(name.getText().toString());
         person.setGender(gender.getSelectedItem().toString());
         person.setAddress(address.getText().toString());
@@ -251,7 +263,7 @@ public class IDCardActivity extends AppCompatActivity {
         person.setBirthday(birthday.getText().toString());
         person.setGatherDate(new Date());
 
-
+        person.setId(generatePersonId(person.getIdCardNo()));
         personDao.insert(person);
 
         alertText("保存成功", "继续采集指纹！", new DialogInterface.OnClickListener() {

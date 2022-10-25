@@ -23,6 +23,8 @@ import com.finger.usbcamera.R;
 import com.finger.usbcamera.USBCameraAPP;
 import com.finger.usbcamera.db.entity.Finger;
 import com.finger.usbcamera.db.greendao.FingerDao;
+import com.finger.usbcamera.internal.LicenseInfo;
+import com.finger.usbcamera.internal.LicenseUtils;
 import com.finger.usbcamera.listener.MosaicImageListener;
 import com.finger.usbcamera.util.FeatureExtractor;
 import com.finger.usbcamera.util.FingerMatcher;
@@ -166,6 +168,7 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
                 }
 
                 if (mUSBMonitor != null) {
+                    //TODO 验证授权
                     mUSBMonitor.requestPermission(deviceList.get(0));
                 }
             }

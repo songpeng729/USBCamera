@@ -59,6 +59,7 @@
     <string name="model_dry">干指采集模式</string>
     <string name="model_wet">湿指采集模式</string>
 
+    <string name="save_portrait">保 存 人 像</string>
 
     <string name="id_card_read">二代身份证阅读机具</string>
     <string name="id_card_name">姓名：</string>

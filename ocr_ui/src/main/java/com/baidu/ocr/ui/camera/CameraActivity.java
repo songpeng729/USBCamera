@@ -42,6 +42,7 @@ public class CameraActivity extends Activity {
     public static final String KEY_NATIVE_ENABLE = "nativeEnable";
     public static final String KEY_NATIVE_MANUAL = "nativeEnableManual";
 
+    //TODO 支持人像采集水印
     public static final String CONTENT_TYPE_GENERAL = "general";
     public static final String CONTENT_TYPE_ID_CARD_FRONT = "IDCardFront";
     public static final String CONTENT_TYPE_ID_CARD_BACK = "IDCardBack";

@@ -3,7 +3,6 @@ package com.finger.usbcamera.activity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,7 +19,6 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.baidu.ocr.sdk.model.IDCardParams;
 import com.finger.fpt.FPT5Object;
 import com.finger.fpt.PackageHead;
 import com.finger.fpt.tp.FingerprintPackage;
@@ -37,8 +35,6 @@ import com.finger.usbcamera.util.XmlUtil;
 
 import org.greenrobot.greendao.query.QueryBuilder;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,6 +47,7 @@ import static com.finger.usbcamera.activity.FingerActivity.EXTRA_PERSONID;
  */
 public class PersonGatherFragment extends Fragment {
     private static final int REQUEST_CODE_ADD_PERSON = 101;
+    private static final int REQUEST_CODE_GATHER_FACE = 102;
 
     private String TAG = "PersonGatherFragment";
     private List<Person> personList = new ArrayList<Person>();
@@ -127,13 +124,21 @@ public class PersonGatherFragment extends Fragment {
                                 personList.remove(pos);
                                 personListAdapter.notifyItemRemoved(pos);
                                 break;
-                            case R.id.person_list_menu_continue:
-                                //继续采集
+                            case R.id.person_list_menu_gather_finger:
+                                //继续采集指纹
                                 Intent intent = new Intent(mContext, FingerActivity.class);
                                 intent.putExtra(EXTRA_NAME, person.getName());
                                 intent.putExtra(EXTRA_IDCARDNO, person.getIdCardNo());
                                 intent.putExtra(EXTRA_PERSONID, person.getId());
                                 startActivity(intent);
+                                break;
+                            case R.id.person_list_menu_gather_face:
+                                //继续采集指纹
+                                Intent intent2 = new Intent(mContext, FaceActivity.class);
+                                intent2.putExtra(EXTRA_NAME, person.getName());
+                                intent2.putExtra(EXTRA_IDCARDNO, person.getIdCardNo());
+                                intent2.putExtra(EXTRA_PERSONID, person.getId());
+                                startActivity(intent2);
                                 break;
                             case R.id.person_list_menu_export_fpt:
                                 exportFpt(person);

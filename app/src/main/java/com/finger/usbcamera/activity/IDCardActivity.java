@@ -55,10 +55,10 @@ import static com.finger.usbcamera.activity.FingerActivity.EXTRA_PERSONID;
  */
 public class IDCardActivity extends AppCompatActivity {
     private final String TAG = "IDCardActivity";
-    private static final int REQUEST_CODE_PICK_IMAGE_FRONT = 201;
-    private static final int REQUEST_CODE_PICK_IMAGE_BACK = 202;
-    private static final int REQUEST_CODE_CAMERA = 102;
-    private static final int REQUEST_CODE_GATHER_FINGER = 101;
+    private static final int REQUEST_CODE_PICK_IMAGE_FRONT = 201;   // 从相册选择身份证正面照片
+    private static final int REQUEST_CODE_PICK_IMAGE_BACK = 202;    // 从相册选择身份证背面照片
+    private static final int REQUEST_CODE_CAMERA = 102;     //相机拍照
+    private static final int REQUEST_CODE_GATHER_FINGER = 101;  //采集指纹
 
     private TextView name, idCardNo, ethnic, birthday, address;
     private Button saveBtn;
@@ -310,12 +310,6 @@ public class IDCardActivity extends AppCompatActivity {
             recIDCard(IDCardParams.ID_CARD_SIDE_FRONT, filePath);
         }
 
-        if (requestCode == REQUEST_CODE_PICK_IMAGE_BACK && resultCode == Activity.RESULT_OK) {
-            Uri uri = data.getData();
-            String filePath = getRealPathFromURI(uri);
-            recIDCard(IDCardParams.ID_CARD_SIDE_BACK, filePath);
-        }
-
         if (requestCode == REQUEST_CODE_CAMERA && resultCode == Activity.RESULT_OK) {
             if (data != null) {
                 String contentType = data.getStringExtra(CameraActivity.KEY_CONTENT_TYPE);
@@ -330,6 +324,7 @@ public class IDCardActivity extends AppCompatActivity {
             }
         }
 
+        //采集指纹完成后，退出
         if(requestCode == REQUEST_CODE_GATHER_FINGER){
             setResult(Activity.RESULT_OK);
             finish();

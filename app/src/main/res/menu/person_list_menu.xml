@@ -8,9 +8,13 @@
         android:orderInCategory="100"
         android:title="删除" />
     <item
-        android:id="@+id/person_list_menu_continue"
+        android:id="@+id/person_list_menu_gather_finger"
         android:orderInCategory="100"
-        android:title="继续采集"/>
+        android:title="采集指纹"/>
+    <item
+        android:id="@+id/person_list_menu_gather_face"
+        android:orderInCategory="100"
+        android:title="采集人像"/>
     <item
         android:id="@+id/person_list_menu_export_fpt"
         android:orderInCategory="100"

@@ -27,6 +27,7 @@ import androidx.core.content.res.ResourcesCompat;
 @SuppressWarnings("unused")
 public class MaskView extends View {
 
+    //TODO 支持人像采集水印
     public static final int MASK_TYPE_NONE = 0;
     public static final int MASK_TYPE_ID_CARD_FRONT = 1;
     public static final int MASK_TYPE_ID_CARD_BACK = 2;

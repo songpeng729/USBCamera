@@ -59,6 +59,8 @@
     <string name="model_dry">model dry</string>
     <string name="model_wet">model wet</string>
 
+    <string name="save_portrait">save portrait</string>
+
     <string name="id_card_read">idcard read</string>
     <string name="id_card_name">name：</string>
     <string name="id_card_phone">phone</string>

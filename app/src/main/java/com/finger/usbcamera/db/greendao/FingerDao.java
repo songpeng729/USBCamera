@@ -25,13 +25,12 @@ public class FingerDao extends AbstractDao<Finger, String> {
      */
     public static class Properties {
         public final static Property Id = new Property(0, String.class, "id", true, "id");
-        public final static Property PersonId = new Property(1, String.class, "personId", false, "PERSON_ID");
-        public final static Property Fgp = new Property(2, int.class, "fgp", false, "FGP");
-        public final static Property IsFlat = new Property(3, int.class, "isFlat", false, "IS_FLAT");
-        public final static Property ImgData = new Property(4, byte[].class, "imgData", false, "IMG_DATA");
-        public final static Property MntData = new Property(5, byte[].class, "mntData", false, "MNT_DATA");
-        public final static Property CreateDate = new Property(6, java.util.Date.class, "createDate", false, "CREATE_DATE");
-        public final static Property GatherUserId = new Property(7, String.class, "gatherUserId", false, "GATHER_USERID");
+        public final static Property PersonId = new Property(1, String.class, "personId", false, "person_id");
+        public final static Property Fgp = new Property(2, int.class, "fgp", false, "fgp");
+        public final static Property IsFlat = new Property(3, boolean.class, "isFlat", false, "is_flat");
+        public final static Property ImgData = new Property(4, byte[].class, "imgData", false, "img_data");
+        public final static Property MntData = new Property(5, byte[].class, "mntData", false, "mnt_data");
+        public final static Property CreateDate = new Property(6, java.util.Date.class, "createDate", false, "create_date");
     }
 
 
@@ -48,13 +47,12 @@ public class FingerDao extends AbstractDao<Finger, String> {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"FINGER\" (" + //
                 "\"id\" TEXT PRIMARY KEY NOT NULL ," + // 0: id
-                "\"PERSON_ID\" TEXT," + // 1: personId
-                "\"FGP\" INTEGER NOT NULL ," + // 2: fgp
-                "\"IS_FLAT\" INTEGER NOT NULL ," + // 3: isFlat
-                "\"IMG_DATA\" BLOB," + // 4: imgData
-                "\"MNT_DATA\" BLOB," + // 5: mntData
-                "\"CREATE_DATE\" INTEGER," + // 6: createDate
-                "\"GATHER_USERID\" TEXT);"); // 7: gatherUserId
+                "\"person_id\" TEXT," + // 1: personId
+                "\"fgp\" INTEGER NOT NULL ," + // 2: fgp
+                "\"is_flat\" INTEGER NOT NULL ," + // 3: isFlat
+                "\"img_data\" BLOB," + // 4: imgData
+                "\"mnt_data\" BLOB," + // 5: mntData
+                "\"create_date\" INTEGER);"); // 6: createDate
     }
 
     /** Drops the underlying database table. */
@@ -77,7 +75,7 @@ public class FingerDao extends AbstractDao<Finger, String> {
             stmt.bindString(2, personId);
         }
         stmt.bindLong(3, entity.getFgp());
-        stmt.bindLong(4, entity.getIsFlat());
+        stmt.bindLong(4, entity.getIsFlat() ? 1L: 0L);
  
         byte[] imgData = entity.getImgData();
         if (imgData != null) {
@@ -92,11 +90,6 @@ public class FingerDao extends AbstractDao<Finger, String> {
         java.util.Date createDate = entity.getCreateDate();
         if (createDate != null) {
             stmt.bindLong(7, createDate.getTime());
-        }
- 
-        String gatherUserId = entity.getGatherUserId();
-        if (gatherUserId != null) {
-            stmt.bindString(8, gatherUserId);
         }
     }
 
@@ -114,7 +107,7 @@ public class FingerDao extends AbstractDao<Finger, String> {
             stmt.bindString(2, personId);
         }
         stmt.bindLong(3, entity.getFgp());
-        stmt.bindLong(4, entity.getIsFlat());
+        stmt.bindLong(4, entity.getIsFlat() ? 1L: 0L);
  
         byte[] imgData = entity.getImgData();
         if (imgData != null) {
@@ -130,11 +123,6 @@ public class FingerDao extends AbstractDao<Finger, String> {
         if (createDate != null) {
             stmt.bindLong(7, createDate.getTime());
         }
- 
-        String gatherUserId = entity.getGatherUserId();
-        if (gatherUserId != null) {
-            stmt.bindString(8, gatherUserId);
-        }
     }
 
     @Override
@@ -148,11 +136,10 @@ public class FingerDao extends AbstractDao<Finger, String> {
             cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0), // id
             cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // personId
             cursor.getInt(offset + 2), // fgp
-            cursor.getInt(offset + 3), // isFlat
+            cursor.getShort(offset + 3) != 0, // isFlat
             cursor.isNull(offset + 4) ? null : cursor.getBlob(offset + 4), // imgData
             cursor.isNull(offset + 5) ? null : cursor.getBlob(offset + 5), // mntData
-            cursor.isNull(offset + 6) ? null : new java.util.Date(cursor.getLong(offset + 6)), // createDate
-            cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7) // gatherUserId
+            cursor.isNull(offset + 6) ? null : new java.util.Date(cursor.getLong(offset + 6)) // createDate
         );
         return entity;
     }
@@ -162,11 +149,10 @@ public class FingerDao extends AbstractDao<Finger, String> {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0));
         entity.setPersonId(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
         entity.setFgp(cursor.getInt(offset + 2));
-        entity.setIsFlat(cursor.getInt(offset + 3));
+        entity.setIsFlat(cursor.getShort(offset + 3) != 0);
         entity.setImgData(cursor.isNull(offset + 4) ? null : cursor.getBlob(offset + 4));
         entity.setMntData(cursor.isNull(offset + 5) ? null : cursor.getBlob(offset + 5));
         entity.setCreateDate(cursor.isNull(offset + 6) ? null : new java.util.Date(cursor.getLong(offset + 6)));
-        entity.setGatherUserId(cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7));
      }
     
     @Override

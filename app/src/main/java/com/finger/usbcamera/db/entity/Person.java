@@ -7,6 +7,10 @@ import org.greenrobot.greendao.annotation.Property;
 
 import java.util.Date;
 
+/**
+ * 人员信息主表
+ * 导出fpt要求现住址和户籍地住址,没有警综人员编号，案事件人员编号等字段
+ */
 @Entity(nameInDb = "PERSON")
 public class Person {
     @Id
@@ -38,19 +42,56 @@ public class Person {
      */
     @Property(nameInDb = "ethnic")
     private String ethnic;
+    /**
+     * 国籍
+     */
     @Property(nameInDb = "nationality")
     private String nationality;
+    /**
+     * 出生日期
+     */
     @Property(nameInDb = "birthday")
     private String birthday;
+    /**
+     * 身份证地址
+     */
     @Property(nameInDb = "address")
     private String address;
+    /**
+     * 采集时间
+     */
     @Property(nameInDb = "gather_date")
     private Date gatherDate;
 
-    @Generated(hash = 1670348414)
+    /**
+     * 备注
+     */
+    @Property(nameInDb = "remark")
+    private String remark;
+
+    /**
+     * 采集人
+     */
+    @Property(nameInDb = "gather_user_id")
+    private String gatherUserId;
+
+    /**
+     * 人像采集状态 1:已采集
+     */
+    @Property(nameInDb = "face_status")
+    private int faceStatus = 0;
+
+    /**
+     * 指纹采集状态 1:已采集
+     */
+    @Property(nameInDb = "finger_status")
+    private int fingerStatus = 0;
+
+    @Generated(hash = 2045067586)
     public Person(String id, String personId, String name, String idCardNo,
             String gender, String ethnic, String nationality, String birthday,
-            String address, Date gatherDate) {
+            String address, Date gatherDate, String remark, String gatherUserId,
+            int faceStatus, int fingerStatus) {
         this.id = id;
         this.personId = personId;
         this.name = name;
@@ -61,6 +102,10 @@ public class Person {
         this.birthday = birthday;
         this.address = address;
         this.gatherDate = gatherDate;
+        this.remark = remark;
+        this.gatherUserId = gatherUserId;
+        this.faceStatus = faceStatus;
+        this.fingerStatus = fingerStatus;
     }
 
     @Generated(hash = 1024547259)
@@ -145,5 +190,37 @@ public class Person {
 
     public void setGatherDate(Date gatherDate) {
         this.gatherDate = gatherDate;
+    }
+
+    public String getRemark() {
+        return this.remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
+    public String getGatherUserId() {
+        return this.gatherUserId;
+    }
+
+    public void setGatherUserId(String gatherUserId) {
+        this.gatherUserId = gatherUserId;
+    }
+
+    public int getFaceStatus() {
+        return this.faceStatus;
+    }
+
+    public void setFaceStatus(int faceStatus) {
+        this.faceStatus = faceStatus;
+    }
+
+    public int getFingerStatus() {
+        return this.fingerStatus;
+    }
+
+    public void setFingerStatus(int fingerStatus) {
+        this.fingerStatus = fingerStatus;
     }
 }

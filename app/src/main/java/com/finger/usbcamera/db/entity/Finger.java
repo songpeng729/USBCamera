@@ -18,42 +18,37 @@ public class Finger {
     /**
      * 采集人员主键
      */
-    @Property(nameInDb = "PERSON_ID")
+    @Property(nameInDb = "person_id")
     private String personId;
     /**
      * 指位(1-10)
      */
-    @Property(nameInDb = "FGP")
+    @Property(nameInDb = "fgp")
     private int fgp;
 
     /**
      * 是否平面
      */
-    @Property(nameInDb = "IS_FLAT")
-    private int isFlat;
+    @Property(nameInDb = "is_flat")
+    private boolean isFlat;
     /**
      * wsq压缩图
      */
-    @Property(nameInDb = "IMG_DATA")
+    @Property(nameInDb = "img_data")
     private byte[] imgData;
     /**
      * 特征
      */
-    @Property(nameInDb = "MNT_DATA")
+    @Property(nameInDb = "mnt_data")
     private byte[] mntData;
     /**
-     * 采集日期
+     * 创建时间
      */
-    @Property(nameInDb = "CREATE_DATE")
+    @Property(nameInDb = "create_date")
     private Date createDate;
-    /**
-     * 采集人
-     */
-    @Property(nameInDb = "GATHER_USERID")
-    private String gatherUserId;
-    @Generated(hash = 1526037110)
-    public Finger(String id, String personId, int fgp, int isFlat, byte[] imgData,
-            byte[] mntData, Date createDate, String gatherUserId) {
+    @Generated(hash = 1446477492)
+    public Finger(String id, String personId, int fgp, boolean isFlat,
+            byte[] imgData, byte[] mntData, Date createDate) {
         this.id = id;
         this.personId = personId;
         this.fgp = fgp;
@@ -61,7 +56,6 @@ public class Finger {
         this.imgData = imgData;
         this.mntData = mntData;
         this.createDate = createDate;
-        this.gatherUserId = gatherUserId;
     }
     @Generated(hash = 814071080)
     public Finger() {
@@ -84,6 +78,12 @@ public class Finger {
     public void setFgp(int fgp) {
         this.fgp = fgp;
     }
+    public boolean getIsFlat() {
+        return this.isFlat;
+    }
+    public void setIsFlat(boolean isFlat) {
+        this.isFlat = isFlat;
+    }
     public byte[] getImgData() {
         return this.imgData;
     }
@@ -102,16 +102,5 @@ public class Finger {
     public void setCreateDate(Date createDate) {
         this.createDate = createDate;
     }
-    public String getGatherUserId() {
-        return this.gatherUserId;
-    }
-    public void setGatherUserId(String gatherUserId) {
-        this.gatherUserId = gatherUserId;
-    }
-    public int getIsFlat() {
-        return this.isFlat;
-    }
-    public void setIsFlat(int isFlat) {
-        this.isFlat = isFlat;
-    }
+
 }

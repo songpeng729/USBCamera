@@ -21,13 +21,12 @@ import com.finger.usbcamera.R;
 
 /**
  * 人像采集
+ * 450*600的比例
  */
 public class FaceActivity extends Activity implements View.OnClickListener, View.OnLongClickListener{
     private final String TAG = "FaceActivity";
     public static final int REQUEST_CODE_CAMERA = 100;//相机拍照
     private static final int REQUEST_CODE_PICK_IMAGE = 101;//从相册选择照片
-    private static final int PERMISSIONS_REQUEST_CAMERA = 800;
-    private static final int PERMISSIONS_EXTERNAL_STORAGE = 801;
 
     private ImageView leftFace, centerFace, rightFace;
     private Button saveBtn;
@@ -35,9 +34,10 @@ public class FaceActivity extends Activity implements View.OnClickListener, View
     private int currentFaceIndex = 0;//当前选中的脸位
 
     private static final String IMAGE_FILE_NAME = "face_image";// 头像文件名称
-    public static final int FACE_INDEX_LEFT = 0;//左脸
+
     public static final int FACE_INDEX_CENTER = 1;//正脸
-    public static final int FACE_INDEX_RIGHT = 2;//右脸
+    public static final int FACE_INDEX_LEFT = 2;//左脸
+    public static final int FACE_INDEX_RIGHT = 4;//右脸
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

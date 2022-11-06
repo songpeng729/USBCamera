@@ -34,6 +34,10 @@ public class PersonDao extends AbstractDao<Person, String> {
         public final static Property Birthday = new Property(7, String.class, "birthday", false, "birthday");
         public final static Property Address = new Property(8, String.class, "address", false, "address");
         public final static Property GatherDate = new Property(9, java.util.Date.class, "gatherDate", false, "gather_date");
+        public final static Property Remark = new Property(10, String.class, "remark", false, "remark");
+        public final static Property GatherUserId = new Property(11, String.class, "gatherUserId", false, "gather_user_id");
+        public final static Property FaceStatus = new Property(12, int.class, "faceStatus", false, "face_status");
+        public final static Property FingerStatus = new Property(13, int.class, "fingerStatus", false, "finger_status");
     }
 
 
@@ -58,7 +62,11 @@ public class PersonDao extends AbstractDao<Person, String> {
                 "\"nationality\" TEXT," + // 6: nationality
                 "\"birthday\" TEXT," + // 7: birthday
                 "\"address\" TEXT," + // 8: address
-                "\"gather_date\" INTEGER);"); // 9: gatherDate
+                "\"gather_date\" INTEGER," + // 9: gatherDate
+                "\"remark\" TEXT," + // 10: remark
+                "\"gather_user_id\" TEXT," + // 11: gatherUserId
+                "\"face_status\" INTEGER NOT NULL ," + // 12: faceStatus
+                "\"finger_status\" INTEGER NOT NULL );"); // 13: fingerStatus
     }
 
     /** Drops the underlying database table. */
@@ -120,6 +128,18 @@ public class PersonDao extends AbstractDao<Person, String> {
         if (gatherDate != null) {
             stmt.bindLong(10, gatherDate.getTime());
         }
+ 
+        String remark = entity.getRemark();
+        if (remark != null) {
+            stmt.bindString(11, remark);
+        }
+ 
+        String gatherUserId = entity.getGatherUserId();
+        if (gatherUserId != null) {
+            stmt.bindString(12, gatherUserId);
+        }
+        stmt.bindLong(13, entity.getFaceStatus());
+        stmt.bindLong(14, entity.getFingerStatus());
     }
 
     @Override
@@ -175,6 +195,18 @@ public class PersonDao extends AbstractDao<Person, String> {
         if (gatherDate != null) {
             stmt.bindLong(10, gatherDate.getTime());
         }
+ 
+        String remark = entity.getRemark();
+        if (remark != null) {
+            stmt.bindString(11, remark);
+        }
+ 
+        String gatherUserId = entity.getGatherUserId();
+        if (gatherUserId != null) {
+            stmt.bindString(12, gatherUserId);
+        }
+        stmt.bindLong(13, entity.getFaceStatus());
+        stmt.bindLong(14, entity.getFingerStatus());
     }
 
     @Override
@@ -194,7 +226,11 @@ public class PersonDao extends AbstractDao<Person, String> {
             cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6), // nationality
             cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7), // birthday
             cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8), // address
-            cursor.isNull(offset + 9) ? null : new java.util.Date(cursor.getLong(offset + 9)) // gatherDate
+            cursor.isNull(offset + 9) ? null : new java.util.Date(cursor.getLong(offset + 9)), // gatherDate
+            cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10), // remark
+            cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11), // gatherUserId
+            cursor.getInt(offset + 12), // faceStatus
+            cursor.getInt(offset + 13) // fingerStatus
         );
         return entity;
     }
@@ -211,6 +247,10 @@ public class PersonDao extends AbstractDao<Person, String> {
         entity.setBirthday(cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7));
         entity.setAddress(cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8));
         entity.setGatherDate(cursor.isNull(offset + 9) ? null : new java.util.Date(cursor.getLong(offset + 9)));
+        entity.setRemark(cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10));
+        entity.setGatherUserId(cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11));
+        entity.setFaceStatus(cursor.getInt(offset + 12));
+        entity.setFingerStatus(cursor.getInt(offset + 13));
      }
     
     @Override

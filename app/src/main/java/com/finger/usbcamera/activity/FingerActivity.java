@@ -229,11 +229,10 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
             List<Finger> fingerList = fingerDao.queryBuilder().where(FingerDao.Properties.PersonId.eq(personId)).list();
             Log.i(TAG, "init: fingerList size" + fingerList.size() );
             for (Finger finger: fingerList){
-                int isFlat = finger.getIsFlat();
                 byte[] cprData = finger.getImgData();
                 byte[] imgData = ImageConverter.decompress(cprData);
                 FingerData fingerData;
-                if(isFlat == 1){
+                if(finger.getIsFlat()){
                     fingerData = flatFingerDataList[finger.getFgp()-1];
                 }else{
                     fingerData = rollFingerDataList[finger.getFgp()-1];
@@ -639,10 +638,9 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
                 finger.setId(UUID.randomUUID().toString().replace("-",""));
                 finger.setPersonId(personId);
                 finger.setCreateDate(new Date());
-                finger.setIsFlat(1);
+                finger.setIsFlat(true);
                 finger.setMntData(fingerData.getFeature());
                 finger.setImgData(fingerData.getCprData());
-                finger.setGatherUserId("1");//TODO 获取采集人信息
                 fingerList.add(finger);
             }
         }
@@ -653,10 +651,9 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
                 finger.setId(UUID.randomUUID().toString().replace("-",""));
                 finger.setPersonId(personId);
                 finger.setCreateDate(new Date());
-                finger.setIsFlat(0);
+                finger.setIsFlat(false);
                 finger.setMntData(fingerData.getFeature());
                 finger.setImgData(fingerData.getCprData());
-                finger.setGatherUserId("1");
                 fingerList.add(finger);
             }
         }

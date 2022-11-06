@@ -25,8 +25,7 @@ public class FPTConverter {
         List<TPFinger> tpFingerList = new ArrayList<>();
         for (Finger finger : fingerList) {
             TPFinger tpFinger = new TPFinger();
-            boolean isFlat = finger.getIsFlat() == 1;
-            tpFinger.setFgp(isFlat ? finger.getFgp()+10+ "" : finger.getFgp()+"");
+            tpFinger.setFgp(finger.getIsFlat() ? finger.getFgp()+10+ "" : finger.getFgp()+"");
             tpFinger.setFingerImageData(Base64.getEncoder().encodeToString(finger.getImgData()));
             tpFinger.setFingerImageHorizontalDirectionLength("640");
             tpFinger.setFingerImageVerticalDirectionLength("640");

@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -18,6 +19,14 @@ import androidx.annotation.Nullable;
 import com.baidu.ocr.FileUtil;
 import com.baidu.ocr.ui.camera.CameraActivity;
 import com.finger.usbcamera.R;
+import com.finger.usbcamera.USBCameraAPP;
+import com.finger.usbcamera.db.entity.Face;
+import com.finger.usbcamera.db.greendao.FaceDao;
+import com.finger.usbcamera.db.greendao.FingerDao;
+
+import java.io.ByteArrayOutputStream;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * 人像采集
@@ -28,16 +37,25 @@ public class FaceActivity extends Activity implements View.OnClickListener, View
     public static final int REQUEST_CODE_CAMERA = 100;//相机拍照
     private static final int REQUEST_CODE_PICK_IMAGE = 101;//从相册选择照片
 
+    public static String EXTRA_NAME = "name";
+    public static String EXTRA_IDCARDNO= "idcardno";
+    public static String EXTRA_PERSONID= "personid";
+    private String personId = "", name = "", idcardno = "";
+    FaceDao faceDao = USBCameraAPP.getInstances().getDaoSession().getFaceDao();
+
+    private TextView faceTitle;
     private ImageView leftFace, centerFace, rightFace;
     private Button saveBtn;
 
     private int currentFaceIndex = 0;//当前选中的脸位
 
-    private static final String IMAGE_FILE_NAME = "face_image";// 头像文件名称
-
     public static final int FACE_INDEX_CENTER = 1;//正脸
     public static final int FACE_INDEX_LEFT = 2;//左脸
     public static final int FACE_INDEX_RIGHT = 4;//右脸
+
+    private byte[] centerImage;//正脸数据
+    private byte[] leftImage;//左脸
+    private byte[] rightImage;//右脸
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -45,8 +63,10 @@ public class FaceActivity extends Activity implements View.OnClickListener, View
         setContentView(R.layout.activity_face);
 
         bindView();
+        init();
     }
     private void bindView(){
+        faceTitle = findViewById(R.id.face_title);
         leftFace = findViewById(R.id.face_left);
         centerFace = findViewById(R.id.face_center);
         rightFace = findViewById(R.id.face_right);
@@ -60,6 +80,23 @@ public class FaceActivity extends Activity implements View.OnClickListener, View
         centerFace.setOnLongClickListener(this);
         rightFace.setOnLongClickListener(this);
         saveBtn.setOnClickListener(this);
+    }
+    private void init(){
+        Intent intent = getIntent();
+        if(intent != null){
+            name = intent.getStringExtra(EXTRA_NAME);
+            idcardno = intent.getStringExtra(EXTRA_IDCARDNO);
+            personId = intent.getStringExtra(EXTRA_PERSONID);
+            faceTitle.setText(String.format("%s(%s)\r\n三面人像采集", name, idcardno));
+
+            List<Face> faceList = faceDao.queryBuilder().where(FaceDao.Properties.PersonId.eq(personId)).list();
+            if(faceList != null && faceList.size() > 0){
+                Face face = faceList.get(0);
+                centerFace.setImageBitmap(bytes2Bitmap(face.getCenterImage()));
+                leftFace.setImageBitmap(bytes2Bitmap(face.getLeftImage()));
+                rightFace.setImageBitmap(bytes2Bitmap(face.getRightImage()));
+            }
+        }
     }
 
     @Override
@@ -156,12 +193,15 @@ public class FaceActivity extends Activity implements View.OnClickListener, View
                 switch (faceIndex){
                     case FACE_INDEX_LEFT:
                         leftFace.setImageResource(R.mipmap.face_default);
+                        leftImage = null;
                         break;
                     case FACE_INDEX_CENTER:
                         centerFace.setImageResource(R.mipmap.face_default);
+                        centerImage = null;
                         break;
                     case FACE_INDEX_RIGHT:
                         rightFace.setImageResource(R.mipmap.face_default);
+                        rightImage = null;
                         break;
                 }
                 dialog.dismiss(); //关闭dialog
@@ -199,21 +239,33 @@ public class FaceActivity extends Activity implements View.OnClickListener, View
 
     private void setImage(int faceIndex, String filePath){
         Bitmap bm = BitmapFactory.decodeFile(filePath); //lessenUriImage(filePath);
+        byte[] imageData = bitmap2Bytes(bm);
         switch (faceIndex){
             case FACE_INDEX_LEFT:
                 leftFace.setImageBitmap(bm);
+                leftImage = imageData;
                 break;
             case FACE_INDEX_CENTER:
                 centerFace.setImageBitmap(bm);
+                centerImage = imageData;
                 break;
             case FACE_INDEX_RIGHT:
                 rightFace.setImageBitmap(bm);
+                rightImage = imageData;
                 break;
         }
     }
+    private byte[] bitmap2Bytes(Bitmap bitmap){
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+        return outputStream.toByteArray();
+    }
+    private Bitmap bytes2Bitmap(byte[] data){
+        return BitmapFactory.decodeByteArray(data, 0, data.length);
+    }
 
     /**
-     * 缩放图片, TODO 是否固定照片大小，有没有必要缩放
+     * 缩放图片
      * @param path
      * @return
      */
@@ -233,17 +285,28 @@ public class FaceActivity extends Activity implements View.OnClickListener, View
         return bitmap;
     }
 
-
     /**
      * 保存照片
      */
     private void savePhoto() {
+        if(centerImage == null || leftImage == null || rightImage == null){
+            Toast.makeText(getApplicationContext(),"请采集三面人像数据!",Toast.LENGTH_SHORT).show();
+            return;
+        }
         AlertDialog.Builder builder=new AlertDialog.Builder(this);  //先得到构造器
         builder.setTitle("提示"); //设置标题
         builder.setMessage("是否保存照片？"); //设置内容
         builder.setPositiveButton("确定", new DialogInterface.OnClickListener() { //设置确定按钮
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                Face face = new Face();
+                face.setCenterImage(centerImage);
+                face.setLeftImage(leftImage);
+                face.setRightImage(rightImage);
+                face.setPersonId(personId);
+                face.setId(UUID.randomUUID().toString().replace("-",""));
+                faceDao.insert(face);
+
                 dialog.dismiss(); //关闭dialog
                 Toast.makeText(getApplicationContext(),"成功保存三面人像数据",Toast.LENGTH_SHORT).show();
                 saveBtn.setBackgroundResource(R.color.gray_light);

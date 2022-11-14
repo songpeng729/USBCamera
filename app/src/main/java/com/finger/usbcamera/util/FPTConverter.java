@@ -37,8 +37,8 @@ public class FPTConverter {
     }
     private static DescriptiveMsg convert2DescriptiveMsg(Person person){
         DescriptiveMsg msg = new DescriptiveMsg();
-        msg.setCasePersonid(person.getId());
-        msg.setFingerPalmCardId(person.getId());
+        msg.setCasePersonid(person.getPersonId());
+        msg.setFingerPalmCardId(person.getPersonId());
         msg.setName(person.getName());
         //TODO 字典转换
         msg.setGender(person.getGender());

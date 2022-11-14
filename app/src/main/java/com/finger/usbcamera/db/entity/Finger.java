@@ -12,14 +12,14 @@ import org.greenrobot.greendao.annotation.Generated;
  */
 @Entity(nameInDb = "FINGER")
 public class Finger {
-    @Id
+    @Id(autoincrement = true)
     @Property(nameInDb = "id")
-    private String id;
+    private Long id;
     /**
      * 采集人员主键
      */
     @Property(nameInDb = "person_id")
-    private String personId;
+    private Long personId;
     /**
      * 指位(1-10)
      */
@@ -46,9 +46,9 @@ public class Finger {
      */
     @Property(nameInDb = "create_date")
     private Date createDate;
-    @Generated(hash = 1446477492)
-    public Finger(String id, String personId, int fgp, boolean isFlat,
-            byte[] imgData, byte[] mntData, Date createDate) {
+    @Generated(hash = 770619718)
+    public Finger(Long id, Long personId, int fgp, boolean isFlat, byte[] imgData,
+            byte[] mntData, Date createDate) {
         this.id = id;
         this.personId = personId;
         this.fgp = fgp;
@@ -60,16 +60,16 @@ public class Finger {
     @Generated(hash = 814071080)
     public Finger() {
     }
-    public String getId() {
+    public Long getId() {
         return this.id;
     }
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
-    public String getPersonId() {
+    public Long getPersonId() {
         return this.personId;
     }
-    public void setPersonId(String personId) {
+    public void setPersonId(Long personId) {
         this.personId = personId;
     }
     public int getFgp() {
@@ -102,5 +102,4 @@ public class Finger {
     public void setCreateDate(Date createDate) {
         this.createDate = createDate;
     }
-
 }

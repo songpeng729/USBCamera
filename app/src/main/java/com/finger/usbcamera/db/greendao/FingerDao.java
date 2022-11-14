@@ -15,7 +15,7 @@ import com.finger.usbcamera.db.entity.Finger;
 /** 
  * DAO for table "FINGER".
 */
-public class FingerDao extends AbstractDao<Finger, String> {
+public class FingerDao extends AbstractDao<Finger, Long> {
 
     public static final String TABLENAME = "FINGER";
 
@@ -24,8 +24,8 @@ public class FingerDao extends AbstractDao<Finger, String> {
      * Can be used for QueryBuilder and for referencing column names.
      */
     public static class Properties {
-        public final static Property Id = new Property(0, String.class, "id", true, "id");
-        public final static Property PersonId = new Property(1, String.class, "personId", false, "person_id");
+        public final static Property Id = new Property(0, Long.class, "id", true, "id");
+        public final static Property PersonId = new Property(1, Long.class, "personId", false, "person_id");
         public final static Property Fgp = new Property(2, int.class, "fgp", false, "fgp");
         public final static Property IsFlat = new Property(3, boolean.class, "isFlat", false, "is_flat");
         public final static Property ImgData = new Property(4, byte[].class, "imgData", false, "img_data");
@@ -46,8 +46,8 @@ public class FingerDao extends AbstractDao<Finger, String> {
     public static void createTable(Database db, boolean ifNotExists) {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"FINGER\" (" + //
-                "\"id\" TEXT PRIMARY KEY NOT NULL ," + // 0: id
-                "\"person_id\" TEXT," + // 1: personId
+                "\"id\" INTEGER PRIMARY KEY AUTOINCREMENT ," + // 0: id
+                "\"person_id\" INTEGER," + // 1: personId
                 "\"fgp\" INTEGER NOT NULL ," + // 2: fgp
                 "\"is_flat\" INTEGER NOT NULL ," + // 3: isFlat
                 "\"img_data\" BLOB," + // 4: imgData
@@ -65,14 +65,14 @@ public class FingerDao extends AbstractDao<Finger, String> {
     protected final void bindValues(DatabaseStatement stmt, Finger entity) {
         stmt.clearBindings();
  
-        String id = entity.getId();
+        Long id = entity.getId();
         if (id != null) {
-            stmt.bindString(1, id);
+            stmt.bindLong(1, id);
         }
  
-        String personId = entity.getPersonId();
+        Long personId = entity.getPersonId();
         if (personId != null) {
-            stmt.bindString(2, personId);
+            stmt.bindLong(2, personId);
         }
         stmt.bindLong(3, entity.getFgp());
         stmt.bindLong(4, entity.getIsFlat() ? 1L: 0L);
@@ -97,14 +97,14 @@ public class FingerDao extends AbstractDao<Finger, String> {
     protected final void bindValues(SQLiteStatement stmt, Finger entity) {
         stmt.clearBindings();
  
-        String id = entity.getId();
+        Long id = entity.getId();
         if (id != null) {
-            stmt.bindString(1, id);
+            stmt.bindLong(1, id);
         }
  
-        String personId = entity.getPersonId();
+        Long personId = entity.getPersonId();
         if (personId != null) {
-            stmt.bindString(2, personId);
+            stmt.bindLong(2, personId);
         }
         stmt.bindLong(3, entity.getFgp());
         stmt.bindLong(4, entity.getIsFlat() ? 1L: 0L);
@@ -126,15 +126,15 @@ public class FingerDao extends AbstractDao<Finger, String> {
     }
 
     @Override
-    public String readKey(Cursor cursor, int offset) {
-        return cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0);
+    public Long readKey(Cursor cursor, int offset) {
+        return cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0);
     }    
 
     @Override
     public Finger readEntity(Cursor cursor, int offset) {
         Finger entity = new Finger( //
-            cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0), // id
-            cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // personId
+            cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
+            cursor.isNull(offset + 1) ? null : cursor.getLong(offset + 1), // personId
             cursor.getInt(offset + 2), // fgp
             cursor.getShort(offset + 3) != 0, // isFlat
             cursor.isNull(offset + 4) ? null : cursor.getBlob(offset + 4), // imgData
@@ -146,8 +146,8 @@ public class FingerDao extends AbstractDao<Finger, String> {
      
     @Override
     public void readEntity(Cursor cursor, Finger entity, int offset) {
-        entity.setId(cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0));
-        entity.setPersonId(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
+        entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
+        entity.setPersonId(cursor.isNull(offset + 1) ? null : cursor.getLong(offset + 1));
         entity.setFgp(cursor.getInt(offset + 2));
         entity.setIsFlat(cursor.getShort(offset + 3) != 0);
         entity.setImgData(cursor.isNull(offset + 4) ? null : cursor.getBlob(offset + 4));
@@ -156,12 +156,13 @@ public class FingerDao extends AbstractDao<Finger, String> {
      }
     
     @Override
-    protected final String updateKeyAfterInsert(Finger entity, long rowId) {
-        return entity.getId();
+    protected final Long updateKeyAfterInsert(Finger entity, long rowId) {
+        entity.setId(rowId);
+        return rowId;
     }
     
     @Override
-    public String getKey(Finger entity) {
+    public Long getKey(Finger entity) {
         if(entity != null) {
             return entity.getId();
         } else {

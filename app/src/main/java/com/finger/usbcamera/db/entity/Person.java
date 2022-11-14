@@ -13,9 +13,9 @@ import java.util.Date;
  */
 @Entity(nameInDb = "PERSON")
 public class Person {
-    @Id
+    @Id(autoincrement = true)
     @Property(nameInDb = "id")
-    private String id;
+    private Long id;
     /**
      * 捺印卡号
      */
@@ -87,8 +87,8 @@ public class Person {
     @Property(nameInDb = "finger_status")
     private int fingerStatus = 0;
 
-    @Generated(hash = 2045067586)
-    public Person(String id, String personId, String name, String idCardNo,
+    @Generated(hash = 1599301650)
+    public Person(Long id, String personId, String name, String idCardNo,
             String gender, String ethnic, String nationality, String birthday,
             String address, Date gatherDate, String remark, String gatherUserId,
             int faceStatus, int fingerStatus) {
@@ -112,16 +112,16 @@ public class Person {
     public Person() {
     }
 
-    public String getId() {
-        return id;
+    public Long getId() {
+        return this.id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
     public String getPersonId() {
-        return personId;
+        return this.personId;
     }
 
     public void setPersonId(String personId) {
@@ -129,7 +129,7 @@ public class Person {
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public void setName(String name) {
@@ -137,7 +137,7 @@ public class Person {
     }
 
     public String getIdCardNo() {
-        return idCardNo;
+        return this.idCardNo;
     }
 
     public void setIdCardNo(String idCardNo) {
@@ -145,7 +145,7 @@ public class Person {
     }
 
     public String getGender() {
-        return gender;
+        return this.gender;
     }
 
     public void setGender(String gender) {
@@ -153,7 +153,7 @@ public class Person {
     }
 
     public String getEthnic() {
-        return ethnic;
+        return this.ethnic;
     }
 
     public void setEthnic(String ethnic) {
@@ -161,7 +161,7 @@ public class Person {
     }
 
     public String getNationality() {
-        return nationality;
+        return this.nationality;
     }
 
     public void setNationality(String nationality) {
@@ -169,7 +169,7 @@ public class Person {
     }
 
     public String getBirthday() {
-        return birthday;
+        return this.birthday;
     }
 
     public void setBirthday(String birthday) {
@@ -177,7 +177,7 @@ public class Person {
     }
 
     public String getAddress() {
-        return address;
+        return this.address;
     }
 
     public void setAddress(String address) {
@@ -185,7 +185,7 @@ public class Person {
     }
 
     public Date getGatherDate() {
-        return gatherDate;
+        return this.gatherDate;
     }
 
     public void setGatherDate(Date gatherDate) {

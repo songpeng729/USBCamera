@@ -237,7 +237,7 @@ public class IDCardActivity extends AppCompatActivity {
         person.setBirthday(idCardResult.getBirthday().getWords());
         person.setGatherDate(new Date());
 
-        person.setId(generatePersonId(person.getIdCardNo()));
+        person.setPersonId(generatePersonId(person.getIdCardNo()));
         personDao.insert(person);
     }
 
@@ -263,7 +263,7 @@ public class IDCardActivity extends AppCompatActivity {
         person.setBirthday(birthday.getText().toString());
         person.setGatherDate(new Date());
 
-        person.setId(generatePersonId(person.getIdCardNo()));
+        person.setPersonId(generatePersonId(person.getIdCardNo()));
         personDao.insert(person);
 
         alertText("保存成功", "继续采集指纹！", new DialogInterface.OnClickListener() {

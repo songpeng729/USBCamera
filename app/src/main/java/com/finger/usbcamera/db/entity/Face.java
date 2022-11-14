@@ -12,14 +12,14 @@ import org.greenrobot.greendao.annotation.Generated;
  */
 @Entity(nameInDb = "FACE")
 public class Face {
-    @Id
+    @Id(autoincrement = true)
     @Property(nameInDb = "ID")
-    private String id;
+    private Long id;
     /**
      * 采集人员主键
      */
     @Property(nameInDb = "person_id")
-    private String personId;
+    private Long personId;
     /**
      * 正脸
      */
@@ -34,8 +34,8 @@ public class Face {
      */
     @Property(nameInDb = "create_date")
     private Date createDate;
-    @Generated(hash = 1863563351)
-    public Face(String id, String personId, byte[] centerImage, byte[] leftImage,
+    @Generated(hash = 1954142677)
+    public Face(Long id, Long personId, byte[] centerImage, byte[] leftImage,
             byte[] rightImage, Date createDate) {
         this.id = id;
         this.personId = personId;
@@ -47,16 +47,16 @@ public class Face {
     @Generated(hash = 601504354)
     public Face() {
     }
-    public String getId() {
+    public Long getId() {
         return this.id;
     }
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
-    public String getPersonId() {
+    public Long getPersonId() {
         return this.personId;
     }
-    public void setPersonId(String personId) {
+    public void setPersonId(Long personId) {
         this.personId = personId;
     }
     public byte[] getCenterImage() {
@@ -83,4 +83,5 @@ public class Face {
     public void setCreateDate(Date createDate) {
         this.createDate = createDate;
     }
+
 }

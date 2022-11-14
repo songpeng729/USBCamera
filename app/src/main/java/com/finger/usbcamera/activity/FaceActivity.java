@@ -40,7 +40,8 @@ public class FaceActivity extends Activity implements View.OnClickListener, View
     public static String EXTRA_NAME = "name";
     public static String EXTRA_IDCARDNO= "idcardno";
     public static String EXTRA_PERSONID= "personid";
-    private String personId = "", name = "", idcardno = "";
+    private String name = "", idcardno = "";
+    private Long personId;
     FaceDao faceDao = USBCameraAPP.getInstances().getDaoSession().getFaceDao();
 
     private TextView faceTitle;
@@ -86,7 +87,7 @@ public class FaceActivity extends Activity implements View.OnClickListener, View
         if(intent != null){
             name = intent.getStringExtra(EXTRA_NAME);
             idcardno = intent.getStringExtra(EXTRA_IDCARDNO);
-            personId = intent.getStringExtra(EXTRA_PERSONID);
+            personId = intent.getLongExtra(EXTRA_PERSONID, 0);
             faceTitle.setText(String.format("%s(%s)\r\n三面人像采集", name, idcardno));
 
             List<Face> faceList = faceDao.queryBuilder().where(FaceDao.Properties.PersonId.eq(personId)).list();
@@ -304,7 +305,6 @@ public class FaceActivity extends Activity implements View.OnClickListener, View
                 face.setLeftImage(leftImage);
                 face.setRightImage(rightImage);
                 face.setPersonId(personId);
-                face.setId(UUID.randomUUID().toString().replace("-",""));
                 faceDao.insert(face);
 
                 dialog.dismiss(); //关闭dialog

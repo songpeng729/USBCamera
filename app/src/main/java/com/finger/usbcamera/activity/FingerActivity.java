@@ -58,8 +58,9 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
     private final String TAG = "FingerActivity";
     public static String EXTRA_NAME = "name";
     public static String EXTRA_IDCARDNO= "idcardno";
-    public static String EXTRA_PERSONID= "personid";
-    private String personId = "", name = "", idcardno = "";
+    public static String EXTRA_PERSONID= "person_id";
+    private String name = "", idcardno = "";
+    private Long personId;
     FingerDao fingerDao = USBCameraAPP.getInstances().getDaoSession().getFingerDao();
 
     private MosaicSurfaceView fingerSurfaceView;//指纹显示
@@ -223,7 +224,7 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
         if(intent != null){
             name = intent.getStringExtra(EXTRA_NAME);
             idcardno = intent.getStringExtra(EXTRA_IDCARDNO);
-            personId = intent.getStringExtra(EXTRA_PERSONID);
+            personId = intent.getLongExtra(EXTRA_PERSONID, 0);
             gatherTitle.setText(String.format("%s(%s)", name, idcardno));
 
             List<Finger> fingerList = fingerDao.queryBuilder().where(FingerDao.Properties.PersonId.eq(personId)).list();
@@ -635,7 +636,6 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
             if(fingerData.getImage() != null){
                 Finger finger = new Finger();
                 finger.setFgp(fingerData.getFgp());
-                finger.setId(UUID.randomUUID().toString().replace("-",""));
                 finger.setPersonId(personId);
                 finger.setCreateDate(new Date());
                 finger.setIsFlat(true);
@@ -648,7 +648,6 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
             if(fingerData.getImage() != null){
                 Finger finger = new Finger();
                 finger.setFgp(fingerData.getFgp());
-                finger.setId(UUID.randomUUID().toString().replace("-",""));
                 finger.setPersonId(personId);
                 finger.setCreateDate(new Date());
                 finger.setIsFlat(false);

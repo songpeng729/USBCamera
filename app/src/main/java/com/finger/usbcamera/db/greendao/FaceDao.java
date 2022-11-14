@@ -15,7 +15,7 @@ import com.finger.usbcamera.db.entity.Face;
 /** 
  * DAO for table "FACE".
 */
-public class FaceDao extends AbstractDao<Face, String> {
+public class FaceDao extends AbstractDao<Face, Long> {
 
     public static final String TABLENAME = "FACE";
 
@@ -24,8 +24,8 @@ public class FaceDao extends AbstractDao<Face, String> {
      * Can be used for QueryBuilder and for referencing column names.
      */
     public static class Properties {
-        public final static Property Id = new Property(0, String.class, "id", true, "ID");
-        public final static Property PersonId = new Property(1, String.class, "personId", false, "person_id");
+        public final static Property Id = new Property(0, Long.class, "id", true, "ID");
+        public final static Property PersonId = new Property(1, Long.class, "personId", false, "person_id");
         public final static Property CenterImage = new Property(2, byte[].class, "centerImage", false, "center_image");
         public final static Property LeftImage = new Property(3, byte[].class, "leftImage", false, "left_image");
         public final static Property RightImage = new Property(4, byte[].class, "rightImage", false, "right_image");
@@ -45,8 +45,8 @@ public class FaceDao extends AbstractDao<Face, String> {
     public static void createTable(Database db, boolean ifNotExists) {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"FACE\" (" + //
-                "\"ID\" TEXT PRIMARY KEY NOT NULL ," + // 0: id
-                "\"person_id\" TEXT," + // 1: personId
+                "\"ID\" INTEGER PRIMARY KEY AUTOINCREMENT ," + // 0: id
+                "\"person_id\" INTEGER," + // 1: personId
                 "\"center_image\" BLOB," + // 2: centerImage
                 "\"left_image\" BLOB," + // 3: leftImage
                 "\"right_image\" BLOB," + // 4: rightImage
@@ -63,14 +63,14 @@ public class FaceDao extends AbstractDao<Face, String> {
     protected final void bindValues(DatabaseStatement stmt, Face entity) {
         stmt.clearBindings();
  
-        String id = entity.getId();
+        Long id = entity.getId();
         if (id != null) {
-            stmt.bindString(1, id);
+            stmt.bindLong(1, id);
         }
  
-        String personId = entity.getPersonId();
+        Long personId = entity.getPersonId();
         if (personId != null) {
-            stmt.bindString(2, personId);
+            stmt.bindLong(2, personId);
         }
  
         byte[] centerImage = entity.getCenterImage();
@@ -98,14 +98,14 @@ public class FaceDao extends AbstractDao<Face, String> {
     protected final void bindValues(SQLiteStatement stmt, Face entity) {
         stmt.clearBindings();
  
-        String id = entity.getId();
+        Long id = entity.getId();
         if (id != null) {
-            stmt.bindString(1, id);
+            stmt.bindLong(1, id);
         }
  
-        String personId = entity.getPersonId();
+        Long personId = entity.getPersonId();
         if (personId != null) {
-            stmt.bindString(2, personId);
+            stmt.bindLong(2, personId);
         }
  
         byte[] centerImage = entity.getCenterImage();
@@ -130,15 +130,15 @@ public class FaceDao extends AbstractDao<Face, String> {
     }
 
     @Override
-    public String readKey(Cursor cursor, int offset) {
-        return cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0);
+    public Long readKey(Cursor cursor, int offset) {
+        return cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0);
     }    
 
     @Override
     public Face readEntity(Cursor cursor, int offset) {
         Face entity = new Face( //
-            cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0), // id
-            cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // personId
+            cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
+            cursor.isNull(offset + 1) ? null : cursor.getLong(offset + 1), // personId
             cursor.isNull(offset + 2) ? null : cursor.getBlob(offset + 2), // centerImage
             cursor.isNull(offset + 3) ? null : cursor.getBlob(offset + 3), // leftImage
             cursor.isNull(offset + 4) ? null : cursor.getBlob(offset + 4), // rightImage
@@ -149,8 +149,8 @@ public class FaceDao extends AbstractDao<Face, String> {
      
     @Override
     public void readEntity(Cursor cursor, Face entity, int offset) {
-        entity.setId(cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0));
-        entity.setPersonId(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
+        entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
+        entity.setPersonId(cursor.isNull(offset + 1) ? null : cursor.getLong(offset + 1));
         entity.setCenterImage(cursor.isNull(offset + 2) ? null : cursor.getBlob(offset + 2));
         entity.setLeftImage(cursor.isNull(offset + 3) ? null : cursor.getBlob(offset + 3));
         entity.setRightImage(cursor.isNull(offset + 4) ? null : cursor.getBlob(offset + 4));
@@ -158,12 +158,13 @@ public class FaceDao extends AbstractDao<Face, String> {
      }
     
     @Override
-    protected final String updateKeyAfterInsert(Face entity, long rowId) {
-        return entity.getId();
+    protected final Long updateKeyAfterInsert(Face entity, long rowId) {
+        entity.setId(rowId);
+        return rowId;
     }
     
     @Override
-    public String getKey(Face entity) {
+    public Long getKey(Face entity) {
         if(entity != null) {
             return entity.getId();
         } else {

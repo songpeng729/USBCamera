@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.finger.usbcamera.db.MigrationDaoHelper;
+import com.finger.usbcamera.db.entity.User;
 import com.finger.usbcamera.db.greendao.DaoMaster;
 import com.finger.usbcamera.db.greendao.DaoSession;
 
@@ -15,6 +16,8 @@ public class USBCameraAPP extends Application {
     private DaoMaster mDaoMaster;
     private DaoSession mDaoSession;
     public static USBCameraAPP instances;
+
+    private User loginUser;
 
     public static USBCameraAPP getInstances(){
         return instances;
@@ -42,9 +45,27 @@ public class USBCameraAPP extends Application {
         // 注意：该数据库连接属于 DaoMaster，所以多个 Session 指的是相同的数据库连接。
         mDaoMaster = new DaoMaster(db);
         mDaoSession = mDaoMaster.newSession();
+
+        //初始数据
+        initDBData();
+    }
+
+    private void initDBData(){
+        User user = new User();
+        user.setLoginName("admin");
+        user.setPassword("svgn");
+        mDaoSession.getUserDao().insert(user);
     }
 
     public DaoSession getDaoSession() {
         return mDaoSession;
+    }
+
+    public User getLoginUser() {
+        return loginUser;
+    }
+
+    public void setLoginUser(User loginUser) {
+        this.loginUser = loginUser;
     }
 }

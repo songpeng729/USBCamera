@@ -25,10 +25,14 @@ import com.finger.fpt.tp.FingerprintPackage;
 import com.finger.usbcamera.R;
 import com.finger.usbcamera.USBCameraAPP;
 import com.finger.usbcamera.adapter.PersonListAdapter;
+import com.finger.usbcamera.db.entity.Face;
 import com.finger.usbcamera.db.entity.Finger;
 import com.finger.usbcamera.db.entity.Person;
+import com.finger.usbcamera.db.entity.User;
+import com.finger.usbcamera.db.greendao.FaceDao;
 import com.finger.usbcamera.db.greendao.FingerDao;
 import com.finger.usbcamera.db.greendao.PersonDao;
+import com.finger.usbcamera.db.greendao.UserDao;
 import com.finger.usbcamera.util.FPTConverter;
 import com.finger.usbcamera.util.FileUtils;
 import com.finger.usbcamera.util.XmlUtil;
@@ -59,13 +63,18 @@ public class PersonGatherFragment extends Fragment {
     private PersonListAdapter personListAdapter;
 
     private PersonDao personDao;
-    FingerDao fingerDao;
+    private FingerDao fingerDao;
+    private UserDao userDao;
+    private FaceDao faceDao;
+
     private Context mContext;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         personDao = USBCameraAPP.getInstances().getDaoSession().getPersonDao();
         fingerDao = USBCameraAPP.getInstances().getDaoSession().getFingerDao();
+        userDao = USBCameraAPP.getInstances().getDaoSession().getUserDao();
+        faceDao = USBCameraAPP.getInstances().getDaoSession().getFaceDao();
         view = inflater.inflate(R.layout.fragment_person_gather, container, false);
         mContext = view.getContext();
         title = view.findViewById(R.id.person_gather_title);
@@ -161,7 +170,13 @@ public class PersonGatherFragment extends Fragment {
         List<FingerprintPackage> fingerprintPackageList = new ArrayList<>();
 
         List<Finger> fingerList = fingerDao.queryBuilder().where(FingerDao.Properties.PersonId.eq(person.getId())).list();
-        FingerprintPackage fingerprintPackage = FPTConverter.convert2FingerprintPackage(person, fingerList);
+        User gatherUser = userDao.queryBuilder().where(UserDao.Properties.Id.eq(person.getGatherUserId())).list().get(0);
+        List<Face> faceList = faceDao.queryBuilder().where(FaceDao.Properties.PersonId.eq(person.getId())).list();
+        Face face = null;
+        if(faceList != null && faceList.size() > 0){
+            face = faceList.get(0);
+        }
+        FingerprintPackage fingerprintPackage = FPTConverter.convert2FingerprintPackage(person, fingerList, face, gatherUser);
 
         fingerprintPackageList.add(fingerprintPackage);
         fpt5Object.setFingerprintPackageList(fingerprintPackageList);

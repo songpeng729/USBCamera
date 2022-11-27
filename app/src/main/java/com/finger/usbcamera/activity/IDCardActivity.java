@@ -193,7 +193,7 @@ public class IDCardActivity extends AppCompatActivity {
     }
 
     /**
-     *
+     * TODO 尝试自定义http请求，能否得到身份证照片图像？？？
      * @param idCardSide 身份证正反面
      * @param filePath 身份证照片路径
      */

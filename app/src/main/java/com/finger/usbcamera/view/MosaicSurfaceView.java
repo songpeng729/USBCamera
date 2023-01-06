@@ -25,6 +25,7 @@ import java.util.concurrent.Executors;
 
 import centipede.livescan.MosaicFetcher;
 import centipede.livescan.MosaicNative;
+import gbfp.jni.GBFPNative;
 
 import static com.finger.usbcamera.listener.MosaicImageListener.MOSAIC_STATUS_END;
 import static com.finger.usbcamera.listener.MosaicImageListener.MOSAIC_STATUS_FAIL;
@@ -59,6 +60,7 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
     private byte[] imgDataBuffer;//图像数据
     private byte[] imgDataBufferWhite;//空白图像据
 
+    private boolean isFlat = false;//是否平面，用于质量校验
     private byte[] featureData;//特征数据
 
     private Bitmap bitmap;
@@ -152,8 +154,9 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
 
     /**
      * 开始采集
+     * @param isFlat 是否平面
      */
-    public synchronized void startGather(USBMonitor.UsbControlBlock ctrlBlock){
+    public synchronized void startGather(USBMonitor.UsbControlBlock ctrlBlock, boolean isFlat){
         if(isPreview){
             return;
         }
@@ -162,6 +165,7 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
             onMosaicStatusChanged(MOSAIC_STATUS_MESSAGE, "usb未连接");
             return;
         }
+        this.isFlat = isFlat;
         //先空画布
         clearImage();
         //采集指纹比较耗时，放到子线程里处理
@@ -187,14 +191,7 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
                     Log.i(TAG, "afterMosaic ret "+ ret);
                     if(ret == 0){
                         imgDataBuffer = bytes;
-                        //校验图像,TODO 这里不能区分滚动和平面，放到外层处理
-                        if(ImageConverter.checkImageQuality(false,bytes)){
-                            //提取特征
-//                            featureData = FeatureExtractor.extractFeature( 1, false, bytes);
-                            onMosaicStatusChanged(MOSAIC_STATUS_SUCCESS, "采集完成");
-                        }else{
-                            onMosaicStatusChanged(MOSAIC_STATUS_FAIL, "质量不合格");
-                        }
+                        onMosaicStatusChanged(MOSAIC_STATUS_SUCCESS, "采集完成", ret);
                         stopGather();
                     }else if (ret < 0){
                         onMosaicStatusChanged(MOSAIC_STATUS_FAIL, "", ret);
@@ -266,7 +263,7 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
      * @param message
      */
     private void onMosaicStatusChanged(int status, String message) {
-        onMosaicStatusChanged(status, message, 0);
+        onMosaicStatusChanged(status, message, MOSAIC_STATUS_MESSAGE);
     }
     private void onMosaicStatusChanged(int status, String message, int code) {
         Log.i(TAG, "status:"+ status + " message:"+ message + " code:"+ code);
@@ -286,73 +283,86 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
                 return;
             }
             switch (msg.what){
-                case MOSAIC_STATUS_START:
+                case MOSAIC_STATUS_MESSAGE | MOSAIC_STATUS_START:
                     Log.d(TAG, "MOSAIC_STATUS_START");
                     mosaicImageListener.onMosaicStatusChanged(msg.what, msg.obj.toString());
                     break;
                 case MOSAIC_STATUS_FAIL:
                     Log.i(TAG, "MOSAIC_STATUS_FAIL:"+ msg.arg1);
-                    String message = msg.obj.toString();
-                    switch (msg.arg1){
-                        case -101:
-                            message = "手指回滚了";
-                            break;
-                        case -102:
-                            message = "模糊";
-                            break;
-                        case -103:
-                            message = "尺寸太小";
-                            break;
-                        case -104:
-                            message = "手指太干";
-                            break;
-                        case -105:
-                            message = "手指太湿";
-                            break;
-                        case -106:
-                            message = "手指模糊";
-                            break;
-                        case -107:
-                            message = "core偏左";
-                            break;
-                        case -108:
-                            message = "core偏右";
-                            break;
-                        case -109:
-                            message = "core太靠顶部";
-                            break;
-                        case -110:
-                            message = "core太靠下部";
-                            break;
-                        case -111:
-                            message = "没有core";
-                            break;
-                        case -112:
-                            message = "重心偏左";
-                            break;
-                        case -113:
-                            message = "重心偏右";
-                            break;
-                        case -114:
-                            message = "重心偏上";
-                            break;
-                        case -115:
-                            message = "重心偏下";
-                            break;
-                        case -116:
-                            message = "不支持平面采集";
-                            break;
-                    }
+                    String message = getErrorMessage(msg.arg1);
                     mosaicImageListener.onMosaicStatusChanged(msg.what, message);
                     break;
-                case MOSAIC_STATUS_SUCCESS:
-                case MOSAIC_STATUS_END:
-                    stopGather();
-                    mosaicImageListener.onMosaicStatusChanged(msg.what, msg.obj.toString());
+                case MOSAIC_STATUS_SUCCESS | MOSAIC_STATUS_END:
+                    //检查质量
+                    int quality = ImageConverter.checkImageQuality(isFlat, imgDataBuffer);
+                    if(quality >= 60){
+                        mosaicImageListener.onMosaicStatusChanged(MOSAIC_STATUS_SUCCESS, msg.obj.toString());
+                    }else if (quality > 0 ) {
+                        mosaicImageListener.onMosaicStatusChanged(MOSAIC_STATUS_END, "质量不合格（" + quality + "）");
+                    }else if (quality == 0){
+                        mosaicImageListener.onMosaicStatusChanged(MOSAIC_STATUS_END, "程序异常GBFPNative.FPBegin");
+                    }else if(quality < 0) {
+                        mosaicImageListener.onMosaicStatusChanged(msg.what, getErrorMessage(quality));
+                    }
                     break;
             }
         }
     };
+
+    private String getErrorMessage(int code){
+        String message = "";
+        switch (code){
+            case -101:
+                message = "手指回滚了";
+                break;
+            case -102:
+                message = "模糊";
+                break;
+            case -103:
+                message = "尺寸太小";
+                break;
+            case -104:
+                message = "手指太干";
+                break;
+            case -105:
+                message = "手指太湿";
+                break;
+            case -106:
+                message = "手指模糊";
+                break;
+            case -107:
+                message = "core偏左";
+                break;
+            case -108:
+                message = "core偏右";
+                break;
+            case -109:
+                message = "core太靠顶部";
+                break;
+            case -110:
+                message = "core太靠下部";
+                break;
+            case -111:
+                message = "没有core";
+                break;
+            case -112:
+                message = "重心偏左";
+                break;
+            case -113:
+                message = "重心偏右";
+                break;
+            case -114:
+                message = "重心偏上";
+                break;
+            case -115:
+                message = "重心偏下";
+                break;
+            case -116:
+                message = "不支持平面采集";
+                break;
+        }
+        return message;
+    }
 
     public synchronized int getGain(){
         return MosaicNative.GetGain();

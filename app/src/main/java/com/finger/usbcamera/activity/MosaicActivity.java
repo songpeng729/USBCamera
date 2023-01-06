@@ -168,7 +168,7 @@ public class MosaicActivity extends Activity implements View.OnClickListener, Mo
         startGatherBtn.setBackgroundResource(R.drawable.finger_btn_background3);
         startGatherBtn.setText(getString(R.string.stop_collect));
 
-        fingerSurfaceView.startGather(usbControlBlock);
+        fingerSurfaceView.startGather(usbControlBlock, false);
     }
 
     /**

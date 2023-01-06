@@ -55,25 +55,26 @@ public class ImageConverter {
         return null;
     }
 
-    public static boolean checkImageQuality(boolean isFlat, byte[] imageData){
+    /**
+     * 检查图像质量
+     * @param isFlat
+     * @param imageData
+     * @return
+     */
+    public static int checkImageQuality(boolean isFlat, byte[] imageData){
         if (GBFPNative.FPBegin() != 1){
             Log.e(LOG_TAG, "GBFPNative.FPBegin() 异常");
-            return false;
+            return 0;
         }
 
         if(isFlat){
             int quality = GBFPNative.FPGetFptQuality(imageData, 640, 640);
             Log.d(LOG_TAG, "GBFPNative.FPGetFptQuality() "+ quality);
-            if(quality >= 60){
-                return true;
-            }
+            return quality;
         }else{
             int quality = MosaicNative.ImageQuality(imageData, 640, 640);
             Log.d(LOG_TAG, "MosaicNative.ImageQuality() "+ quality);
-            if(quality > 0){
-                return true;
-            }
+            return quality;
         }
-        return false;
     }
 }

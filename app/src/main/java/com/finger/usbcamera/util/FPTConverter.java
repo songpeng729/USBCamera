@@ -55,11 +55,11 @@ public class FPTConverter {
         msg.setCasePersonid(person.getPersonId());
         msg.setFingerPalmCardId(person.getPersonId());
         msg.setName(person.getName());
-        //TODO 字典转换
-        msg.setGender(person.getGender());
+        //字典转换
+        msg.setGender(FPTCode.getGenderCode(person.getGender()));
+        msg.setEthnic(FPTCode.getEthnicCode(person.getEthnic()));
         msg.setBirthday(person.getBirthday());
         msg.setHukouAddress(person.getAddress());
-        msg.setEthnic(person.getEthnic());
         return msg;
     }
     private static CollectInfoMsg convert2CollectInfoMsg(Person person, User user){

@@ -26,6 +26,7 @@ import org.greenrobot.greendao.query.QueryBuilder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -41,7 +42,7 @@ public class PersonManagerFragment extends Fragment {
     private PersonListAdapter personListAdapter;
 
     private Button dateBtn;
-    private int year,month, dayOfMonth;
+    private Calendar calendar = Calendar.getInstance();
     private TextView dateTitle;
 
     @Override
@@ -54,12 +55,12 @@ public class PersonManagerFragment extends Fragment {
         dateTitle = view.findViewById(R.id.person_manager_title);
 
         initRecyclerView();
-        initDate();
+        refreshDateTitle();
 
         dateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatePickerDialog dpd = new DatePickerDialog(mContext, dateSetListener, year, month, dayOfMonth);
+                DatePickerDialog dpd = new DatePickerDialog(mContext, dateSetListener, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),calendar.get(Calendar.DAY_OF_MONTH));
                 dpd.show();//显示DatePickerDialog组件
             }
         });
@@ -68,24 +69,13 @@ public class PersonManagerFragment extends Fragment {
     private DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener(){
         @Override
         public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-            PersonManagerFragment.this.year = year;
-            PersonManagerFragment.this.month = month;
-            PersonManagerFragment.this.dayOfMonth = dayOfMonth;
+            calendar.set(Calendar.YEAR, year);
+            calendar.set(Calendar.MONTH, month);
+            calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
             refreshDateTitle();
         }
     };
-    private void initDate() {
-        Calendar calendar = Calendar.getInstance();
-        year = calendar.get(Calendar.YEAR);
-        month = calendar.get(Calendar.MONTH);
-        dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
-        refreshDateTitle();
-    }
     private void refreshDateTitle(){
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.YEAR, year);
-        calendar.set(Calendar.MONTH, month);
-        calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日");
         dateTitle.setText(sdf.format(calendar.getTime()));
         refreshData();
@@ -105,6 +95,7 @@ public class PersonManagerFragment extends Fragment {
 
     private void refreshData(){
         QueryBuilder<Person> queryBuilder = personDao.queryBuilder();
+        queryBuilder.where(PersonDao.Properties.GatherDate.ge(calendar.getTime()),PersonDao.Properties.GatherDate.lt(new Date(calendar.getTimeInMillis()+ 24*60*60*1000)));
         personList.clear();
         personList.addAll(queryBuilder.list());
         personListAdapter.notifyDataSetChanged();//刷新

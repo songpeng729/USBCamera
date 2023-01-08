@@ -44,6 +44,7 @@ public class DryWetSettingActivity extends Activity implements View.OnClickListe
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mContext = this;
         //不自动息屏
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_dry_wet_setting);
@@ -126,7 +127,6 @@ public class DryWetSettingActivity extends Activity implements View.OnClickListe
             public void onStopTrackingTouch(SeekBar seekBar) { }
         });
 
-        mContext = this;
         mUSBMonitor = new USBMonitor(mContext, new USBMonitor.OnDeviceConnectListener() {
             @Override
             public void onAttach(UsbDevice device) {

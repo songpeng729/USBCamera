@@ -55,6 +55,7 @@ import static com.finger.usbcamera.activity.FingerActivity.EXTRA_PERSONID;
  */
 public class IDCardActivity extends AppCompatActivity {
     private final String TAG = "IDCardActivity";
+    private Context mContext;
     private static final int REQUEST_CODE_PICK_IMAGE_FRONT = 201;   // 从相册选择身份证正面照片
     private static final int REQUEST_CODE_PICK_IMAGE_BACK = 202;    // 从相册选择身份证背面照片
     private static final int REQUEST_CODE_CAMERA = 102;     //相机拍照
@@ -67,37 +68,7 @@ public class IDCardActivity extends AppCompatActivity {
     private TextView infoTextView;
     private AlertDialog.Builder alertDialog;//OCR 弹框
     private PersonDao personDao;
-    private Context mContext;
 
-    private boolean checkGalleryPermission() {
-        int ret = ActivityCompat.checkSelfPermission(IDCardActivity.this, Manifest.permission
-                .READ_EXTERNAL_STORAGE);
-        if (ret != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(IDCardActivity.this,
-                    new String[] {Manifest.permission.READ_EXTERNAL_STORAGE},
-                    1000);
-            return false;
-        }
-        return true;
-    }
-    /**
-     * 自定义license的文件路径和文件名称，以license文件方式初始化
-     */
-    private void initAccessTokenLicenseFile() {
-        OCR.getInstance(getApplicationContext()).initAccessToken(new OnResultListener<AccessToken>() {
-            @Override
-            public void onResult(AccessToken accessToken) {
-                String token = accessToken.getAccessToken();
-//                hasGotToken = true;
-            }
-
-            @Override
-            public void onError(OCRError error) {
-                error.printStackTrace();
-                alertText("自定义文件路径licence方式获取token失败", error.getMessage());
-            }
-        }, "aip-ocr.license", getApplicationContext());
-    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -191,7 +162,35 @@ public class IDCardActivity extends AppCompatActivity {
             }
         });
     }
+    private boolean checkGalleryPermission() {
+        int ret = ActivityCompat.checkSelfPermission(IDCardActivity.this, Manifest.permission
+                .READ_EXTERNAL_STORAGE);
+        if (ret != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(IDCardActivity.this,
+                    new String[] {Manifest.permission.READ_EXTERNAL_STORAGE},
+                    1000);
+            return false;
+        }
+        return true;
+    }
+    /**
+     * 自定义license的文件路径和文件名称，以license文件方式初始化
+     */
+    private void initAccessTokenLicenseFile() {
+        OCR.getInstance(getApplicationContext()).initAccessToken(new OnResultListener<AccessToken>() {
+            @Override
+            public void onResult(AccessToken accessToken) {
+                String token = accessToken.getAccessToken();
+//                hasGotToken = true;
+            }
 
+            @Override
+            public void onError(OCRError error) {
+                error.printStackTrace();
+                alertText("自定义文件路径licence方式获取token失败", error.getMessage());
+            }
+        }, "aip-ocr.license", getApplicationContext());
+    }
     /**
      * TODO 尝试自定义http请求，能否得到身份证照片图像？？？
      * @param idCardSide 身份证正反面

@@ -96,4 +96,12 @@
     <string name="id_card_all_collect_finger">十指采集</string>
     <string name="id_card_collect_photo">人像采集</string>
     <string name="id_card_exit">退出系统</string>
+
+    <string name="user_login_name">登录名</string>
+    <string name="user_name">姓名</string>
+    <string name="user_idcardno">身份证号码</string>
+    <string name="user_phone">电话</string>
+    <string name="user_unit_code">单位代码</string>
+    <string name="user_unit_name">单位名称</string>
+
 </resources>

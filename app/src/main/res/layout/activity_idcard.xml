@@ -100,12 +100,18 @@
             android:textSize="18sp"
             android:text="@string/id_card_ethnic"/>
 
-        <EditText
+        <Spinner
             android:id="@+id/id_card_ethnic_edit"
             android:layout_width="220dp"
             android:layout_height="wrap_content"
             android:textSize="18sp"
-            android:singleLine="true" />
+            android:entries="@array/ethnic" />
+        <!--<EditText
+            android:id="@+id/id_card_ethnic_edit"
+            android:layout_width="220dp"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:singleLine="true" />-->
 
     </LinearLayout>
 

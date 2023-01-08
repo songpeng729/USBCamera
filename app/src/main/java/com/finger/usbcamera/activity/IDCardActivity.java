@@ -60,9 +60,9 @@ public class IDCardActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_CAMERA = 102;     //相机拍照
     private static final int REQUEST_CODE_GATHER_FINGER = 101;  //采集指纹
 
-    private TextView name, idCardNo, ethnic, birthday, address;
+    private TextView name, idCardNo, birthday, address;
     private Button saveBtn;
-    private Spinner gender;
+    private Spinner gender, ethnic;
 
     private TextView infoTextView;
     private AlertDialog.Builder alertDialog;//OCR 弹框
@@ -259,7 +259,7 @@ public class IDCardActivity extends AppCompatActivity {
         person.setGender(gender.getSelectedItem().toString());
         person.setAddress(address.getText().toString());
         person.setIdCardNo(idCardNo.getText().toString());
-        person.setEthnic(ethnic.getText().toString());
+        person.setEthnic(ethnic.getSelectedItem().toString());
         person.setBirthday(birthday.getText().toString());
         person.setGatherDate(new Date());
 
@@ -283,7 +283,7 @@ public class IDCardActivity extends AppCompatActivity {
         setGender(idCardResult.getGender().getWords());
         address.setText(idCardResult.getAddress().getWords());
         idCardNo.setText(idCardResult.getIdNumber().getWords());
-        ethnic.setText(idCardResult.getEthnic().getWords());
+        setEthnic(idCardResult.getEthnic().getWords());
         birthday.setText(idCardResult.getBirthday().getWords());
     }
 
@@ -296,6 +296,15 @@ public class IDCardActivity extends AppCompatActivity {
         for(int i = 0; i < adapter.getCount(); i++){
             if(adapter.getItem(i).toString().equals(genderString)){
                 gender.setSelection(i);
+                break;
+            }
+        }
+    }
+    private void setEthnic(String genderString){
+        SpinnerAdapter adapter= ethnic.getAdapter();
+        for(int i = 0; i < adapter.getCount(); i++){
+            if(adapter.getItem(i).toString().equals(genderString)){
+                ethnic.setSelection(i);
                 break;
             }
         }

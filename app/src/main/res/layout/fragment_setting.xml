@@ -3,8 +3,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     >
+    <Button
+        android:id="@+id/set_dry_wet_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="干湿设置"/>
+    <Button
+        android:id="@+id/set_user_info_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="用户信息"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

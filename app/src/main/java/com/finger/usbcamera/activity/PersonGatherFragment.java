@@ -58,7 +58,7 @@ public class PersonGatherFragment extends Fragment {
     private TextView title;
     private Button addBtn;
     private Button refreshBtn;
-    private View view;
+    private View mView;
     private RecyclerView recyclerView;
     private PersonListAdapter personListAdapter;
 
@@ -75,11 +75,11 @@ public class PersonGatherFragment extends Fragment {
         fingerDao = USBCameraAPP.getInstances().getDaoSession().getFingerDao();
         userDao = USBCameraAPP.getInstances().getDaoSession().getUserDao();
         faceDao = USBCameraAPP.getInstances().getDaoSession().getFaceDao();
-        view = inflater.inflate(R.layout.fragment_person_gather, container, false);
-        mContext = view.getContext();
-        title = view.findViewById(R.id.person_gather_title);
-        addBtn = view.findViewById(R.id.person_gather_add);
-        refreshBtn = view.findViewById(R.id.person_gather_refresh);
+        mView = inflater.inflate(R.layout.fragment_person_gather, container, false);
+        mContext = mView.getContext();
+        title = mView.findViewById(R.id.person_gather_title);
+        addBtn = mView.findViewById(R.id.person_gather_add);
+        refreshBtn = mView.findViewById(R.id.person_gather_refresh);
 
         initRecyclerView();
         initData();
@@ -97,8 +97,7 @@ public class PersonGatherFragment extends Fragment {
                 refreshPersonList();
             }
         });
-        // Inflate the layout for this fragment
-        return view;
+        return mView;
     }
 
     private void initData() {
@@ -107,7 +106,7 @@ public class PersonGatherFragment extends Fragment {
         personList.addAll(queryBuilder.list());
     }
     private void initRecyclerView () {
-        recyclerView = view.findViewById(R.id.recyclerView);
+        recyclerView = mView.findViewById(R.id.recyclerView);
         recyclerView.getItemAnimator().setChangeDuration(500);
         recyclerView.getItemAnimator().setMoveDuration(500);
         personListAdapter = new PersonListAdapter(getActivity(), personList);

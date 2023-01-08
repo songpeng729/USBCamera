@@ -1,12 +1,14 @@
 package com.finger.usbcamera.activity;
 
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.PopupMenu;
+import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -21,6 +23,9 @@ import com.finger.usbcamera.db.greendao.PersonDao;
 
 import org.greenrobot.greendao.query.QueryBuilder;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -28,12 +33,16 @@ import java.util.List;
  */
 public class PersonManagerFragment extends Fragment {
     private Context mContext;
-    private List<Person> personList;
+    private List<Person> personList = new ArrayList<>();
     private PersonDao personDao;
 
     private View view;
     private RecyclerView recyclerView;
     private PersonListAdapter personListAdapter;
+
+    private Button dateBtn;
+    private int year,month, dayOfMonth;
+    private TextView dateTitle;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -41,17 +50,47 @@ public class PersonManagerFragment extends Fragment {
         personDao = USBCameraAPP.getInstances().getDaoSession().getPersonDao();
         view = inflater.inflate(R.layout.fragment_person_manager, container, false);
         mContext = view.getContext();
+        dateBtn = view.findViewById(R.id.person_manager_date);
+        dateTitle = view.findViewById(R.id.person_manager_title);
 
         initRecyclerView();
-        initData();
+        initDate();
 
+        dateBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatePickerDialog dpd = new DatePickerDialog(mContext, dateSetListener, year, month, dayOfMonth);
+                dpd.show();//显示DatePickerDialog组件
+            }
+        });
         return view;
     }
-
-    private void initData(){
-        QueryBuilder<Person> queryBuilder = personDao.queryBuilder();
-        personList = queryBuilder.list();
+    private DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener(){
+        @Override
+        public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+            PersonManagerFragment.this.year = year;
+            PersonManagerFragment.this.month = month;
+            PersonManagerFragment.this.dayOfMonth = dayOfMonth;
+            refreshDateTitle();
+        }
+    };
+    private void initDate() {
+        Calendar calendar = Calendar.getInstance();
+        year = calendar.get(Calendar.YEAR);
+        month = calendar.get(Calendar.MONTH);
+        dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+        refreshDateTitle();
     }
+    private void refreshDateTitle(){
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.YEAR, year);
+        calendar.set(Calendar.MONTH, month);
+        calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日");
+        dateTitle.setText(sdf.format(calendar.getTime()));
+        refreshData();
+    }
+
     private void initRecyclerView () {
         recyclerView = view.findViewById(R.id.recyclerView);
         recyclerView.getItemAnimator().setChangeDuration(500);
@@ -62,5 +101,12 @@ public class PersonManagerFragment extends Fragment {
         recyclerView.setAdapter(personListAdapter);
         recyclerView.setLayoutManager(manager);
         recyclerView.addItemDecoration(new DividerItemDecoration(mContext, LinearLayoutManager.VERTICAL));
+    }
+
+    private void refreshData(){
+        QueryBuilder<Person> queryBuilder = personDao.queryBuilder();
+        personList.clear();
+        personList.addAll(queryBuilder.list());
+        personListAdapter.notifyDataSetChanged();//刷新
     }
 }

@@ -354,7 +354,7 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
                 }
                 break;
             case MOSAIC_STATUS_FAIL:
-                Toast.makeText(this, "采集失败:"+message, Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "采集失败("+message+") 重新采集", Toast.LENGTH_SHORT).show();
                 //重新开始采集
                 restartGather();
                 break;
@@ -396,7 +396,7 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
             }
         }
 
-        fingerSurfaceView.showFingerData(getCurrentFingerData());
+        checkFingerIndex(currentFingerIndex);
     }
     /**
      * 切换指位
@@ -430,6 +430,7 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
      * 继续采集下一枚指纹，
      */
     private void toNextFinger(){
+        Log.i(TAG, "toNextFinger currentFingerIndex:"+ this.currentFingerIndex);
         if(this.currentFingerIndex < 9){
             FingerData fingerData;
             if(isFlat){
@@ -507,6 +508,7 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
      * 重新开始采集
      */
     private void restartGather(){
+        Log.i(TAG, "restartGather "+ currentFingerIndex + " isFlat "+ isFlat);
         fingerSurfaceView.stopGather();
         fingerSurfaceView.startGather(usbControlBlock, isFlat);
     }

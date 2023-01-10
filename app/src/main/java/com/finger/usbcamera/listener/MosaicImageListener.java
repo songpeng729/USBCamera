@@ -5,11 +5,12 @@ package com.finger.usbcamera.listener;
  * 拼接图像监听接口
  */
 public interface MosaicImageListener {
+    // MosaicFetcher 只用到了，MOSAIC_STATUS_START, MOSAIC_STATUS_SUCCESS, MOSAIC_STATUS_FAIL
     public final int MOSAIC_STATUS_MESSAGE	= 1;//有消息信息
     public final int MOSAIC_STATUS_SUCCESS	= 2;//拼接完成
     public final int MOSAIC_STATUS_FAIL	= 3;//拼接失败
     public final int MOSAIC_STATUS_START = 4;//开始拼接
-    public final int MOSAIC_STATUS_END = 5;//拼接结束
+//    public final int MOSAIC_STATUS_END = 5;//拼接结束
 
    /* public final int MOSAIC_ERROR_CODE_rollback = -101;
     public final int MOSAIC_ERROR_CODE_fuzzy = -102;

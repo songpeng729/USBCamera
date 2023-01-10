@@ -25,9 +25,7 @@ import java.util.concurrent.Executors;
 
 import centipede.livescan.MosaicFetcher;
 import centipede.livescan.MosaicNative;
-import gbfp.jni.GBFPNative;
 
-import static com.finger.usbcamera.listener.MosaicImageListener.MOSAIC_STATUS_END;
 import static com.finger.usbcamera.listener.MosaicImageListener.MOSAIC_STATUS_FAIL;
 import static com.finger.usbcamera.listener.MosaicImageListener.MOSAIC_STATUS_MESSAGE;
 import static com.finger.usbcamera.listener.MosaicImageListener.MOSAIC_STATUS_START;
@@ -266,7 +264,7 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
         onMosaicStatusChanged(status, message, MOSAIC_STATUS_MESSAGE);
     }
     private void onMosaicStatusChanged(int status, String message, int code) {
-        Log.i(TAG, "status:"+ status + " message:"+ message + " code:"+ code);
+        Log.i(TAG, "onMosaicStatusChanged status:"+ status + " message:"+ message + " code:"+ code);
         Message msg = mosaicSurfaceViewHandler.obtainMessage(status);
         msg.what= status;
         msg.arg1 = code;
@@ -283,26 +281,26 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
                 return;
             }
             switch (msg.what){
-                case MOSAIC_STATUS_MESSAGE | MOSAIC_STATUS_START:
+                case MOSAIC_STATUS_START:
                     Log.d(TAG, "MOSAIC_STATUS_START");
-                    mosaicImageListener.onMosaicStatusChanged(msg.what, msg.obj.toString());
+                    mosaicImageListener.onMosaicStatusChanged(MOSAIC_STATUS_START, msg.obj.toString());
                     break;
                 case MOSAIC_STATUS_FAIL:
                     Log.i(TAG, "MOSAIC_STATUS_FAIL:"+ msg.arg1);
                     String message = getErrorMessage(msg.arg1);
-                    mosaicImageListener.onMosaicStatusChanged(msg.what, message);
+                    mosaicImageListener.onMosaicStatusChanged(MOSAIC_STATUS_FAIL, message);
                     break;
-                case MOSAIC_STATUS_SUCCESS | MOSAIC_STATUS_END:
+                case MOSAIC_STATUS_SUCCESS:
                     //检查质量
                     int quality = ImageConverter.checkImageQuality(isFlat, imgDataBuffer);
                     if(quality >= 60){
                         mosaicImageListener.onMosaicStatusChanged(MOSAIC_STATUS_SUCCESS, msg.obj.toString());
                     }else if (quality > 0 ) {
-                        mosaicImageListener.onMosaicStatusChanged(MOSAIC_STATUS_END, "质量不合格（" + quality + "）");
+                        mosaicImageListener.onMosaicStatusChanged(MOSAIC_STATUS_FAIL, "质量不合格（" + quality + "）");
                     }else if (quality == 0){
-                        mosaicImageListener.onMosaicStatusChanged(MOSAIC_STATUS_END, "程序异常GBFPNative.FPBegin");
-                    }else if(quality < 0) {
-                        mosaicImageListener.onMosaicStatusChanged(msg.what, getErrorMessage(quality));
+                        mosaicImageListener.onMosaicStatusChanged(MOSAIC_STATUS_FAIL, "程序异常GBFPNative.FPBegin");
+                    }else{
+                        mosaicImageListener.onMosaicStatusChanged(MOSAIC_STATUS_FAIL, getErrorMessage(quality));
                     }
                     break;
             }

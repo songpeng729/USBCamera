@@ -18,7 +18,7 @@ import com.finger.usbcamera.R;
 public class SettingFragment extends Fragment {
     private Context mContext;
     private View mView;
-    private Button userSettingBtn;
+    private Button userSettingBtn, dryWetSettingBtn;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -31,6 +31,14 @@ public class SettingFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(mContext, UserSettingActivity.class);
+                startActivity(intent);
+            }
+        });
+        dryWetSettingBtn = mView.findViewById(R.id.set_dry_wet_btn);
+        dryWetSettingBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, DryWetSettingActivity.class);
                 startActivity(intent);
             }
         });

@@ -33,6 +33,12 @@ public class Person {
     private String idCardNo;
 
     /**
+     * 身份证照片
+     */
+    @Property(nameInDb = "idcard_photo")
+    private byte[] idCardPhoto;
+
+    /**
      * 性别
      */
     @Property(nameInDb = "gender")
@@ -87,15 +93,16 @@ public class Person {
     @Property(nameInDb = "finger_status")
     private int fingerStatus = 0;
 
-    @Generated(hash = 1599301650)
+    @Generated(hash = 1110049442)
     public Person(Long id, String personId, String name, String idCardNo,
-            String gender, String ethnic, String nationality, String birthday,
-            String address, Date gatherDate, String remark, String gatherUserId,
-            int faceStatus, int fingerStatus) {
+            byte[] idCardPhoto, String gender, String ethnic, String nationality,
+            String birthday, String address, Date gatherDate, String remark,
+            String gatherUserId, int faceStatus, int fingerStatus) {
         this.id = id;
         this.personId = personId;
         this.name = name;
         this.idCardNo = idCardNo;
+        this.idCardPhoto = idCardPhoto;
         this.gender = gender;
         this.ethnic = ethnic;
         this.nationality = nationality;
@@ -222,5 +229,13 @@ public class Person {
 
     public void setFingerStatus(int fingerStatus) {
         this.fingerStatus = fingerStatus;
+    }
+
+    public byte[] getIdCardPhoto() {
+        return this.idCardPhoto;
+    }
+
+    public void setIdCardPhoto(byte[] idCardPhoto) {
+        this.idCardPhoto = idCardPhoto;
     }
 }

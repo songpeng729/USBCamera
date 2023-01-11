@@ -1,5 +1,8 @@
 package com.finger.usbcamera.util;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+
 public class BitmapUtil {
 
     public static int[] convert2Pixels(byte[] pixBuff) {
@@ -22,5 +25,8 @@ public class BitmapUtil {
             buf_pic[index] = alpha | (b << 16) | (g << 8) | r;
         }
         return buf_pic;
+    }
+    public static Bitmap bytes2Bitmap(byte[] data){
+        return BitmapFactory.decodeByteArray(data, 0, data.length);
     }
 }

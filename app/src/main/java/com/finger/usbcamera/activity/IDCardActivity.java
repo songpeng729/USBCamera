@@ -1,6 +1,7 @@
 package com.finger.usbcamera.activity;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -8,13 +9,17 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
@@ -23,13 +28,17 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+import com.baidu.auth.AuthService;
 import com.baidu.ocr.FileUtil;
+import com.baidu.ocr.IDCardResult2;
+import com.baidu.ocr.IDCardUtil;
 import com.baidu.ocr.sdk.OCR;
 import com.baidu.ocr.sdk.OnResultListener;
 import com.baidu.ocr.sdk.exception.OCRError;
 import com.baidu.ocr.sdk.model.AccessToken;
 import com.baidu.ocr.sdk.model.IDCardParams;
 import com.baidu.ocr.sdk.model.IDCardResult;
+import com.baidu.ocr.sdk.utils.HttpUtil;
 import com.baidu.ocr.ui.camera.CameraActivity;
 import com.baidu.ocr.ui.camera.CameraNativeHelper;
 import com.baidu.ocr.ui.camera.CameraView;
@@ -37,14 +46,13 @@ import com.finger.usbcamera.R;
 import com.finger.usbcamera.USBCameraAPP;
 import com.finger.usbcamera.db.entity.Person;
 import com.finger.usbcamera.db.greendao.PersonDao;
+import com.finger.usbcamera.util.BitmapUtil;
 
-import org.acra.data.StringFormat;
+import org.json.JSONObject;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
+import java.util.Base64;
 import java.util.Date;
-import java.util.Random;
-import java.util.UUID;
 
 import static com.finger.usbcamera.activity.FingerActivity.EXTRA_IDCARDNO;
 import static com.finger.usbcamera.activity.FingerActivity.EXTRA_NAME;
@@ -52,6 +60,8 @@ import static com.finger.usbcamera.activity.FingerActivity.EXTRA_PERSONID;
 
 /**
  * 身份证采集
+ * 参考文档
+ * https://ai.baidu.com/ai-doc/OCR/rk3h7xzck
  */
 public class IDCardActivity extends AppCompatActivity {
     private final String TAG = "IDCardActivity";
@@ -61,6 +71,7 @@ public class IDCardActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_CAMERA = 102;     //相机拍照
     private static final int REQUEST_CODE_GATHER_FINGER = 101;  //采集指纹
 
+    private ImageView idCardPhoto;
     private TextView name, idCardNo, birthday, address;
     private Button saveBtn;
     private Spinner gender, ethnic;
@@ -68,6 +79,7 @@ public class IDCardActivity extends AppCompatActivity {
     private TextView infoTextView;
     private AlertDialog.Builder alertDialog;//OCR 弹框
     private PersonDao personDao;
+    private byte[] photo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +89,7 @@ public class IDCardActivity extends AppCompatActivity {
         setContentView(R.layout.activity_idcard);
         alertDialog = new AlertDialog.Builder(this);
         infoTextView = (TextView) findViewById(R.id.info_text_view);
+        idCardPhoto = findViewById(R.id.id_card_photo);
         name = findViewById(R.id.id_card_name_edit);
         idCardNo = findViewById(R.id.id_card_idcard_edit);
         gender = findViewById(R.id.id_card_gender_edit);
@@ -175,13 +188,14 @@ public class IDCardActivity extends AppCompatActivity {
     }
     /**
      * 自定义license的文件路径和文件名称，以license文件方式初始化
+     * TODO 优化请求
      */
     private void initAccessTokenLicenseFile() {
         OCR.getInstance(getApplicationContext()).initAccessToken(new OnResultListener<AccessToken>() {
             @Override
             public void onResult(AccessToken accessToken) {
-                String token = accessToken.getAccessToken();
-//                hasGotToken = true;
+                USBCameraAPP.accessToken = accessToken.getAccessToken();
+                Log.e(TAG, "accessToken:"+USBCameraAPP.accessToken);
             }
 
             @Override
@@ -191,11 +205,57 @@ public class IDCardActivity extends AppCompatActivity {
             }
         }, "aip-ocr.license", getApplicationContext());
     }
+
     /**
-     * TODO 尝试自定义http请求，能否得到身份证照片图像？？？
+     * 自定义http请求，得到身份证照片图像
+     * @param idCardSide
+     * @param filePath
+     */
+    private void recIDCard2(String idCardSide, String filePath) {
+        Log.d(TAG, "IDCardResult2 filePath:"+ filePath);
+        recognizeIDCard(filePath);
+    }
+
+    @SuppressLint("HandlerLeak")
+    Handler mHandler = new Handler() {
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch(msg.what) {
+                case 0:
+                    IDCardResult2 idCardResult = (IDCardResult2) msg.obj;
+                    if(idCardResult != null){
+                        setIDCardResult2(idCardResult);
+                    }
+                default:
+            }
+        }
+    };
+
+    private void recognizeIDCard(String filePath){
+        //网络请求放到子线程
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                IDCardResult2 idCardResult = null;
+                try {
+                    idCardResult = IDCardUtil.postidcard(USBCameraAPP.accessToken, filePath);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                Log.e(TAG, "mHandler.sendEmptyMessage");
+                Message msg = mHandler.obtainMessage(0);//TODO 暂时先用0
+                msg.obj = idCardResult;
+                mHandler.sendMessage(msg);
+            }
+        }).start();
+
+    }
+    /**
+     * 该方法调用ocr.sdk，不能得到身份证图像数据
      * @param idCardSide 身份证正反面
      * @param filePath 身份证照片路径
      */
+    @Deprecated
     private void recIDCard(String idCardSide, String filePath) {
         IDCardParams param = new IDCardParams();
         param.setImageFile(new File(filePath));
@@ -261,6 +321,8 @@ public class IDCardActivity extends AppCompatActivity {
         person.setEthnic(ethnic.getSelectedItem().toString());
         person.setBirthday(birthday.getText().toString());
         person.setGatherDate(new Date());
+        if(photo != null)
+            person.setIdCardPhoto(photo);
 
         person.setPersonId(generatePersonId(person.getIdCardNo()));
         personDao.insert(person);
@@ -277,6 +339,18 @@ public class IDCardActivity extends AppCompatActivity {
         });
     }
 
+    private void setIDCardResult2(IDCardResult2 idCardResult){
+        name.setText(idCardResult.getName().getWords());
+        setGender(idCardResult.getGender().getWords());
+        address.setText(idCardResult.getAddress().getWords());
+        idCardNo.setText(idCardResult.getIdNumber().getWords());
+        setEthnic(idCardResult.getEthnic().getWords());
+        birthday.setText(idCardResult.getBirthday().getWords());
+        if(idCardResult.getPhoto() != null){
+            photo = Base64.getDecoder().decode(idCardResult.getPhoto());
+            idCardPhoto.setImageBitmap(BitmapUtil.bytes2Bitmap(photo));
+        }
+    }
     private void setIDCardResult(IDCardResult idCardResult){
         name.setText(idCardResult.getName().getWords());
         setGender(idCardResult.getGender().getWords());
@@ -311,11 +385,14 @@ public class IDCardActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.e(TAG, "onActivityResult: "+requestCode+" resultCode "+ resultCode);
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_PICK_IMAGE_FRONT && resultCode == Activity.RESULT_OK) {
             Uri uri = data.getData();
             String filePath = getRealPathFromURI(uri);
-            recIDCard(IDCardParams.ID_CARD_SIDE_FRONT, filePath);
+
+            recIDCard2(IDCardParams.ID_CARD_SIDE_FRONT, filePath);
+//            recIDCard(IDCardParams.ID_CARD_SIDE_FRONT, filePath);
         }
 
         if (requestCode == REQUEST_CODE_CAMERA && resultCode == Activity.RESULT_OK) {
@@ -324,7 +401,8 @@ public class IDCardActivity extends AppCompatActivity {
                 String filePath = FileUtil.getSaveFile(getApplicationContext()).getAbsolutePath();
                 if (!TextUtils.isEmpty(contentType)) {
                     if (CameraActivity.CONTENT_TYPE_ID_CARD_FRONT.equals(contentType)) {
-                        recIDCard(IDCardParams.ID_CARD_SIDE_FRONT, filePath);
+                        recIDCard2(IDCardParams.ID_CARD_SIDE_FRONT, filePath);
+//                        recIDCard(IDCardParams.ID_CARD_SIDE_FRONT, filePath);
                     } else if (CameraActivity.CONTENT_TYPE_ID_CARD_BACK.equals(contentType)) {
                         recIDCard(IDCardParams.ID_CARD_SIDE_BACK, filePath);
                     }

@@ -42,6 +42,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
+    <ImageView
+        android:id="@+id/id_card_photo"
+        android:layout_width="100dp"
+        android:layout_height="125dp"
+        android:layout_gravity="center"
+        android:src="@mipmap/unknown_photo"/>
+
     <LinearLayout
         android:id="@+id/id_card_name_layout"
         android:layout_width="wrap_content"

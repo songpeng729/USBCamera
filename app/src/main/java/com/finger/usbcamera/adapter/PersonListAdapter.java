@@ -1,6 +1,8 @@
 package com.finger.usbcamera.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.finger.usbcamera.R;
 import com.finger.usbcamera.db.entity.Person;
+import com.finger.usbcamera.util.BitmapUtil;
 import com.finger.usbcamera.util.DateUtils;
 
 import java.util.ArrayList;
@@ -46,6 +49,8 @@ public class PersonListAdapter extends RecyclerView.Adapter<PersonListAdapter.Pe
         holder.gender.setText(person.getGender());
         holder.idCardNo.setText(person.getIdCardNo());
         holder.address.setText(person.getAddress());
+        if(person.getIdCardPhoto() != null)
+            holder.photo.setImageBitmap(BitmapUtil.bytes2Bitmap(person.getIdCardPhoto()));
         holder.gatherTime.setText(DateUtils.date2DateTimeString(person.getGatherDate()));
         //长按弹出菜单
         holder.personListItemLayout.setOnLongClickListener(new View.OnLongClickListener(){

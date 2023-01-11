@@ -10,6 +10,16 @@ import com.finger.usbcamera.db.greendao.DaoMaster;
 import com.finger.usbcamera.db.greendao.DaoSession;
 
 public class USBCameraAPP extends Application {
+    //https://console.bce.baidu.com/iam/#/iam/accesslist
+//    public static final String Access_Key = "21e132b876c64158bcaadc8489f68d5f";
+//    public static final String Secret_Key = "d10dcf3a982742a6a293fce7f144827e";
+
+    public static final String APP_ID = "26633100";
+    public static final String APP_KEY = "quROaF6TH8uNqQyKvagI3n5o";
+    public static final String SECRET_KEY = "ZGuuT69kVbYIe8KqR9LyVF6sai9kD548";
+    public static final String AES_KEY = "e325f40cc6c5b7b5";
+    public static String accessToken = "";
+
     private static Context context;
     private MigrationDaoHelper mHelper;
     private SQLiteDatabase db;

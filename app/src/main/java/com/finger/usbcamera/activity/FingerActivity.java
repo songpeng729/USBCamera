@@ -23,7 +23,9 @@ import androidx.annotation.Nullable;
 import com.finger.usbcamera.R;
 import com.finger.usbcamera.USBCameraAPP;
 import com.finger.usbcamera.db.entity.Finger;
+import com.finger.usbcamera.db.entity.Person;
 import com.finger.usbcamera.db.greendao.FingerDao;
+import com.finger.usbcamera.db.greendao.PersonDao;
 import com.finger.usbcamera.listener.MosaicImageListener;
 import com.finger.usbcamera.util.FeatureExtractor;
 import com.finger.usbcamera.util.FingerMatcher;
@@ -42,6 +44,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import static com.finger.usbcamera.db.DatabaseConstants.STATUS_NOT_NULL;
+import static com.finger.usbcamera.vo.FingerData.FINGER_STATUS_NONE;
 import static com.finger.usbcamera.vo.FingerData.FINGER_STATUS_NORMAL;
 
 /**
@@ -53,8 +57,9 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
     public static String EXTRA_IDCARDNO= "idcardno";
     public static String EXTRA_PERSONID= "person_id";
     private String name = "", idcardno = "";
-    private Long personId;
-    FingerDao fingerDao = USBCameraAPP.getInstances().getDaoSession().getFingerDao();
+    private Long personId;//person.id
+    private FingerDao fingerDao = USBCameraAPP.getInstances().getDaoSession().getFingerDao();
+    private PersonDao personDao = USBCameraAPP.getInstances().getDaoSession().getPersonDao();
 
     private MosaicSurfaceView fingerSurfaceView;//指纹显示
     private LinearLayout fingerViewLayout;
@@ -666,7 +671,7 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
     }*/
 
     /**
-     * 保存指纹数据,存储压缩图和特征, TODO 如果不做比对可不存特征？？？
+     * 保存指纹数据,存储压缩图和特征
      */
     private void saveFingerDataList(){
         List<Finger> fingerList = new ArrayList<>();
@@ -695,6 +700,10 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
             }
         }
         fingerDao.insertInTx(fingerList);
+
+        Person person = personDao.load(personId);
+        person.setFingerStatus(STATUS_NOT_NULL);
+        personDao.save(person);
         Toast.makeText(mContext, "数据保存成功", Toast.LENGTH_SHORT).show();
     }
 }

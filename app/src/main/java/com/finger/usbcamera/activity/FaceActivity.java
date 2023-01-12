@@ -21,12 +21,16 @@ import com.baidu.ocr.ui.camera.CameraActivity;
 import com.finger.usbcamera.R;
 import com.finger.usbcamera.USBCameraAPP;
 import com.finger.usbcamera.db.entity.Face;
+import com.finger.usbcamera.db.entity.Person;
 import com.finger.usbcamera.db.greendao.FaceDao;
 import com.finger.usbcamera.db.greendao.FingerDao;
+import com.finger.usbcamera.db.greendao.PersonDao;
 
 import java.io.ByteArrayOutputStream;
 import java.util.List;
 import java.util.UUID;
+
+import static com.finger.usbcamera.db.DatabaseConstants.STATUS_NOT_NULL;
 
 /**
  * 人像采集
@@ -41,8 +45,9 @@ public class FaceActivity extends Activity implements View.OnClickListener, View
     public static String EXTRA_IDCARDNO= "idcardno";
     public static String EXTRA_PERSONID= "personid";
     private String name = "", idcardno = "";
-    private Long personId;
-    FaceDao faceDao = USBCameraAPP.getInstances().getDaoSession().getFaceDao();
+    private Long personId; //person.id
+    private FaceDao faceDao = USBCameraAPP.getInstances().getDaoSession().getFaceDao();
+    private PersonDao personDao = USBCameraAPP.getInstances().getDaoSession().getPersonDao();
 
     private TextView faceTitle;
     private ImageView leftFace, centerFace, rightFace;
@@ -306,6 +311,10 @@ public class FaceActivity extends Activity implements View.OnClickListener, View
                 face.setRightImage(rightImage);
                 face.setPersonId(personId);
                 faceDao.insert(face);
+                
+                Person person = personDao.load(personId);
+                person.setFaceStatus(STATUS_NOT_NULL);
+                personDao.save(person);
 
                 dialog.dismiss(); //关闭dialog
                 Toast.makeText(getApplicationContext(),"成功保存三面人像数据",Toast.LENGTH_SHORT).show();

@@ -42,9 +42,9 @@ import org.greenrobot.greendao.query.QueryBuilder;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.finger.usbcamera.activity.FingerActivity.EXTRA_IDCARDNO;
-import static com.finger.usbcamera.activity.FingerActivity.EXTRA_NAME;
-import static com.finger.usbcamera.activity.FingerActivity.EXTRA_PERSONID;
+import static com.finger.usbcamera.USBCameraAPP.EXTRA_IDCARDNO;
+import static com.finger.usbcamera.USBCameraAPP.EXTRA_NAME;
+import static com.finger.usbcamera.USBCameraAPP.EXTRA_PERSONID;
 
 /**
  * 人员采集Fragment

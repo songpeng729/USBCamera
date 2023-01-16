@@ -50,9 +50,9 @@ import java.io.File;
 import java.util.Base64;
 import java.util.Date;
 
-import static com.finger.usbcamera.activity.FingerActivity.EXTRA_IDCARDNO;
-import static com.finger.usbcamera.activity.FingerActivity.EXTRA_NAME;
-import static com.finger.usbcamera.activity.FingerActivity.EXTRA_PERSONID;
+import static com.finger.usbcamera.USBCameraAPP.EXTRA_IDCARDNO;
+import static com.finger.usbcamera.USBCameraAPP.EXTRA_NAME;
+import static com.finger.usbcamera.USBCameraAPP.EXTRA_PERSONID;
 
 /**
  * 身份证采集

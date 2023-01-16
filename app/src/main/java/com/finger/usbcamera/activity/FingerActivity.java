@@ -44,6 +44,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import static com.finger.usbcamera.USBCameraAPP.EXTRA_IDCARDNO;
+import static com.finger.usbcamera.USBCameraAPP.EXTRA_NAME;
+import static com.finger.usbcamera.USBCameraAPP.EXTRA_PERSONID;
 import static com.finger.usbcamera.db.DatabaseConstants.STATUS_NOT_NULL;
 import static com.finger.usbcamera.vo.FingerData.FINGER_STATUS_NONE;
 import static com.finger.usbcamera.vo.FingerData.FINGER_STATUS_NORMAL;
@@ -53,9 +56,6 @@ import static com.finger.usbcamera.vo.FingerData.FINGER_STATUS_NORMAL;
  */
 public class FingerActivity extends Activity implements View.OnClickListener, MosaicImageListener {
     private final String TAG = "FingerActivity";
-    public static String EXTRA_NAME = "name";
-    public static String EXTRA_IDCARDNO= "idcardno";
-    public static String EXTRA_PERSONID= "person_id";
     private String name = "", idcardno = "";
     private Long personId;//person.id
     private FingerDao fingerDao = USBCameraAPP.getInstances().getDaoSession().getFingerDao();

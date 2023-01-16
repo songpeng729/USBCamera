@@ -30,6 +30,9 @@ import java.io.ByteArrayOutputStream;
 import java.util.List;
 import java.util.UUID;
 
+import static com.finger.usbcamera.USBCameraAPP.EXTRA_IDCARDNO;
+import static com.finger.usbcamera.USBCameraAPP.EXTRA_NAME;
+import static com.finger.usbcamera.USBCameraAPP.EXTRA_PERSONID;
 import static com.finger.usbcamera.db.DatabaseConstants.STATUS_NOT_NULL;
 
 /**
@@ -41,9 +44,6 @@ public class FaceActivity extends Activity implements View.OnClickListener, View
     public static final int REQUEST_CODE_CAMERA = 100;//相机拍照
     private static final int REQUEST_CODE_PICK_IMAGE = 101;//从相册选择照片
 
-    public static String EXTRA_NAME = "name";
-    public static String EXTRA_IDCARDNO= "idcardno";
-    public static String EXTRA_PERSONID= "personid";
     private String name = "", idcardno = "";
     private Long personId; //person.id
     private FaceDao faceDao = USBCameraAPP.getInstances().getDaoSession().getFaceDao();
@@ -93,7 +93,7 @@ public class FaceActivity extends Activity implements View.OnClickListener, View
             name = intent.getStringExtra(EXTRA_NAME);
             idcardno = intent.getStringExtra(EXTRA_IDCARDNO);
             personId = intent.getLongExtra(EXTRA_PERSONID, 0);
-            faceTitle.setText(String.format("%s(%s)\r\n三面人像采集", name, idcardno));
+            faceTitle.setText(String.format("%s(%s)\r\n三面人像采集"+personId, name, idcardno));
 
             List<Face> faceList = faceDao.queryBuilder().where(FaceDao.Properties.PersonId.eq(personId)).list();
             if(faceList != null && faceList.size() > 0){
@@ -311,7 +311,7 @@ public class FaceActivity extends Activity implements View.OnClickListener, View
                 face.setRightImage(rightImage);
                 face.setPersonId(personId);
                 faceDao.insert(face);
-                
+
                 Person person = personDao.load(personId);
                 person.setFaceStatus(STATUS_NOT_NULL);
                 personDao.save(person);

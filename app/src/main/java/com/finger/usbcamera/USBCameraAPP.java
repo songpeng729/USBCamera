@@ -29,6 +29,10 @@ public class USBCameraAPP extends Application {
 
     private User loginUser;
 
+    public static String EXTRA_NAME = "name";
+    public static String EXTRA_IDCARDNO= "idcardno";
+    public static String EXTRA_PERSONID= "person_id";
+
     public static USBCameraAPP getInstances(){
         return instances;
     }

@@ -52,7 +52,23 @@ public class PersonListAdapter extends RecyclerView.Adapter<PersonListAdapter.Pe
         if(person.getIdCardPhoto() != null)
             holder.photo.setImageBitmap(BitmapUtil.bytes2Bitmap(person.getIdCardPhoto()));
         holder.gatherTime.setText(DateUtils.date2DateTimeString(person.getGatherDate()));
-        //长按弹出菜单
+        //采集状态
+        if(1 == person.getIdCardStatus())
+            holder.idcardStatusImage.setImageResource(R.mipmap.idcard1);
+        else
+            holder.idcardStatusImage.setImageResource(R.mipmap.idcard0);
+
+        if(1 == person.getFingerStatus())
+            holder.fingerStatusImage.setImageResource(R.mipmap.finger1);
+        else
+            holder.fingerStatusImage.setImageResource(R.mipmap.finger0);
+
+        if(1 == person.getFaceStatus())
+            holder.faceStatusImage.setImageResource(R.mipmap.face1);
+        else
+            holder.faceStatusImage.setImageResource(R.mipmap.face0);
+
+            //长按弹出菜单
         holder.personListItemLayout.setOnLongClickListener(new View.OnLongClickListener(){
             @Override
             public boolean onLongClick(View v) {
@@ -90,6 +106,7 @@ public class PersonListAdapter extends RecyclerView.Adapter<PersonListAdapter.Pe
         TextView idCardNo;
         TextView gatherTime;
         TextView address;
+        ImageView idcardStatusImage, fingerStatusImage, faceStatusImage;
         LinearLayout personListItemLayout;
         public PersonListViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -99,6 +116,9 @@ public class PersonListAdapter extends RecyclerView.Adapter<PersonListAdapter.Pe
             idCardNo = itemView.findViewById(R.id.person_idcardno);
             gatherTime = itemView.findViewById(R.id.gather_time);
             address = itemView.findViewById(R.id.person_address);
+            idcardStatusImage = itemView.findViewById(R.id.person_idcard_status);
+            fingerStatusImage = itemView.findViewById(R.id.person_finger_status);
+            faceStatusImage = itemView.findViewById(R.id.person_face_status);
             personListItemLayout = itemView.findViewById(R.id.person_list_item);
         }
     }

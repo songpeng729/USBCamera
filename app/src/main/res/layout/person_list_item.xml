@@ -10,14 +10,14 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="125dp"
+        android:layout_height="150dp"
         android:gravity="center"
         android:orientation="horizontal">
 
         <ImageView
             android:id="@+id/person_photo"
             android:layout_width="100dp"
-            android:layout_height="125dp"
+            android:layout_height="135dp"
             android:layout_gravity="center"
             android:src="@mipmap/unknown_photo"/>
 
@@ -26,36 +26,74 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/person_name"
-                android:layout_width="match_parent"
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:gravity="left"
-                android:text="姓名"
-                android:textSize="20sp" />
+                android:orientation="horizontal">
+                <LinearLayout
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+                    <TextView
+                        android:id="@+id/person_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="left"
+                        android:text="@string/person_list_name"
+                        android:textSize="20sp" />
 
-            <TextView
-                android:id="@+id/person_gender"
-                android:layout_width="match_parent"
-                android:layout_height="25dp"
-                android:layout_gravity="center"
-                android:text="性别"
-                android:textSize="20sp" />
+                    <TextView
+                        android:id="@+id/person_gender"
+                        android:layout_width="match_parent"
+                        android:layout_height="25dp"
+                        android:layout_gravity="center"
+                        android:text="@string/person_list_gender"
+                        android:textSize="20sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <ImageView
+                        android:id="@+id/person_idcard_status"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@mipmap/idcard0"/>
+                    <ImageView
+                        android:id="@+id/person_finger_status"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@mipmap/finger0"/>
+                    <ImageView
+                        android:id="@+id/person_face_status"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@mipmap/face0"/>
+                    <ImageView
+                        android:id="@+id/person_message_status"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@mipmap/message0"/>
+                </LinearLayout>
+
+            </LinearLayout>
+
             <TextView
                 android:id="@+id/person_idcardno"
                 android:layout_width="match_parent"
                 android:layout_height="25dp"
                 android:layout_gravity="left"
-                android:text="身份证"
+                android:text="@string/person_list_idcardno"
                 android:textSize="20sp" />
             <TextView
                 android:id="@+id/person_address"
                 android:layout_width="wrap_content"
                 android:layout_height="25dp"
                 android:layout_gravity="left"
-                android:text="地址"
+                android:text="@string/person_list_address"
                 android:textSize="20sp" />
             <TextView
                 android:id="@+id/gather_time"
@@ -64,7 +102,7 @@
                 android:layout_gravity="left"
                 android:layout_weight="1"
                 android:gravity="right"
-                android:text="时间"
+                android:text="@string/person_list_gather_time"
                 android:textSize="15sp" />
 
         </LinearLayout>

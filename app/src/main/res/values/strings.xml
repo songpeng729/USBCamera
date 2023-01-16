@@ -104,4 +104,11 @@
     <string name="user_unit_code">单位代码</string>
     <string name="user_unit_name">单位名称</string>
 
+    <string name="person_list_name">姓名</string>
+    <string name="person_list_gender">姓别</string>
+    <string name="person_list_ethnic">民族</string>
+    <string name="person_list_idcardno">身份证</string>
+    <string name="person_list_address">地址</string>
+    <string name="person_list_gather_time">采集时间</string>
+
 </resources>

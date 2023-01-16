@@ -22,7 +22,7 @@ public class IDCardTest {
     }
     @Test
     public void test_idcard() throws Exception {
-        IDCardUtil.postidcard("/Users/songpeng/Downloads/songpeng-doc/idcard.jpeg");
+        IDCardUtil.postIdcard("/Users/songpeng/Downloads/songpeng-doc/idcard.jpeg");
     }
     @Test
     public void test_resultJson() throws Exception {

@@ -1,13 +1,8 @@
 package com.baidu.ocr;
 
-import android.text.TextUtils;
-import android.util.Log;
-
 import com.baidu.auth.AuthService;
 import com.baidu.ocr.sdk.exception.OCRError;
-import com.baidu.ocr.sdk.model.IDCardResult;
 import com.baidu.ocr.sdk.model.Word;
-import com.finger.usbcamera.USBCameraAPP;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,11 +34,18 @@ public class IDCardUtil {
     // 请求url
     private static final String url = "https://aip.baidubce.com/rest/2.0/ocr/v1/idcard";
 
-    public static IDCardResult2 postidcard(String filePath) throws Exception{
-        return postidcard(AuthService.getAccessToken(), filePath);
+    public static IDCardResult2 postIdcard(String filePath) throws Exception{
+        return postIdcard(AuthService.getAccessToken(), filePath);
     }
 
-    public static IDCardResult2 postidcard(String token, String filePath) throws Exception{
+    /**
+     * 发送请求识别身份证信息，正面id_card_side=front,带照片detect_photo=true
+     * @param token
+     * @param filePath
+     * @return
+     * @throws Exception
+     */
+    public static IDCardResult2 postIdcard(String token, String filePath) throws Exception{
         MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
         // image 可以通过 getFileContentAsBase64("C:\fakepath\身份证照片.jpeg") 方法获取
         String image = getFileContentAsBase64(filePath);
@@ -58,6 +60,13 @@ public class IDCardUtil {
         Response response = HTTP_CLIENT.newCall(request).execute();
         return parse(response.body().string());
     }
+
+    /**
+     * 转换身份证请求反馈的json数据
+     * @param json
+     * @return
+     * @throws OCRError
+     */
     private static IDCardResult2 parse(String json) throws OCRError {
         OCRError error;
         try {

@@ -82,6 +82,12 @@ public class Person {
     private String gatherUserId;
 
     /**
+     * 身份证采集模式，1：身份证拍照或扫描 0：手动录入
+     */
+    @Property(nameInDb = "idcard_status")
+    private int idCardStatus;
+
+    /**
      * 人像采集状态 1:已采集
      */
     @Property(nameInDb = "face_status")
@@ -93,11 +99,12 @@ public class Person {
     @Property(nameInDb = "finger_status")
     private int fingerStatus = 0;
 
-    @Generated(hash = 1110049442)
+    @Generated(hash = 2007294684)
     public Person(Long id, String personId, String name, String idCardNo,
             byte[] idCardPhoto, String gender, String ethnic, String nationality,
             String birthday, String address, Date gatherDate, String remark,
-            String gatherUserId, int faceStatus, int fingerStatus) {
+            String gatherUserId, int idCardStatus, int faceStatus,
+            int fingerStatus) {
         this.id = id;
         this.personId = personId;
         this.name = name;
@@ -111,6 +118,7 @@ public class Person {
         this.gatherDate = gatherDate;
         this.remark = remark;
         this.gatherUserId = gatherUserId;
+        this.idCardStatus = idCardStatus;
         this.faceStatus = faceStatus;
         this.fingerStatus = fingerStatus;
     }
@@ -237,5 +245,13 @@ public class Person {
 
     public void setIdCardPhoto(byte[] idCardPhoto) {
         this.idCardPhoto = idCardPhoto;
+    }
+
+    public int getIdCardStatus() {
+        return this.idCardStatus;
+    }
+
+    public void setIdCardStatus(int idCardStatus) {
+        this.idCardStatus = idCardStatus;
     }
 }

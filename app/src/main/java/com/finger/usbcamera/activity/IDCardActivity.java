@@ -9,7 +9,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -28,7 +27,6 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
-import com.baidu.auth.AuthService;
 import com.baidu.ocr.FileUtil;
 import com.baidu.ocr.IDCardResult2;
 import com.baidu.ocr.IDCardUtil;
@@ -38,17 +36,15 @@ import com.baidu.ocr.sdk.exception.OCRError;
 import com.baidu.ocr.sdk.model.AccessToken;
 import com.baidu.ocr.sdk.model.IDCardParams;
 import com.baidu.ocr.sdk.model.IDCardResult;
-import com.baidu.ocr.sdk.utils.HttpUtil;
 import com.baidu.ocr.ui.camera.CameraActivity;
 import com.baidu.ocr.ui.camera.CameraNativeHelper;
 import com.baidu.ocr.ui.camera.CameraView;
 import com.finger.usbcamera.R;
 import com.finger.usbcamera.USBCameraAPP;
+import com.finger.usbcamera.db.DatabaseConstants;
 import com.finger.usbcamera.db.entity.Person;
 import com.finger.usbcamera.db.greendao.PersonDao;
 import com.finger.usbcamera.util.BitmapUtil;
-
-import org.json.JSONObject;
 
 import java.io.File;
 import java.util.Base64;
@@ -231,6 +227,10 @@ public class IDCardActivity extends AppCompatActivity {
         }
     };
 
+    /**
+     * 发送请求识别身份证信息，目前只识别正面
+     * @param filePath
+     */
     private void recognizeIDCard(String filePath){
         //网络请求放到子线程
         new Thread(new Runnable() {
@@ -238,7 +238,7 @@ public class IDCardActivity extends AppCompatActivity {
             public void run() {
                 IDCardResult2 idCardResult = null;
                 try {
-                    idCardResult = IDCardUtil.postidcard(USBCameraAPP.accessToken, filePath);
+                    idCardResult = IDCardUtil.postIdcard(USBCameraAPP.accessToken, filePath);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -277,7 +277,7 @@ public class IDCardActivity extends AppCompatActivity {
 
             @Override
             public void onError(OCRError error) {
-                alertText("", error.getMessage());
+                alertText("OCR onError", error.getMessage());
             }
         });
     }
@@ -321,8 +321,10 @@ public class IDCardActivity extends AppCompatActivity {
         person.setEthnic(ethnic.getSelectedItem().toString());
         person.setBirthday(birthday.getText().toString());
         person.setGatherDate(new Date());
-        if(photo != null)
+        if(photo != null){//如果有身份证照片，表示已采集身份证信息
             person.setIdCardPhoto(photo);
+            person.setIdCardStatus(DatabaseConstants.STATUS_NOT_NULL);
+        }
 
         person.setPersonId(generatePersonId(person.getIdCardNo()));
         personDao.insert(person);
@@ -385,7 +387,7 @@ public class IDCardActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.e(TAG, "onActivityResult: "+requestCode+" resultCode "+ resultCode);
+        Log.d(TAG, "onActivityResult: "+requestCode+" resultCode "+ resultCode);
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_PICK_IMAGE_FRONT && resultCode == Activity.RESULT_OK) {
             Uri uri = data.getData();
@@ -402,7 +404,6 @@ public class IDCardActivity extends AppCompatActivity {
                 if (!TextUtils.isEmpty(contentType)) {
                     if (CameraActivity.CONTENT_TYPE_ID_CARD_FRONT.equals(contentType)) {
                         recIDCard2(IDCardParams.ID_CARD_SIDE_FRONT, filePath);
-//                        recIDCard(IDCardParams.ID_CARD_SIDE_FRONT, filePath);
                     } else if (CameraActivity.CONTENT_TYPE_ID_CARD_BACK.equals(contentType)) {
                         recIDCard(IDCardParams.ID_CARD_SIDE_BACK, filePath);
                     }

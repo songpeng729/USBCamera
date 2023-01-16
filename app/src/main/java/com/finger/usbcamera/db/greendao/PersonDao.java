@@ -37,8 +37,9 @@ public class PersonDao extends AbstractDao<Person, Long> {
         public final static Property GatherDate = new Property(10, java.util.Date.class, "gatherDate", false, "gather_date");
         public final static Property Remark = new Property(11, String.class, "remark", false, "remark");
         public final static Property GatherUserId = new Property(12, String.class, "gatherUserId", false, "gather_user_id");
-        public final static Property FaceStatus = new Property(13, int.class, "faceStatus", false, "face_status");
-        public final static Property FingerStatus = new Property(14, int.class, "fingerStatus", false, "finger_status");
+        public final static Property IdCardStatus = new Property(13, int.class, "idCardStatus", false, "idcard_status");
+        public final static Property FaceStatus = new Property(14, int.class, "faceStatus", false, "face_status");
+        public final static Property FingerStatus = new Property(15, int.class, "fingerStatus", false, "finger_status");
     }
 
 
@@ -67,8 +68,9 @@ public class PersonDao extends AbstractDao<Person, Long> {
                 "\"gather_date\" INTEGER," + // 10: gatherDate
                 "\"remark\" TEXT," + // 11: remark
                 "\"gather_user_id\" TEXT," + // 12: gatherUserId
-                "\"face_status\" INTEGER NOT NULL ," + // 13: faceStatus
-                "\"finger_status\" INTEGER NOT NULL );"); // 14: fingerStatus
+                "\"idcard_status\" INTEGER NOT NULL ," + // 13: idCardStatus
+                "\"face_status\" INTEGER NOT NULL ," + // 14: faceStatus
+                "\"finger_status\" INTEGER NOT NULL );"); // 15: fingerStatus
     }
 
     /** Drops the underlying database table. */
@@ -145,8 +147,9 @@ public class PersonDao extends AbstractDao<Person, Long> {
         if (gatherUserId != null) {
             stmt.bindString(13, gatherUserId);
         }
-        stmt.bindLong(14, entity.getFaceStatus());
-        stmt.bindLong(15, entity.getFingerStatus());
+        stmt.bindLong(14, entity.getIdCardStatus());
+        stmt.bindLong(15, entity.getFaceStatus());
+        stmt.bindLong(16, entity.getFingerStatus());
     }
 
     @Override
@@ -217,8 +220,9 @@ public class PersonDao extends AbstractDao<Person, Long> {
         if (gatherUserId != null) {
             stmt.bindString(13, gatherUserId);
         }
-        stmt.bindLong(14, entity.getFaceStatus());
-        stmt.bindLong(15, entity.getFingerStatus());
+        stmt.bindLong(14, entity.getIdCardStatus());
+        stmt.bindLong(15, entity.getFaceStatus());
+        stmt.bindLong(16, entity.getFingerStatus());
     }
 
     @Override
@@ -242,8 +246,9 @@ public class PersonDao extends AbstractDao<Person, Long> {
             cursor.isNull(offset + 10) ? null : new java.util.Date(cursor.getLong(offset + 10)), // gatherDate
             cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11), // remark
             cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12), // gatherUserId
-            cursor.getInt(offset + 13), // faceStatus
-            cursor.getInt(offset + 14) // fingerStatus
+            cursor.getInt(offset + 13), // idCardStatus
+            cursor.getInt(offset + 14), // faceStatus
+            cursor.getInt(offset + 15) // fingerStatus
         );
         return entity;
     }
@@ -263,8 +268,9 @@ public class PersonDao extends AbstractDao<Person, Long> {
         entity.setGatherDate(cursor.isNull(offset + 10) ? null : new java.util.Date(cursor.getLong(offset + 10)));
         entity.setRemark(cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11));
         entity.setGatherUserId(cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12));
-        entity.setFaceStatus(cursor.getInt(offset + 13));
-        entity.setFingerStatus(cursor.getInt(offset + 14));
+        entity.setIdCardStatus(cursor.getInt(offset + 13));
+        entity.setFaceStatus(cursor.getInt(offset + 14));
+        entity.setFingerStatus(cursor.getInt(offset + 15));
      }
     
     @Override

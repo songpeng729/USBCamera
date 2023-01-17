@@ -23,12 +23,10 @@ import com.finger.usbcamera.USBCameraAPP;
 import com.finger.usbcamera.db.entity.Face;
 import com.finger.usbcamera.db.entity.Person;
 import com.finger.usbcamera.db.greendao.FaceDao;
-import com.finger.usbcamera.db.greendao.FingerDao;
 import com.finger.usbcamera.db.greendao.PersonDao;
 
 import java.io.ByteArrayOutputStream;
 import java.util.List;
-import java.util.UUID;
 
 import static com.finger.usbcamera.USBCameraAPP.EXTRA_IDCARDNO;
 import static com.finger.usbcamera.USBCameraAPP.EXTRA_NAME;
@@ -198,15 +196,15 @@ public class FaceActivity extends Activity implements View.OnClickListener, View
             public void onClick(DialogInterface dialog, int which) {
                 switch (faceIndex){
                     case FACE_INDEX_LEFT:
-                        leftFace.setImageResource(R.drawable.face_default);
+                        leftFace.setImageResource(R.drawable.face_left);
                         leftImage = null;
                         break;
                     case FACE_INDEX_CENTER:
-                        centerFace.setImageResource(R.drawable.face_default);
+                        centerFace.setImageResource(R.drawable.face_center);
                         centerImage = null;
                         break;
                     case FACE_INDEX_RIGHT:
-                        rightFace.setImageResource(R.drawable.face_default);
+                        rightFace.setImageResource(R.drawable.face_right);
                         rightImage = null;
                         break;
                 }

@@ -47,7 +47,7 @@
         android:layout_width="100dp"
         android:layout_height="125dp"
         android:layout_gravity="center"
-        android:src="@drawable/unknown_photo"/>
+        android:src="@drawable/camera"/>
 
     <LinearLayout
         android:id="@+id/id_card_name_layout"

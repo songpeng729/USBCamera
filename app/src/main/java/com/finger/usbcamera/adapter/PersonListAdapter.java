@@ -54,19 +54,19 @@ public class PersonListAdapter extends RecyclerView.Adapter<PersonListAdapter.Pe
         holder.gatherTime.setText(DateUtils.date2DateTimeString(person.getGatherDate()));
         //采集状态
         if(1 == person.getIdCardStatus())
-            holder.idcardStatusImage.setImageResource(R.mipmap.idcard1);
+            holder.idcardStatusImage.setImageResource(R.drawable.idcard1);
         else
-            holder.idcardStatusImage.setImageResource(R.mipmap.idcard0);
+            holder.idcardStatusImage.setImageResource(R.drawable.idcard0);
 
         if(1 == person.getFingerStatus())
-            holder.fingerStatusImage.setImageResource(R.mipmap.finger1);
+            holder.fingerStatusImage.setImageResource(R.drawable.finger1);
         else
-            holder.fingerStatusImage.setImageResource(R.mipmap.finger0);
+            holder.fingerStatusImage.setImageResource(R.drawable.finger0);
 
         if(1 == person.getFaceStatus())
-            holder.faceStatusImage.setImageResource(R.mipmap.face1);
+            holder.faceStatusImage.setImageResource(R.drawable.face1);
         else
-            holder.faceStatusImage.setImageResource(R.mipmap.face0);
+            holder.faceStatusImage.setImageResource(R.drawable.face0);
 
             //长按弹出菜单
         holder.personListItemLayout.setOnLongClickListener(new View.OnLongClickListener(){

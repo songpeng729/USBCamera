@@ -36,7 +36,7 @@
             android:layout_height="200dp"
             android:layout_weight="1"
             android:layout_margin="10dp"
-            android:src="@mipmap/face_default"/>
+            android:src="@drawable/face_default"/>
         
         <ImageView 
             android:id="@+id/face_center"
@@ -44,7 +44,7 @@
             android:layout_height="200dp"
             android:layout_weight="1"
             android:layout_margin="10dp"
-            android:src="@mipmap/face_default"/>
+            android:src="@drawable/face_default"/>
         
         <ImageView 
             android:id="@+id/face_right"
@@ -52,7 +52,7 @@
             android:layout_height="200dp"
             android:layout_weight="1"
             android:layout_margin="10dp"
-            android:src="@mipmap/face_default"/>
+            android:src="@drawable/face_default"/>
         
     </LinearLayout>
     

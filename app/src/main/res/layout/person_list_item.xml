@@ -19,7 +19,7 @@
             android:layout_width="100dp"
             android:layout_height="135dp"
             android:layout_gravity="center"
-            android:src="@mipmap/unknown_photo"/>
+            android:src="@drawable/unknown_photo"/>
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -61,22 +61,22 @@
                         android:id="@+id/person_idcard_status"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
-                        android:src="@mipmap/idcard0"/>
+                        android:src="@drawable/idcard0"/>
                     <ImageView
                         android:id="@+id/person_finger_status"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
-                        android:src="@mipmap/finger0"/>
+                        android:src="@drawable/finger0"/>
                     <ImageView
                         android:id="@+id/person_face_status"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
-                        android:src="@mipmap/face0"/>
+                        android:src="@drawable/face0"/>
                     <ImageView
                         android:id="@+id/person_message_status"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
-                        android:src="@mipmap/message0"/>
+                        android:src="@drawable/message0"/>
                 </LinearLayout>
 
             </LinearLayout>

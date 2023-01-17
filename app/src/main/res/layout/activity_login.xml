@@ -24,7 +24,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:src="@mipmap/login_user" />
+                android:src="@drawable/login_user" />
 
             <TextView
                 android:id="@+id/login_user_text"
@@ -61,7 +61,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:src="@mipmap/login_pwd" />
+                android:src="@drawable/login_pwd" />
 
             <TextView
                 android:id="@+id/login_pwd_text"

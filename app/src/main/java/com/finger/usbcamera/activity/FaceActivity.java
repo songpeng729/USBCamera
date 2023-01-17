@@ -198,15 +198,15 @@ public class FaceActivity extends Activity implements View.OnClickListener, View
             public void onClick(DialogInterface dialog, int which) {
                 switch (faceIndex){
                     case FACE_INDEX_LEFT:
-                        leftFace.setImageResource(R.mipmap.face_default);
+                        leftFace.setImageResource(R.drawable.face_default);
                         leftImage = null;
                         break;
                     case FACE_INDEX_CENTER:
-                        centerFace.setImageResource(R.mipmap.face_default);
+                        centerFace.setImageResource(R.drawable.face_default);
                         centerImage = null;
                         break;
                     case FACE_INDEX_RIGHT:
-                        rightFace.setImageResource(R.mipmap.face_default);
+                        rightFace.setImageResource(R.drawable.face_default);
                         rightImage = null;
                         break;
                 }

@@ -48,7 +48,6 @@ import static com.finger.usbcamera.USBCameraAPP.EXTRA_IDCARDNO;
 import static com.finger.usbcamera.USBCameraAPP.EXTRA_NAME;
 import static com.finger.usbcamera.USBCameraAPP.EXTRA_PERSONID;
 import static com.finger.usbcamera.db.DatabaseConstants.STATUS_NOT_NULL;
-import static com.finger.usbcamera.vo.FingerData.FINGER_STATUS_NONE;
 import static com.finger.usbcamera.vo.FingerData.FINGER_STATUS_NORMAL;
 
 /**
@@ -120,7 +119,7 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
         fingerLThumbBtn = findViewById(R.id.finger_l_thumb_btn);
         fingerLIndexBtn = findViewById(R.id.finger_l_index_btn);
         fingerLMiddleBtn = findViewById(R.id.finger_l_middle_btn);
-        fingerLRingBtn = findViewById(R.id.finger_l_ring_bnt);
+        fingerLRingBtn = findViewById(R.id.finger_l_ring_btn);
         fingerLLittleBtn = findViewById(R.id.finger_l_little_btn);
         fingerButtonList = new Button[]{fingerRThumbBtn, fingerRIndexBtn, fingerRMiddleBtn, fingerRRingBtn, fingerRLittleBtn, fingerLThumbBtn, fingerLIndexBtn, fingerLMiddleBtn, fingerLRingBtn, fingerLLittleBtn};
         fingerButtonNameList = new String[]{getString(R.string.finger_r_thumb), getString(R.string.finger_r_index), getString(R.string.finger_r_middle), getString(R.string.finger_r_ring), getString(R.string.finger_r_little),
@@ -309,7 +308,7 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
             case R.id.finger_l_thumb_btn:
             case R.id.finger_l_index_btn:
             case R.id.finger_l_middle_btn:
-            case R.id.finger_l_ring_bnt:
+            case R.id.finger_l_ring_btn:
             case R.id.finger_l_little_btn:
                 checkFingerIndexButton(v);
                 break;

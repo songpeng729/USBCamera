@@ -139,10 +139,10 @@
                 android:textSize="18sp" />
 
             <Button
-                android:id="@+id/finger_l_ring_bnt"
+                android:id="@+id/finger_l_ring_btn"
                 style="@style/FingerNameText"
                 android:layout_width="75dp"
-                android:text="@string/finger_r_index"
+                android:text="@string/finger_l_ring"
                 android:textColor="@color/finger_name"
                 android:textSize="18sp" />
 

@@ -293,7 +293,7 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
                 case MOSAIC_STATUS_SUCCESS:
                     //检查质量
                     int quality = ImageConverter.checkImageQuality(isFlat, imgDataBuffer);
-                    if(quality >= 60){
+                    if(quality >= 50){
                         mosaicImageListener.onMosaicStatusChanged(MOSAIC_STATUS_SUCCESS, msg.obj.toString());
                     }else if (quality > 0 ) {
                         mosaicImageListener.onMosaicStatusChanged(MOSAIC_STATUS_FAIL, "质量不合格（" + quality + "）");

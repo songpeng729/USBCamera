@@ -15,6 +15,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import com.finger.usbcamera.listener.MosaicImageListener;
 import com.finger.usbcamera.util.ImageConverter;
+import com.finger.usbcamera.util.SharedPreferencesUtil;
 import com.finger.usbcamera.vo.FingerData;
 import com.serenegiant.usb.USBMonitor;
 import com.serenegiant.usb.UVCCamera;
@@ -48,6 +49,9 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
     private final int CONTRAST_DEFAULT = 50;//对比度默认值
     private final int WIDTH_DEFAULT = 640; // 固定宽度640
     private final int HEIGHT_DEFAULT = 640; // 固定高度640
+
+    //指纹采集质量校验分数
+    public int qualityLimit = SharedPreferencesUtil.getIntValue(SharedPreferencesUtil.KEY_QUALITY_LIMIT, 60);
 
     private MosaicFetcher mosaicFetcher;//指纹采集类
     private int gain = GAIN_DEFAULT; //当前亮度
@@ -293,7 +297,7 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
                 case MOSAIC_STATUS_SUCCESS:
                     //检查质量
                     int quality = ImageConverter.checkImageQuality(isFlat, imgDataBuffer);
-                    if(quality >= 50){
+                    if(quality >= qualityLimit){
                         mosaicImageListener.onMosaicStatusChanged(MOSAIC_STATUS_SUCCESS, msg.obj.toString());
                     }else if (quality > 0 ) {
                         mosaicImageListener.onMosaicStatusChanged(MOSAIC_STATUS_FAIL, "质量不合格（" + quality + "）");

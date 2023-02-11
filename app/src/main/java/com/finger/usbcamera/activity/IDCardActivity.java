@@ -27,6 +27,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+import com.baidu.auth.AuthService;
 import com.baidu.ocr.FileUtil;
 import com.baidu.ocr.IDCardResult2;
 import com.baidu.ocr.IDCardUtil;
@@ -46,7 +47,10 @@ import com.finger.usbcamera.db.entity.Person;
 import com.finger.usbcamera.db.greendao.PersonDao;
 import com.finger.usbcamera.util.BitmapUtil;
 
+import org.json.JSONException;
+
 import java.io.File;
+import java.io.IOException;
 import java.util.Base64;
 import java.util.Date;
 
@@ -140,7 +144,7 @@ public class IDCardActivity extends AppCompatActivity {
             }
         });
 
-        // 身份证正面拍照
+        /*// 身份证正面拍照
         findViewById(R.id.id_card_front_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -154,6 +158,24 @@ public class IDCardActivity extends AppCompatActivity {
 
         // 身份证正面扫描
         findViewById(R.id.id_card_front_button_native).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(IDCardActivity.this, CameraActivity.class);
+                intent.putExtra(CameraActivity.KEY_OUTPUT_FILE_PATH,
+                        FileUtil.getSaveFile(getApplication()).getAbsolutePath());
+                intent.putExtra(CameraActivity.KEY_NATIVE_ENABLE,
+                        true);
+                // KEY_NATIVE_MANUAL设置了之后CameraActivity中不再自动初始化和释放模型
+                // 请手动使用CameraNativeHelper初始化和释放模型
+                // 推荐这样做，可以避免一些activity切换导致的不必要的异常
+                intent.putExtra(CameraActivity.KEY_NATIVE_MANUAL,
+                        true);
+                intent.putExtra(CameraActivity.KEY_CONTENT_TYPE, CameraActivity.CONTENT_TYPE_ID_CARD_FRONT);
+                startActivityForResult(intent, REQUEST_CODE_CAMERA);
+            }
+        });*/
+        //使用身份证正面扫描
+        idCardPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(IDCardActivity.this, CameraActivity.class);
@@ -198,6 +220,12 @@ public class IDCardActivity extends AppCompatActivity {
             public void onError(OCRError error) {
                 error.printStackTrace();
                 alertText("自定义文件路径licence方式获取token失败", error.getMessage());
+                try {
+                    //网络请求token授权
+                    USBCameraAPP.accessToken = AuthService.getAccessToken();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }, "aip-ocr.license", getApplicationContext());
     }

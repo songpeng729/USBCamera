@@ -79,7 +79,7 @@ public class Person {
      * 采集人
      */
     @Property(nameInDb = "gather_user_id")
-    private String gatherUserId;
+    private Long gatherUserId;
 
     /**
      * 身份证采集模式，1：身份证拍照或扫描 0：手动录入
@@ -99,12 +99,11 @@ public class Person {
     @Property(nameInDb = "finger_status")
     private int fingerStatus = 0;
 
-    @Generated(hash = 2007294684)
+    @Generated(hash = 539895819)
     public Person(Long id, String personId, String name, String idCardNo,
             byte[] idCardPhoto, String gender, String ethnic, String nationality,
             String birthday, String address, Date gatherDate, String remark,
-            String gatherUserId, int idCardStatus, int faceStatus,
-            int fingerStatus) {
+            Long gatherUserId, int idCardStatus, int faceStatus, int fingerStatus) {
         this.id = id;
         this.personId = personId;
         this.name = name;
@@ -157,6 +156,14 @@ public class Person {
 
     public void setIdCardNo(String idCardNo) {
         this.idCardNo = idCardNo;
+    }
+
+    public byte[] getIdCardPhoto() {
+        return this.idCardPhoto;
+    }
+
+    public void setIdCardPhoto(byte[] idCardPhoto) {
+        this.idCardPhoto = idCardPhoto;
     }
 
     public String getGender() {
@@ -215,12 +222,20 @@ public class Person {
         this.remark = remark;
     }
 
-    public String getGatherUserId() {
+    public Long getGatherUserId() {
         return this.gatherUserId;
     }
 
-    public void setGatherUserId(String gatherUserId) {
+    public void setGatherUserId(Long gatherUserId) {
         this.gatherUserId = gatherUserId;
+    }
+
+    public int getIdCardStatus() {
+        return this.idCardStatus;
+    }
+
+    public void setIdCardStatus(int idCardStatus) {
+        this.idCardStatus = idCardStatus;
     }
 
     public int getFaceStatus() {
@@ -239,19 +254,4 @@ public class Person {
         this.fingerStatus = fingerStatus;
     }
 
-    public byte[] getIdCardPhoto() {
-        return this.idCardPhoto;
-    }
-
-    public void setIdCardPhoto(byte[] idCardPhoto) {
-        this.idCardPhoto = idCardPhoto;
-    }
-
-    public int getIdCardStatus() {
-        return this.idCardStatus;
-    }
-
-    public void setIdCardStatus(int idCardStatus) {
-        this.idCardStatus = idCardStatus;
-    }
 }

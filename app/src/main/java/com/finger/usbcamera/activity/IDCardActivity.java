@@ -349,6 +349,7 @@ public class IDCardActivity extends AppCompatActivity {
         person.setEthnic(ethnic.getSelectedItem().toString());
         person.setBirthday(birthday.getText().toString());
         person.setGatherDate(new Date());
+        person.setGatherUserId(USBCameraAPP.getInstances().getLoginUser().getId());
         if(photo != null){//如果有身份证照片，表示已采集身份证信息
             person.setIdCardPhoto(photo);
             person.setIdCardStatus(DatabaseConstants.STATUS_NOT_NULL);

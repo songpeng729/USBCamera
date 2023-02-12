@@ -3,6 +3,7 @@ package com.finger.usbcamera.activity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -39,6 +40,7 @@ import com.finger.usbcamera.util.XmlUtil;
 
 import org.greenrobot.greendao.query.QueryBuilder;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -169,7 +171,11 @@ public class PersonGatherFragment extends Fragment {
         List<FingerprintPackage> fingerprintPackageList = new ArrayList<>();
 
         List<Finger> fingerList = fingerDao.queryBuilder().where(FingerDao.Properties.PersonId.eq(person.getId())).list();
-        User gatherUser = userDao.queryBuilder().where(UserDao.Properties.Id.eq(person.getGatherUserId())).list().get(0);
+
+        User gatherUser = USBCameraAPP.getInstances().getLoginUser();
+        if(person.getGatherUserId() != null){
+            gatherUser = userDao.load(person.getGatherUserId());
+        }
         List<Face> faceList = faceDao.queryBuilder().where(FaceDao.Properties.PersonId.eq(person.getId())).list();
         Face face = null;
         if(faceList != null && faceList.size() > 0){
@@ -182,8 +188,9 @@ public class PersonGatherFragment extends Fragment {
 
         String xml = XmlUtil.convertToXml(fpt5Object);
 
-        FileUtils.saveTextFile(mContext, xml, person.getName()+"("+person.getIdCardNo()+").fptx");
-        Toast.makeText(mContext, "保存fpt数据成功", Toast.LENGTH_SHORT).show();
+        Uri uri = FileUtils.saveTextFile(mContext, xml, person.getName()+"-"+person.getIdCardNo()+".fptx");
+//        Boolean ok = FileUtils.save(new File(mContext.getDataDir()+"/fpt/"+person.getName()+"-"+person.getIdCardNo()+".fptx"), xml);
+        Toast.makeText(mContext, "保存fpt数据成功"+uri, Toast.LENGTH_SHORT).show();
     }
 
     /**

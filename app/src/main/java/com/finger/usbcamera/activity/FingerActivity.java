@@ -48,7 +48,10 @@ import static com.finger.usbcamera.USBCameraAPP.EXTRA_IDCARDNO;
 import static com.finger.usbcamera.USBCameraAPP.EXTRA_NAME;
 import static com.finger.usbcamera.USBCameraAPP.EXTRA_PERSONID;
 import static com.finger.usbcamera.db.DatabaseConstants.STATUS_NOT_NULL;
+import static com.finger.usbcamera.vo.FingerData.FINGER_STATUS_EMPTY;
+import static com.finger.usbcamera.vo.FingerData.FINGER_STATUS_NONE;
 import static com.finger.usbcamera.vo.FingerData.FINGER_STATUS_NORMAL;
+import static com.finger.usbcamera.vo.FingerData.FINGER_STATUS_SELECTED;
 
 /**
  * 采集指纹
@@ -89,8 +92,20 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
     private USBMonitor.UsbControlBlock usbControlBlock;
     private Context mContext;
 
+//    int fingerRedColor = getColor(R.color.finger_red);//Color.parseColor("#fd4949");
+//    int fingerGreenColor = getColor(R.color.finger_green);//Color.parseColor("#009688");
+//    int fingerGrayColor = getColor(R.color.finger_gray);//Color.parseColor("#4b4b4b");
+//    int fingerWhiteColor = getColor(R.color.finger_white);//Color.parseColor("#e4e4e4");
+//    int fingerBlueColor = getColor(R.color.finger_blue);//Color.parseColor("#2294E5");
+    int fingerRedColor = Color.parseColor("#fd4949");
+    int fingerGreenColor = Color.parseColor("#009688");
+    int fingerGrayColor = Color.parseColor("#e4e4e4");
+    int fingerBlackColor = Color.parseColor("#4b4b4b");
+    int fingerBlueColor = Color.parseColor("#2294E5");
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         //不自动息屏
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -161,22 +176,21 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 flatFingerDataList[currentFingerIndex].setStatus(position);
                 rollFingerDataList[currentFingerIndex].setStatus(position);
-                if (position != FINGER_STATUS_NORMAL) {
+                if (position != 0) {
                     //指纹采集选择了异常情况，直接跳过此指位采集，保存信息后自动到下一个
                     rollFingerDataList[currentFingerIndex].setImage(null);
                     rollFingerDataList[currentFingerIndex].setFeature(null);
                     flatFingerDataList[currentFingerIndex].setImage(null);
                     flatFingerDataList[currentFingerIndex].setFeature(null);
                     fingerSurfaceView.clearImage();
-
-                    fingerButtonList[currentFingerIndex].setBackgroundColor(Color.RED);
-                }else{
-                    FingerData fingerData = getCurrentFingerData();
-                    if(fingerData.getImage() != null){
-                        fingerButtonList[currentFingerIndex].setBackgroundColor(Color.GREEN);
-                    }else{
-                        fingerButtonList[currentFingerIndex].setBackgroundColor(Color.WHITE);
-                    }
+//                }else{
+//                    FingerData fingerData = getCurrentFingerData();
+//                    if(fingerData.getImage() != null){
+//                        fingerButtonList[currentFingerIndex].setBackgroundColor(fingerGreenColor);
+//                    }else{
+//                        fingerButtonList[currentFingerIndex].setBackgroundColor(Color.WHITE);
+//                        fingerButtonList[currentFingerIndex].setTextColor(fingerBlackColor);
+//                    }
                 }
             }
             @Override
@@ -274,7 +288,7 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
             @Override
             public void run() {
                 try {
-                    Thread.sleep(200);  //线程休眠200毫秒执行
+                    Thread.sleep(100);  //线程休眠200毫秒执行
 //                    checkFingerIndex(0);//这里需要延时加载才能显示出图像
                     fingerSurfaceView.showFingerData(getCurrentFingerData());
                 } catch (InterruptedException e) {
@@ -347,7 +361,7 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
                     fingerData.setCprData(cpr);
                     fingerData.setFeature(mnt);
                     //采集完成设置背景色green
-                    fingerButtonList[currentFingerIndex].setBackgroundColor(Color.GREEN);
+                    fingerButtonList[currentFingerIndex].setBackgroundColor(fingerGreenColor);
 
                     Toast.makeText(this, "采集完成!", Toast.LENGTH_SHORT).show();
 
@@ -382,22 +396,11 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
 
         if(isFlat){
             fingerTypeName = getString(R.string.finger_flat);
-        }else{
+            flatBtn.setTextColor(fingerBlackColor);
+            rollBtn.setTextColor(fingerGrayColor);
             fingerTypeName = getString(R.string.finger_roll);
-        }
-
-        for (int i = 0; i < 10; i++){
-            FingerData fingerData = isFlat ? flatFingerDataList[i] : rollFingerDataList[i];
-            if(fingerData.getImage() != null){
-                //如果采集了指纹，背景绿色;
-                fingerButtonList[i].setBackgroundColor(Color.GREEN);
-            }else if(fingerData.getStatus() != FINGER_STATUS_NORMAL){
-                // 如果状态缺指，背景红色
-                fingerButtonList[i].setBackgroundColor(Color.RED);
-            }else {
-                // 其他情况背景白色
-                fingerButtonList[i].setBackgroundColor(Color.WHITE);
-            }
+            flatBtn.setTextColor(fingerGrayColor);
+            rollBtn.setTextColor(fingerBlackColor);
         }
 
         checkFingerIndex(currentFingerIndex);
@@ -409,25 +412,31 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
     private void checkFingerIndex(int fingerIndex){
         Log.i(TAG, "checkFingerIndex:"+fingerIndex);
         this.currentFingerIndex = fingerIndex;
+        //设置指纹状态（是否缺指)
+        int fingerStatus = getCurrentFingerData().getStatus();
+        fingerStatusSp.setSelection(fingerStatus);
+
         for (int i = 0; i < fingerButtonList.length; i++){
             Button btn = fingerButtonList[i];
+            FingerData fingerData = isFlat ? flatFingerDataList[i] : rollFingerDataList[i];
+            int status = fingerData.getStatus();
+            if(status == FINGER_STATUS_NORMAL && fingerData.getImage() == null){
+                status = FINGER_STATUS_EMPTY;
+            }
             if(i != fingerIndex){
-                if(btn.isSelected())
+                if(btn.isSelected()){
                     btn.setSelected(false);
+                }
             }else{
                 btn.setSelected(true);
+                status = FINGER_STATUS_SELECTED;
             }
+            setFingerButtonStatus(btn, status);
         }
-        checkFingerStatus();
 
         showGatherStatus(fingerTypeName + "-->"+ fingerButtonNameList[currentFingerIndex], false);
 
         fingerSurfaceView.showFingerData(getCurrentFingerData());
-    }
-    private void checkFingerStatus(){
-        //设置指纹状态（是否缺指)
-        int fingerStatus = getCurrentFingerData().getStatus();
-        fingerStatusSp.setSelection(fingerStatus);
     }
 
     /**
@@ -481,6 +490,7 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
 
         startGatherBtn.setBackgroundResource(R.drawable.finger_btn_background);
         startGatherBtn.setText(getString(R.string.start_collect));
+        startGatherBtn.setTextColor(fingerBlueColor);
 
         fingerSurfaceView.stopGather();
         isGathering = false;
@@ -503,6 +513,7 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
         fingerStatusSp.setEnabled(false);
 
         startGatherBtn.setBackgroundResource(R.drawable.finger_btn_background3);
+        startGatherBtn.setTextColor(Color.WHITE);
         startGatherBtn.setText(getString(R.string.stop_collect));
 
         fingerSurfaceView.startGather(usbControlBlock, isFlat);
@@ -529,6 +540,34 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
             gatherStatusTextView.setTextColor(Color.WHITE);
         }
         gatherStatusTextView.setText(message);
+    }
+
+    private void showFingerButtonStatus(int fingerIndex, int status){
+
+    }
+
+    /**
+     * 设置指纹按钮样式
+     */
+    private void setFingerButtonStatus(Button fingerButton, int status){
+        switch (status){
+            case FINGER_STATUS_NONE:
+                fingerButton.setTextColor(fingerBlackColor);
+                fingerButton.setBackgroundColor(fingerGrayColor);
+                break;
+            case FINGER_STATUS_EMPTY:
+                fingerButton.setTextColor(fingerBlackColor);
+                fingerButton.setBackgroundColor(Color.WHITE);
+                break;
+            case FINGER_STATUS_NORMAL:
+                fingerButton.setTextColor(Color.WHITE);
+                fingerButton.setBackgroundColor(fingerGreenColor);
+                break;
+            case FINGER_STATUS_SELECTED:
+                fingerButton.setTextColor(Color.WHITE);
+                fingerButton.setBackgroundColor(fingerRedColor);
+                break;
+        }
     }
 
     /**

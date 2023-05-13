@@ -7,6 +7,8 @@ public class FingerData {
     public static final int FINGER_STATUS_NORMAL = 0;//指纹正常
     public static final int FINGER_STATUS_NONE = 1;//指纹缺指
     public static final int FINGER_STATUS_OTHER = 2;//其他原因
+    public static final int FINGER_STATUS_EMPTY = 3;//未采集
+    public static final int FINGER_STATUS_SELECTED = 4;//选中
 
     private boolean isFlat;//是否平面
     private int fgp; //指位

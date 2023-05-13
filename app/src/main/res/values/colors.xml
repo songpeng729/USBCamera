@@ -15,6 +15,14 @@
     <color name="red_light">#FFF97A7A</color>
     <color name="red">#FFFF0000</color>
     <color name="purple">#FFAC58A3</color>
+
+    <!-- 采集指纹 -->
+    <color name="finger_red">#fd4949</color>
+    <color name="finger_green">#009688</color>
+    <color name="finger_white">#ffffff</color>
+    <color name="finger_gray">#e4e4e4</color>
+    <color name="finger_black">#4b4b4b</color>
+    <color name="finger_blue">#3fb1e3</color>
     <!-- 系统设置 -->
     <color name="blue_light">#FF1296db</color>
     <color name="blue_drak">#FF143868</color>

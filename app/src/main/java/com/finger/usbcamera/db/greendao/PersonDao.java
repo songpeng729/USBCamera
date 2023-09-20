@@ -40,6 +40,7 @@ public class PersonDao extends AbstractDao<Person, Long> {
         public final static Property IdCardStatus = new Property(13, int.class, "idCardStatus", false, "idcard_status");
         public final static Property FaceStatus = new Property(14, int.class, "faceStatus", false, "face_status");
         public final static Property FingerStatus = new Property(15, int.class, "fingerStatus", false, "finger_status");
+        public final static Property UploadStatus = new Property(16, int.class, "uploadStatus", false, "upload_status");
     }
 
 
@@ -70,7 +71,8 @@ public class PersonDao extends AbstractDao<Person, Long> {
                 "\"gather_user_id\" INTEGER," + // 12: gatherUserId
                 "\"idcard_status\" INTEGER NOT NULL ," + // 13: idCardStatus
                 "\"face_status\" INTEGER NOT NULL ," + // 14: faceStatus
-                "\"finger_status\" INTEGER NOT NULL );"); // 15: fingerStatus
+                "\"finger_status\" INTEGER NOT NULL ," + // 15: fingerStatus
+                "\"upload_status\" INTEGER NOT NULL );"); // 16: uploadStatus
     }
 
     /** Drops the underlying database table. */
@@ -150,6 +152,7 @@ public class PersonDao extends AbstractDao<Person, Long> {
         stmt.bindLong(14, entity.getIdCardStatus());
         stmt.bindLong(15, entity.getFaceStatus());
         stmt.bindLong(16, entity.getFingerStatus());
+        stmt.bindLong(17, entity.getUploadStatus());
     }
 
     @Override
@@ -223,6 +226,7 @@ public class PersonDao extends AbstractDao<Person, Long> {
         stmt.bindLong(14, entity.getIdCardStatus());
         stmt.bindLong(15, entity.getFaceStatus());
         stmt.bindLong(16, entity.getFingerStatus());
+        stmt.bindLong(17, entity.getUploadStatus());
     }
 
     @Override
@@ -248,7 +252,8 @@ public class PersonDao extends AbstractDao<Person, Long> {
             cursor.isNull(offset + 12) ? null : cursor.getLong(offset + 12), // gatherUserId
             cursor.getInt(offset + 13), // idCardStatus
             cursor.getInt(offset + 14), // faceStatus
-            cursor.getInt(offset + 15) // fingerStatus
+            cursor.getInt(offset + 15), // fingerStatus
+            cursor.getInt(offset + 16) // uploadStatus
         );
         return entity;
     }
@@ -271,6 +276,7 @@ public class PersonDao extends AbstractDao<Person, Long> {
         entity.setIdCardStatus(cursor.getInt(offset + 13));
         entity.setFaceStatus(cursor.getInt(offset + 14));
         entity.setFingerStatus(cursor.getInt(offset + 15));
+        entity.setUploadStatus(cursor.getInt(offset + 16));
      }
     
     @Override

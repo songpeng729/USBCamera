@@ -20,6 +20,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="质量分数设置"/>
+    <Button
+        android:id="@+id/set_upload_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="上报设置"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

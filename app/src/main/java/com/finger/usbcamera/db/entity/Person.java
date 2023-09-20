@@ -99,11 +99,18 @@ public class Person {
     @Property(nameInDb = "finger_status")
     private int fingerStatus = 0;
 
-    @Generated(hash = 539895819)
+    /**
+     * 上报状态 1:已上报，2：上报失败
+     */
+    @Property(nameInDb = "upload_status")
+    private int uploadStatus= 0;
+
+    @Generated(hash = 1853538121)
     public Person(Long id, String personId, String name, String idCardNo,
             byte[] idCardPhoto, String gender, String ethnic, String nationality,
             String birthday, String address, Date gatherDate, String remark,
-            Long gatherUserId, int idCardStatus, int faceStatus, int fingerStatus) {
+            Long gatherUserId, int idCardStatus, int faceStatus, int fingerStatus,
+            int uploadStatus) {
         this.id = id;
         this.personId = personId;
         this.name = name;
@@ -120,6 +127,7 @@ public class Person {
         this.idCardStatus = idCardStatus;
         this.faceStatus = faceStatus;
         this.fingerStatus = fingerStatus;
+        this.uploadStatus = uploadStatus;
     }
 
     @Generated(hash = 1024547259)
@@ -252,6 +260,14 @@ public class Person {
 
     public void setFingerStatus(int fingerStatus) {
         this.fingerStatus = fingerStatus;
+    }
+
+    public int getUploadStatus() {
+        return this.uploadStatus;
+    }
+
+    public void setUploadStatus(int uploadStatus) {
+        this.uploadStatus = uploadStatus;
     }
 
 }

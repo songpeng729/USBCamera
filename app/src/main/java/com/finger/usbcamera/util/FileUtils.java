@@ -75,14 +75,15 @@ public class FileUtils {
         } else {//android Q
             Uri contentUri;
             if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-                contentUri = MediaStore.Downloads.EXTERNAL_CONTENT_URI;
+                contentUri = MediaStore.Downloads.EXTERNAL_CONTENT_URI;//外部存储
             } else
-                contentUri = MediaStore.Downloads.INTERNAL_CONTENT_URI;
+                contentUri = MediaStore.Downloads.INTERNAL_CONTENT_URI;//内部存储
             //创建ContentValues对象，准备插入数据
             ContentValues contentValues = new ContentValues();
-            contentValues.put(MediaStore.Downloads.MIME_TYPE, "text/plain");//文件格式
+            contentValues.put(MediaStore.Downloads.MIME_TYPE, "application/octet-stream");//text/plain 普通文本格式
             contentValues.put(MediaStore.Downloads.DATE_TAKEN, System.currentTimeMillis());
             contentValues.put(MediaStore.Downloads.DISPLAY_NAME, fileName);//文件名字
+
             Uri fileUri = mContext.getContentResolver().insert(contentUri, contentValues);
             if (fileUri == null)
                 return null;

@@ -18,7 +18,7 @@ import com.finger.usbcamera.R;
 public class SettingFragment extends Fragment {
     private Context mContext;
     private View mView;
-    private Button userSettingBtn, dryWetSettingBtn, qualitySettingBtn;
+    private Button userSettingBtn, dryWetSettingBtn, qualitySettingBtn, uploadSettingBtn;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -48,6 +48,15 @@ public class SettingFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(mContext, QualityLimitSettingActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        uploadSettingBtn = mView.findViewById(R.id.set_upload_btn);
+        uploadSettingBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, UploadSettingActivity.class);
                 startActivity(intent);
             }
         });

@@ -21,6 +21,8 @@ public class SharedPreferencesUtil {
     public static final String KEY_LOGIN_USER = "LOGIN_USER";
     //指纹采集质量校验分数
     public static final String KEY_QUALITY_LIMIT = "QUALITY_LIMIT";
+    //上报地址
+    public static final String KEY_UPLOAD_URL = "UPLOAD_URL";
 
     @SuppressLint("CommitPrefEdits")
     public SharedPreferencesUtil(Context context, String spName) {

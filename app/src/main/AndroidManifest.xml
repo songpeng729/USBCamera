@@ -37,5 +37,6 @@
         <activity android:name=".activity.DryWetSettingActivity"/>
         <activity android:name=".activity.UserSettingActivity"/>
         <activity android:name=".activity.QualityLimitSettingActivity"/>
+        <activity android:name=".activity.UploadSettingActivity"/>
     </application>
 </manifest>

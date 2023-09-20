@@ -41,10 +41,18 @@ public class FPTConverter {
         for (Finger finger : fingerList) {
             TPFinger tpFinger = new TPFinger();
             tpFinger.setFgp(finger.getIsFlat() ? finger.getFgp()+10+ "" : finger.getFgp()+"");
-            tpFinger.setFingerImageData(Base64.getEncoder().encodeToString(finger.getImgData()));
+            //去掉头部64位信息
+            byte[] imgData = finger.getImgData();
+            byte[] wsqData = new byte[imgData.length - 64];
+            System.arraycopy(imgData, 64, wsqData, 0, wsqData.length);
+
+            tpFinger.setFingerImageData(wsqData);
             tpFinger.setFingerImageHorizontalDirectionLength("640");
             tpFinger.setFingerImageVerticalDirectionLength("640");
             tpFinger.setFingerImageRatio("500");
+            tpFinger.setFingerFeatureExtractionMethodCode("0");
+            tpFinger.setFingerImageCompressMethodDescript("1400");
+
             tpFingerList.add(tpFinger);
         }
 

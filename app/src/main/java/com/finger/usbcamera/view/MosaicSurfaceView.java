@@ -195,7 +195,7 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
                         imgDataBuffer = bytes;
                         onMosaicStatusChanged(MOSAIC_STATUS_SUCCESS, "采集完成", ret);
                         try {
-                            Thread.sleep(100);  //线程休眠100毫秒执行,否则鸿蒙系统崩溃
+                            Thread.sleep(50);  //线程休眠50毫秒执行,否则鸿蒙系统崩溃
                             stopGather();
                         } catch (InterruptedException e) {
                             e.printStackTrace();
@@ -467,6 +467,11 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
             @Override
             public void run() {
                 while (isPreview) {
+                    try {
+                        Thread.sleep(1000/60);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                     MosaicNative.ReadImg(imgDataBuffer);
                     drawImage(imgDataBuffer);
                 }

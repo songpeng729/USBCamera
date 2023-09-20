@@ -1,12 +1,13 @@
 package com.finger.usbcamera;
 
-import android.util.JsonReader;
-
+import com.finger.usbcamera.db.entity.Face;
+import com.finger.usbcamera.db.entity.Finger;
 import com.finger.usbcamera.db.entity.Person;
+import com.finger.usbcamera.util.GsonUtil;
+import com.finger.usbcamera.vo.UploadPersonRequest;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONTokener;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -42,7 +43,30 @@ public class ExampleUnitTest {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        JSONTokener jsonTokener = new JSONTokener(jsonStr);
-//        jsonTokener.nextValue();
+    }
+
+    @Test
+    public void test_upload() {
+        UploadPersonRequest request = new UploadPersonRequest();
+        Person person = new Person();
+        person.setIdCardNo("12334");
+        person.setName("张三");
+        person.setPersonId("P123456");
+        person.setAddress("河南省郑州市");
+        request.setPerson(person);
+        Face face = new Face();
+        face.setPersonId(123L);
+        face.setCenterImage("123456".getBytes());
+
+        Finger finger = new Finger();
+        finger.setFgp(1);
+        finger.setImgData("666666".getBytes());
+        finger.setPersonId(123L);
+        request.getFingerList().add(finger);
+        request.setFace(face);
+        String jsonStr = GsonUtil.createJsonString(request);
+        System.out.println(jsonStr);
+        UploadPersonRequest uploadPersonRequest = GsonUtil.getObject(jsonStr, UploadPersonRequest.class);
+        System.out.println(uploadPersonRequest.getFace().getPersonId());
     }
 }

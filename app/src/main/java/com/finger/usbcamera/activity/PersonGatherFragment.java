@@ -20,6 +20,12 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.finger.fpt.FPT5Object;
 import com.finger.fpt.PackageHead;
 import com.finger.fpt.tp.FingerprintPackage;
@@ -36,11 +42,15 @@ import com.finger.usbcamera.db.greendao.PersonDao;
 import com.finger.usbcamera.db.greendao.UserDao;
 import com.finger.usbcamera.util.FPTConverter;
 import com.finger.usbcamera.util.FileUtils;
+import com.finger.usbcamera.util.GsonUtil;
+import com.finger.usbcamera.util.SharedPreferencesUtil;
 import com.finger.usbcamera.util.XmlUtil;
+import com.finger.usbcamera.vo.UploadPersonRequest;
 
 import org.greenrobot.greendao.query.QueryBuilder;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -153,6 +163,9 @@ public class PersonGatherFragment extends Fragment {
                             case R.id.person_list_menu_export_fpt:
                                 exportFpt(person);
                                 break;
+                            case R.id.person_list_menu_upload:
+                                uploadPerson(person);
+                                break;
                             case R.id.person_list_menu_edit:
                                 startActivity(new Intent(mContext, MosaicActivity.class));
                                 break;
@@ -209,5 +222,39 @@ public class PersonGatherFragment extends Fragment {
         if (requestCode == REQUEST_CODE_ADD_PERSON && resultCode == Activity.RESULT_OK) {
             refreshPersonList();//添加，刷新列表
         }
+    }
+
+    private RequestQueue requestQueue = null;
+    private void uploadPerson(Person person) {
+        requestQueue = Volley.newRequestQueue(this.mContext);
+        UploadPersonRequest request = new UploadPersonRequest();
+        request.setPerson(person);
+        List<Face> faceList = faceDao.queryBuilder().where(FaceDao.Properties.PersonId.eq(person.getId())).list();
+        if(faceList != null && faceList.size() > 0){
+            request.setFace(faceList.get(0));
+        }
+        List<Finger> fingerList = fingerDao.queryBuilder().where(FingerDao.Properties.PersonId.eq(person.getId())).list();
+        request.setFingerList(fingerList);
+
+        String url = SharedPreferencesUtil.getStringValue(SharedPreferencesUtil.KEY_UPLOAD_URL, "http://0.0.0.0:10000")+"/uploadPerson";
+        JSONObject jsonObject = null;
+        try {
+            jsonObject = new JSONObject(GsonUtil.createJsonString(request));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.PUT, url, jsonObject,new Response.Listener() {
+            @Override
+            public void onResponse(Object response) {
+                Toast.makeText(mContext, "上报数据成功"+ response.toString(), Toast.LENGTH_SHORT).show();
+            }
+        }, new Response.ErrorListener(){
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(mContext, "上报数据失败"+ error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        requestQueue.add(jsonObjectRequest);
     }
 }

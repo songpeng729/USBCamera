@@ -122,7 +122,7 @@ public class TPFinger {
      * 指纹_图像数据
      */
     @XmlElement(name = "zw_txsj")
-    private String fingerImageData = "";
+    private byte[] fingerImageData;
 
     public String getFgp() {
         return fgp;
@@ -428,11 +428,11 @@ public class TPFinger {
         this.fingerImageQuality = fingerImageQuality;
     }
 
-    public String getFingerImageData() {
+    public byte[] getFingerImageData() {
         return fingerImageData;
     }
 
-    public void setFingerImageData(String fingerImageData) {
+    public void setFingerImageData(byte[] fingerImageData) {
         this.fingerImageData = fingerImageData;
     }
 }

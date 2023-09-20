@@ -40,6 +40,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * 预览指纹，拼接指纹, 调试页面
+ */
 public class MosaicActivity extends Activity implements View.OnClickListener, MosaicImageListener{
 
     private String TAG = "MosaicActivity";

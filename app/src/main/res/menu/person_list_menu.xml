@@ -19,4 +19,8 @@
         android:id="@+id/person_list_menu_export_fpt"
         android:orderInCategory="100"
         android:title="导出FPT"/>
+    <item
+        android:id="@+id/person_list_menu_upload"
+        android:orderInCategory="100"
+        android:title="上报"/>
 </menu>

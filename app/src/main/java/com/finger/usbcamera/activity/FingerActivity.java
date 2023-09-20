@@ -288,7 +288,7 @@ public class FingerActivity extends Activity implements View.OnClickListener, Mo
             @Override
             public void run() {
                 try {
-                    Thread.sleep(100);  //线程休眠200毫秒执行
+                    Thread.sleep(50);  //线程休眠50毫秒执行
 //                    checkFingerIndex(0);//这里需要延时加载才能显示出图像
                     fingerSurfaceView.showFingerData(getCurrentFingerData());
                 } catch (InterruptedException e) {

@@ -16,10 +16,9 @@
     <style name="FingerNameText">
         <item name="android:background">@drawable/finger_name_background</item>
         <item name="android:textColor">@color/finger_name</item>
-        <item name="android:layout_marginLeft">2dip</item>
-        <item name="android:layout_marginRight">2dip</item>
-        <item name="android:layout_marginTop">2dip</item>
-        <item name="android:layout_marginBottom">2dip</item>
+        <item name="android:layout_margin">2dip</item>
+        <item name="android:layout_width">77dp</item>
+        <item name="android:textSize">18sp</item>
     </style>
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 

@@ -23,10 +23,11 @@
         android:padding="1dip" >
     </LinearLayout>
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" >
+        android:layout_weight="1"
+        android:orientation="vertical">
 
         <RadioGroup
             android:id="@+id/finger_type_group"
@@ -48,6 +49,7 @@
                 android:gravity="center"
                 android:paddingLeft="80dp"
                 android:text="@string/finger_roll"
+                android:textColor="@color/blue_light"
                 android:textSize="20sp" />
 
             <RadioButton
@@ -76,83 +78,73 @@
             <Button
                 android:id="@+id/finger_r_thumb_btn"
                 style="@style/FingerNameText"
-                android:layout_width="75dp"
-                android:layout_height="wrap_content"
-                android:text="@string/finger_r_thumb"
-                android:textSize="18sp" />
+                android:layout_row="0"
+                android:layout_column="0"
+                android:text="@string/finger_r_thumb" />
 
             <Button
                 android:id="@+id/finger_r_index_btn"
                 style="@style/FingerNameText"
-                android:layout_width="75dp"
-                android:text="@string/finger_r_index"
-                android:textColor="@color/finger_name"
-                android:textSize="18sp" />
+                android:layout_row="0"
+                android:layout_column="1"
+                android:text="@string/finger_r_index" />
 
             <Button
                 android:id="@+id/finger_r_middle_btn"
                 style="@style/FingerNameText"
-                android:layout_width="75dp"
-                android:text="@string/finger_r_middle"
-                android:textColor="@color/finger_name"
-                android:textSize="18sp" />
+                android:layout_row="0"
+                android:layout_column="2"
+                android:text="@string/finger_r_middle" />
 
             <Button
                 android:id="@+id/finger_r_ring_bnt"
                 style="@style/FingerNameText"
-                android:layout_width="75dp"
-                android:layout_height="wrap_content"
-                android:text="@string/finger_r_ring"
-                android:textColor="@color/finger_name"
-                android:textSize="18sp" />
+                android:layout_row="0"
+                android:layout_column="3"
+                android:text="@string/finger_r_ring" />
 
             <Button
                 android:id="@+id/finger_r_little_btn"
                 style="@style/FingerNameText"
-                android:layout_width="75dp"
-                android:text="@string/finger_r_little"
-                android:textColor="@color/finger_name"
-                android:textSize="18sp" />
+                android:layout_row="0"
+                android:layout_column="4"
+                android:text="@string/finger_r_little" />
 
             <Button
                 android:id="@+id/finger_l_thumb_btn"
                 style="@style/FingerNameText"
-                android:layout_width="75dp"
-                android:text="@string/finger_l_thumb"
-                android:textColor="@color/finger_name"
-                android:textSize="18sp" />
+                android:layout_row="1"
+                android:layout_column="0"
+                android:text="@string/finger_l_thumb" />
 
             <Button
                 android:id="@+id/finger_l_index_btn"
                 style="@style/FingerNameText"
-                android:layout_width="75dp"
-                android:text="@string/finger_l_index"
-                android:textColor="@color/finger_name"
-                android:textSize="18sp" />
+                android:layout_row="1"
+                android:layout_column="1"
+                android:text="@string/finger_l_index" />
 
             <Button
                 android:id="@+id/finger_l_middle_btn"
                 style="@style/FingerNameText"
-                android:layout_width="75dp"
-                android:text="@string/finger_l_middle"
-                android:textColor="@color/finger_name"
-                android:textSize="18sp" />
+                android:layout_row="1"
+                android:layout_column="2"
+                android:text="@string/finger_l_middle" />
 
             <Button
                 android:id="@+id/finger_l_ring_btn"
                 style="@style/FingerNameText"
-                android:layout_width="75dp"
-                android:text="@string/finger_l_ring"
-                android:textColor="@color/finger_name"
-                android:textSize="18sp" />
+                android:layout_row="1"
+                android:layout_column="3"
+                android:text="@string/finger_l_ring" />
 
             <Button
                 android:id="@+id/finger_l_little_btn"
                 style="@style/FingerNameText"
-                android:layout_width="75dp"
-                android:text="@string/finger_l_little"
-                android:textColor="@color/finger_name"
-                android:textSize="18sp" />
+                android:layout_row="1"
+                android:layout_column="4"
+                android:text="@string/finger_l_little" />
+
         </GridLayout>
 
         <TextView
@@ -168,81 +160,67 @@
             android:textColor="#FFFFFF"
             android:textSize="18sp" />
 
-        <TableLayout
-            android:id="@+id/finger_info_table"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_below="@id/gather_status_tv"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp" >
-
-            <Spinner
-                android:id="@+id/finger_status_sp"
-                android:layout_width="80dp"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="10dp"
-                android:entries="@array/finger_status" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_height="50dp"
+            android:padding="10dp">
 
             <TextView
-                android:id="@+id/tv_finger_hint"
-                android:layout_width="80dp"
-                android:layout_height="40dp"
-                android:layout_marginLeft="10dp"
-                android:paddingTop="10dp"
-                android:text="(请选择指纹采集缺省情况)"
-                android:textColor="@color/gray_light"
-                android:textSize="18sp" />
-
-            <Spinner
-                android:id="@+id/finger_model_sp"
-                android:layout_width="80dp"
+                android:id="@+id/gather_model_dry_tv"
+                android:layout_width="50dp"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="10dp"
-                android:entries="@array/finger_model" />
+                android:layout_centerVertical="true"
+                android:text="干"
+                android:textSize="20sp" />
 
-        </TableLayout>
+            <SeekBar
+                android:id="@+id/gather_model_seekbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toStartOf="@id/gather_model_wet_tv"
+                android:layout_toEndOf="@id/gather_model_dry_tv"
+                android:max="3"
+                android:progress="2" />
+
+            <TextView
+                android:id="@+id/gather_model_wet_tv"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:gravity="end"
+                android:text="湿"
+                android:textSize="20sp" />
+        </RelativeLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/gather_status_tv"
-            android:layout_marginLeft="0dp"
+            android:layout_marginLeft="50dp"
             android:layout_marginTop="10dp"
             android:layout_marginRight="10dp"
             android:layout_marginBottom="10dp"
-            android:layout_toRightOf="@+id/finger_info_table"
-            android:orientation="vertical">
-
+            android:orientation="horizontal">
             <Button
                 android:id="@+id/finger_start_gather_btn"
-                android:layout_width="100dp"
+                android:layout_width="120dp"
                 android:layout_height="wrap_content"
                 android:background="@drawable/finger_btn_background"
                 android:text="@string/start_collect"
                 android:textColor="@drawable/finger_text_color" />
 
-<!--            <Button-->
-<!--                android:id="@+id/finger_dry_wet_setting_btn"-->
-<!--                android:layout_width="100dp"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginTop="10dp"-->
-<!--                android:background="@drawable/finger_btn_background"-->
-<!--                android:text="@string/dry_wet_setting"-->
-<!--                android:textColor="@drawable/finger_text_color" />-->
-
             <Button
                 android:id="@+id/finger_save_btn"
-                android:layout_width="100dp"
+                android:layout_width="120dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginLeft="50dp"
                 android:background="@drawable/finger_btn_background"
                 android:text="@string/tv_save"
                 android:textColor="@drawable/finger_text_color" />
 
         </LinearLayout>
 
-    </RelativeLayout>
+    </LinearLayout>
 
 </LinearLayout>

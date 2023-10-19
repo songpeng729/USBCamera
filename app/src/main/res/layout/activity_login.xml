@@ -8,12 +8,13 @@
         android:id="@+id/login_user_password_layout"
         android:layout_width="300dp"
         android:layout_height="200dp"
-        android:layout_marginTop="360dp"
+        android:layout_marginTop="260dp"
         android:layout_centerHorizontal="true"
         android:orientation="vertical">
 
         <RelativeLayout
             android:id="@+id/login_user_layout"
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_marginTop="20dp"
@@ -51,6 +52,7 @@
 
         <RelativeLayout
             android:id="@+id/login_pwd_layout"
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_marginTop="10dp"
@@ -104,7 +106,7 @@
         android:layout_below="@+id/login_user_password_layout"
         android:background="@drawable/finger_btn_background"
         android:layout_centerInParent="true"
-        android:text="登 录 系 统"
+        android:text="@string/login_btn"
         android:visibility="visible"
         android:textColor="@color/blue_drak" />
 

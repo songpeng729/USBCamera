@@ -4,6 +4,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlType;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +13,12 @@ import java.util.List;
  * 捺印指纹信息
  */
 @XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(propOrder = {"fgp","fingerFeatureExtractionMethodCode","adactylismCauseCode","fingerPatternMasterCode","fingerPatternSlaveCode","fingerFeatureDirection","fingerFeatureDirectionRange",
+        "fingerCenterPointFeatureXCoordinate","fingerCenterPointFeatureYCoordinate","fingerCenterPointFeatureCoordinateRange","fingerCenterPointFeatureDirection","fingerCenterPointFeatureDirectionRange","fingerCenterPointFeatureReliabilityLevel",
+        "fingerSlaveCenterFeatureXCoordinate","fingerSlaveCenterFeatureYCoordinate","fingerSlaveCenterFeatureCoordinateRange","fingerSlaveCenterFeatureDirection","fingerSlaveCenterFeatureDirectionRange","fingerSlaveCenterFeatureReliabilityLevel",
+        "fingerLeftTriangleFeatureXCoordinate","fingerLeftTriangleFeatureYCoordinate","fingerLeftTriangleFeatureCoordinateRange","fingerLeftTriangleFeatureDirection","fingerLeftTriangleFeatureDirectionRange","fingerLeftTriangleFeatureReliabilityLevel",
+        "fingerRightTriangleFeatureXCoordinate","fingerRightTriangleFeatureYCoordinate","fingerRightTriangleFeatureCoordinateRange","fingerRightTriangleFeatureDirection","fingerRightTriangleFeatureDirectionRange","fingerRightTriangleFeatureReliabilityLevel",
+        "tpFingerFeatureDataList","fingerCustomInfo","fingerImageHorizontalDirectionLength","fingerImageVerticalDirectionLength","fingerImageRatio","fingerImageCompressMethodDescript","fingerImageQuality","fingerImageData"})
 public class TPFinger {
     /**
      * 指纹指位代码

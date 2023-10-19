@@ -33,6 +33,9 @@ public class USBCameraAPP extends Application {
     public static String EXTRA_IDCARDNO= "idcardno";
     public static String EXTRA_PERSONID= "person_id";
 
+    public static final String DEFAULT_USER = "admin";  //默认登录用户
+    public static final int DEFAULT_QUALITY_LIMIT = 65; //默认采集质量分数限制
+
     public static USBCameraAPP getInstances(){
         return instances;
     }

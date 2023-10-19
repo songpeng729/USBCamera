@@ -1,5 +1,6 @@
 package com.finger.usbcamera.util;
 
+import com.finger.fpt.FPT5Constants;
 import com.finger.fpt.tp.CollectInfoMsg;
 import com.finger.fpt.tp.DescriptiveMsg;
 import com.finger.fpt.tp.FingerprintPackage;
@@ -18,7 +19,7 @@ import java.util.List;
  * FPT5 转换类
  */
 public class FPTConverter {
-    private static final String SYS_TYPE_CODE = "0000";//TODO 系统类型代码
+    private static final String SYS_TYPE_CODE = "1900";//TODO 系统类型代码
 
     private static final String FACE_CENTER_CODE = "1";
     private static final String FACE_LEFT_CODE = "2";
@@ -40,7 +41,9 @@ public class FPTConverter {
         List<TPFinger> tpFingerList = new ArrayList<>();
         for (Finger finger : fingerList) {
             TPFinger tpFinger = new TPFinger();
-            tpFinger.setFgp(finger.getIsFlat() ? finger.getFgp()+10+ "" : finger.getFgp()+"");
+            int fgp = finger.getIsFlat() ? finger.getFgp() + 10 : finger.getFgp();
+            tpFinger.setFgp(fgp >= 10 ? ""+fgp : "0"+finger.getFgp());
+            tpFinger.setFingerFeatureExtractionMethodCode("A");
             //去掉头部64位信息
             byte[] imgData = finger.getImgData();
             byte[] wsqData = new byte[imgData.length - 64];
@@ -60,24 +63,27 @@ public class FPTConverter {
     }
     private static DescriptiveMsg convert2DescriptiveMsg(Person person){
         DescriptiveMsg msg = new DescriptiveMsg();
-        msg.setCasePersonid(person.getPersonId());
+        msg.setOriginalSystemCasePersonId(person.getPersonId());
         msg.setFingerPalmCardId(person.getPersonId());
         msg.setName(person.getName());
+        msg.setCredentialsCode(FPTCode.DEFAULT_CERTIFICATE_TYPE);
+        msg.setCredentialsNo(person.getIdCardNo());
         //字典转换
         msg.setGender(FPTCode.getGenderCode(person.getGender()));
         msg.setEthnic(FPTCode.getEthnicCode(person.getEthnic()));
+        msg.setNationality(FPTCode.NATIONALITY_CHINA);
         msg.setBirthday(person.getBirthday());
         msg.setHukouAddress(person.getAddress());
         return msg;
     }
     private static CollectInfoMsg convert2CollectInfoMsg(Person person, User user){
         CollectInfoMsg msg = new CollectInfoMsg();
-        msg.setChopDateTime(DateUtils.date2String(person.getGatherDate()));
+        msg.setChopDateTime(DateUtils.date2String(person.getGatherDate(),"yyyyMMddHHmmss"));
         msg.setChopPersonIdCard(user.getIdCardNo());
         msg.setChopPersonName(user.getName());
         msg.setChopPersonTel(user.getPhone());
         msg.setChopUnitCode(user.getUnitCode());
-        msg.setChopUnitCode(user.getUnitName());
+        msg.setChopUnitName(user.getUnitName());
         msg.setFingerprintComparisonSysTypeDescript(SYS_TYPE_CODE);
         return msg;
     }

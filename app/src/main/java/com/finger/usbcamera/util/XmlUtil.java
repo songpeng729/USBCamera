@@ -31,8 +31,7 @@ public class XmlUtil {
 
             Marshaller marshaller = context.createMarshaller();
             // 格式化xml输出的格式
-            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,
-                    Boolean.TRUE);
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
             marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
             // 将对象转换成输出流形式的xml
             marshaller.marshal(obj, sw);
@@ -153,5 +152,8 @@ public class XmlUtil {
             System.out.println(e.getMessage());
         }
         return false;
+    }
+
+    public void aaa(){
     }
 }

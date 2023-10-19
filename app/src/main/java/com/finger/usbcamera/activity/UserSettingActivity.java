@@ -55,14 +55,19 @@ public class UserSettingActivity extends Activity implements View.OnClickListene
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.user_save_btn:
-                loginUser.setName(name.getText().toString());
-                loginUser.setIdCardNo(idcardno.getText().toString());
-                loginUser.setPhone(phone.getText().toString());
-                loginUser.setUnitCode(unitCode.getText().toString());
-                loginUser.setUnitName(unitName.getText().toString());
-                userDao.save(loginUser);
-                Toast.makeText(mContext,"保存成功！", Toast.LENGTH_SHORT).show();
-                finish();
+                String unitCodeStr = unitCode.getText().toString();
+                if(unitCodeStr.length() == 12){
+                    loginUser.setName(name.getText().toString());
+                    loginUser.setIdCardNo(idcardno.getText().toString());
+                    loginUser.setPhone(phone.getText().toString());
+                    loginUser.setUnitCode(unitCode.getText().toString());
+                    loginUser.setUnitName(unitName.getText().toString());
+                    userDao.save(loginUser);
+                    Toast.makeText(mContext,"保存成功！", Toast.LENGTH_SHORT).show();
+                    finish();
+                }else{
+                    Toast.makeText(mContext,"单位代码长度不是12位", Toast.LENGTH_SHORT).show();
+                }
                 break;
         }
     }

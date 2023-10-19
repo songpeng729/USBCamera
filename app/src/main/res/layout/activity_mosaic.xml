@@ -35,29 +35,30 @@
             android:layout_marginBottom="10dp"
             android:orientation="vertical">
 
-            <Button
-                android:id="@+id/mosaic_gather_btn"
-                android:layout_width="130dp"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:background="@drawable/finger_btn_background"
-                android:text="@string/start_collect"
-                android:textColor="@drawable/finger_text_color" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <Button
-                android:id="@+id/mosaic_preview_btn"
-                android:layout_width="130dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:background="@drawable/finger_btn_background"
-                android:text="@string/start_preview"
-                android:textColor="@drawable/finger_text_color" />
+                android:orientation="horizontal">
+                <Button
+                    android:id="@+id/mosaic_gather_btn"
+                    android:layout_width="130dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:background="@drawable/finger_btn_background"
+                    android:text="@string/start_collect"
+                    android:textColor="@drawable/finger_text_color" />
+                <Button
+                    android:id="@+id/mosaic_preview_btn"
+                    android:layout_width="130dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:background="@drawable/finger_btn_background"
+                    android:text="@string/start_preview"
+                    android:textColor="@drawable/finger_text_color" />
+            </LinearLayout>
             <Button
                 android:id="@+id/mosaic_save_preview_btn"
+                android:visibility="gone"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
@@ -65,9 +66,9 @@
                 android:text="@string/tv_save"
                 android:textColor="@drawable/finger_text_color" />
 
-        </LinearLayout>
             <Button
                 android:id="@+id/dry_wet_btn"
+                android:visibility="gone"
                 android:layout_width="130dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
@@ -75,6 +76,11 @@
                 android:text="@string/dry_wet_setting"
                 android:textColor="@drawable/finger_text_color" />
 
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/m5000_info"
+                />
         </LinearLayout>
 
     </RelativeLayout>

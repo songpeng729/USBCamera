@@ -11,6 +11,7 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 
 import com.finger.usbcamera.R;
+import com.finger.usbcamera.USBCameraAPP;
 import com.finger.usbcamera.util.SharedPreferencesUtil;
 
 public class QualityLimitSettingActivity extends Activity{
@@ -29,7 +30,7 @@ public class QualityLimitSettingActivity extends Activity{
     }
     private void bindView(){
         qualityLimit = findViewById(R.id.quality_limit_edit);
-        qualityLimit.setText(""+SharedPreferencesUtil.getIntValue(SharedPreferencesUtil.KEY_QUALITY_LIMIT, 60));
+        qualityLimit.setText(String.format("%d", SharedPreferencesUtil.getIntValue(SharedPreferencesUtil.KEY_QUALITY_LIMIT, USBCameraAPP.DEFAULT_QUALITY_LIMIT)));
 
         saveBtn = findViewById(R.id.quality_limit_save_btn);
         saveBtn.setOnClickListener(new View.OnClickListener() {

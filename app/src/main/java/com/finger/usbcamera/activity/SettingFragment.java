@@ -18,13 +18,22 @@ import com.finger.usbcamera.R;
 public class SettingFragment extends Fragment {
     private Context mContext;
     private View mView;
-    private Button userSettingBtn, dryWetSettingBtn, qualitySettingBtn, uploadSettingBtn;
+    private Button previewBtn,userSettingBtn, dryWetSettingBtn, qualitySettingBtn, uploadSettingBtn;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         mView = inflater.inflate(R.layout.fragment_setting, container, false);
         mContext = mView.getContext();
+
+        previewBtn = mView.findViewById(R.id.set_preview_btn);
+        previewBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, MosaicActivity.class);
+                startActivity(intent);
+            }
+        });
 
         userSettingBtn = mView.findViewById(R.id.set_user_info_btn);
         userSettingBtn.setOnClickListener(new View.OnClickListener() {

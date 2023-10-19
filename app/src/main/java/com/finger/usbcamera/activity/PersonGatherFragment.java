@@ -1,7 +1,9 @@
 package com.finger.usbcamera.activity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -26,6 +28,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.finger.fpt.FPT5Constants;
 import com.finger.fpt.FPT5Object;
 import com.finger.fpt.PackageHead;
 import com.finger.fpt.tp.FingerprintPackage;
@@ -40,6 +43,7 @@ import com.finger.usbcamera.db.greendao.FaceDao;
 import com.finger.usbcamera.db.greendao.FingerDao;
 import com.finger.usbcamera.db.greendao.PersonDao;
 import com.finger.usbcamera.db.greendao.UserDao;
+import com.finger.usbcamera.util.DateUtils;
 import com.finger.usbcamera.util.FPTConverter;
 import com.finger.usbcamera.util.FileUtils;
 import com.finger.usbcamera.util.GsonUtil;
@@ -52,7 +56,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import static com.finger.usbcamera.USBCameraAPP.EXTRA_IDCARDNO;
 import static com.finger.usbcamera.USBCameraAPP.EXTRA_NAME;
@@ -99,8 +105,14 @@ public class PersonGatherFragment extends Fragment {
         addBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(mContext, IDCardActivity.class);
-                startActivityForResult(intent, REQUEST_CODE_ADD_PERSON);
+                //校验用户信息
+                User gatherUser = USBCameraAPP.getInstances().getLoginUser();
+                if(gatherUser.getUnitCode() != null){
+                    Intent intent = new Intent(mContext, IDCardActivity.class);
+                    startActivityForResult(intent, REQUEST_CODE_ADD_PERSON);
+                }else{
+                    showAlertDialog("请设置采集人单位信息");
+                }
             }
         });
         refreshBtn.setOnClickListener(new View.OnClickListener(){
@@ -119,7 +131,7 @@ public class PersonGatherFragment extends Fragment {
     }
     private void initRecyclerView () {
         recyclerView = mView.findViewById(R.id.recyclerView);
-        recyclerView.getItemAnimator().setChangeDuration(500);
+        Objects.requireNonNull(recyclerView.getItemAnimator()).setChangeDuration(500);
         recyclerView.getItemAnimator().setMoveDuration(500);
         personListAdapter = new PersonListAdapter(getActivity(), personList);
         LinearLayoutManager manager = new LinearLayoutManager(getActivity());
@@ -140,7 +152,11 @@ public class PersonGatherFragment extends Fragment {
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()){
                             case R.id.person_list_menu_delete:
-                                //删除
+                                //TODO 优化删除
+                                faceDao.queryBuilder().where(FaceDao.Properties.PersonId.eq(person.getId())).list().forEach(face -> faceDao.delete(face));
+                                fingerDao.queryBuilder().where(FingerDao.Properties.PersonId.eq(person.getId())).list().forEach(finger-> fingerDao.delete(finger));
+                                personDao.delete(person);
+
                                 personList.remove(pos);
                                 personListAdapter.notifyItemRemoved(pos);
                                 break;
@@ -166,9 +182,6 @@ public class PersonGatherFragment extends Fragment {
                             case R.id.person_list_menu_upload:
                                 uploadPerson(person);
                                 break;
-                            case R.id.person_list_menu_edit:
-                                startActivity(new Intent(mContext, MosaicActivity.class));
-                                break;
                         }
                         return false;
                     }
@@ -180,15 +193,24 @@ public class PersonGatherFragment extends Fragment {
     private void exportFpt(Person person){
         FPT5Object fpt5Object = new FPT5Object();
         PackageHead packageHead = new PackageHead();
-        fpt5Object.setPackageHead(packageHead);
-        List<FingerprintPackage> fingerprintPackageList = new ArrayList<>();
-
-        List<Finger> fingerList = fingerDao.queryBuilder().where(FingerDao.Properties.PersonId.eq(person.getId())).list();
+        packageHead.setCreateTime(DateUtils.date2String(new Date(),"yyyyMMddHHmmss"));
 
         User gatherUser = USBCameraAPP.getInstances().getLoginUser();
         if(person.getGatherUserId() != null){
             gatherUser = userDao.load(person.getGatherUserId());
         }
+        packageHead.setSendPersonIdCard(gatherUser.getIdCardNo());
+        packageHead.setSendPersonName(gatherUser.getName());
+        packageHead.setSendPersonTel(gatherUser.getPhone());
+        packageHead.setSendUnitCode(gatherUser.getUnitCode());
+        packageHead.setSendUnitName(gatherUser.getUnitName());
+        packageHead.setSendUnitSystemType(FPT5Constants.SYS_CODE_EGFS);
+
+        fpt5Object.setPackageHead(packageHead);
+        List<FingerprintPackage> fingerprintPackageList = new ArrayList<>();
+
+        List<Finger> fingerList = fingerDao.queryBuilder().where(FingerDao.Properties.PersonId.eq(person.getId())).list();
+
         List<Face> faceList = faceDao.queryBuilder().where(FaceDao.Properties.PersonId.eq(person.getId())).list();
         Face face = null;
         if(faceList != null && faceList.size() > 0){
@@ -201,6 +223,7 @@ public class PersonGatherFragment extends Fragment {
 
         String xml = XmlUtil.convertToXml(fpt5Object);
 
+//        showAlertDialog(xml);
         Uri uri = FileUtils.saveTextFile(mContext, xml, person.getName()+"-"+person.getIdCardNo()+".fptx");
 //        Boolean ok = FileUtils.save(new File(mContext.getDataDir()+"/fpt/"+person.getName()+"-"+person.getIdCardNo()+".fptx"), xml);
         Toast.makeText(mContext, "保存fpt数据成功"+uri, Toast.LENGTH_SHORT).show();
@@ -256,5 +279,23 @@ public class PersonGatherFragment extends Fragment {
         });
 
         requestQueue.add(jsonObjectRequest);
+    }
+
+    /**
+     * 提示信息
+     * @param message
+     */
+    private void showAlertDialog(String message){
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        builder.setTitle("消息提示"); //设置标题
+        builder.setMessage(message);
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        builder.create().show();
     }
 }

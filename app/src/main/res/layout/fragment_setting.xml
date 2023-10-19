@@ -6,30 +6,29 @@
     android:orientation="vertical"
     >
     <Button
+        android:id="@+id/set_preview_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/set_preview_btn"/>
+    <Button
         android:id="@+id/set_dry_wet_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="干湿设置"/>
+        android:text="@string/set_dry_wet_btn"/>
     <Button
         android:id="@+id/set_user_info_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="用户信息"/>
+        android:text="@string/set_user_info_btn"/>
     <Button
         android:id="@+id/set_quality_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="质量分数设置"/>
+        android:text="@string/set_quality_btn"/>
     <Button
         android:id="@+id/set_upload_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="上报设置"/>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:textSize="50sp"
-        android:gravity="center"
-        android:text="这是设置界面" />
+        android:text="@string/set_upload_btn"/>
 
 </LinearLayout>

@@ -20,6 +20,8 @@ import com.finger.usbcamera.util.SharedPreferencesUtil;
 
 import java.util.List;
 
+import static com.finger.usbcamera.USBCameraAPP.DEFAULT_USER;
+
 public class LoginActivity extends Activity implements View.OnClickListener{
     private UserDao userDao = USBCameraAPP.getInstances().getDaoSession().getUserDao();
 
@@ -54,18 +56,18 @@ public class LoginActivity extends Activity implements View.OnClickListener{
         }
     }
     private void login() {
-        String username = loginUserEdit.getText().toString().trim();
-        String password = loginPwdEdit.getText().toString().trim();
-        if ("".equals(username)) {
-            Toast.makeText(this, "请先输入用户名", Toast.LENGTH_SHORT).show();
-            return ;
-        }
-        if ("".equals(password)) {
-            Toast.makeText(this, "请先输入密码", Toast.LENGTH_SHORT).show();
-            return ;
-        }
-        //TODO 校验密码
-        login(username);
+//        String username = loginUserEdit.getText().toString().trim();
+//        String password = loginPwdEdit.getText().toString().trim();
+//        if ("".equals(username)) {
+//            Toast.makeText(this, "请先输入用户名", Toast.LENGTH_SHORT).show();
+//            return ;
+//        }
+//        if ("".equals(password)) {
+//            Toast.makeText(this, "请先输入密码", Toast.LENGTH_SHORT).show();
+//            return ;
+//        }
+        //取消登录校验
+        login(USBCameraAPP.DEFAULT_USER);
     }
 
     private void login(String loginName){

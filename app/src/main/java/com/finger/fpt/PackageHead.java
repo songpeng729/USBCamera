@@ -3,17 +3,19 @@ package com.finger.fpt;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  */
 @XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(propOrder = {"version","createTime","originSystem","sendUnitCode","sendUnitName","sendUnitSystemType","sendPersonName","sendPersonIdCard","sendPersonTel"})
 public class PackageHead {
 
     /**
      * 版本号
      */
     @XmlElement(name = "version")
-    private String version;
+    private String version = "FPT0500";
     /**
      * 日期时间型,格式是”YYYYMMDDHH24MISS”
      */
@@ -23,7 +25,7 @@ public class PackageHead {
      * 来源系统
      */
     @XmlElement(name = "originSystem")
-    private String originSystem;
+    private String originSystem = "FingerAPP";
     /**
      * 发送单位代码
      */

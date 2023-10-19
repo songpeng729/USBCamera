@@ -5,6 +5,11 @@ import java.util.HashMap;
 public class FPTCode {
     private static HashMap<String,String> genderMap = new HashMap<>();
     private static HashMap<String,String> ethnicMap = new HashMap<>();
+
+    public static String NATIONALITY_CHINA = "156"; // 国籍-中国
+    public static String DEFAULT_CERTIFICATE_TYPE = "111"; //身份证
+
+
     static {
         //初始化数据
         //TODO 读取配置

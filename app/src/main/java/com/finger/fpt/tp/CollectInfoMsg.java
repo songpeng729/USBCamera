@@ -3,11 +3,13 @@ package com.finger.fpt.tp;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  * 捺印信息节点
  */
 @XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(propOrder = {"fingerprintComparisonSysTypeDescript","chopUnitCode","chopUnitName","chopPersonName","chopPersonIdCard","chopPersonTel","chopDateTime"})
 public class CollectInfoMsg {
 
     /**

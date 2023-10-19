@@ -4,6 +4,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlType;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +13,7 @@ import java.util.List;
  * 捺印指掌纹基本信息
  */
 @XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(propOrder = {"originalSystemCasePersonId","jingZongPersonId","casePersonid","fingerPalmCardId","collectionReason","name","alias","gender","birthday","nationality","ethnic","credentialsCode","credentialsNo","hukouAddressCode","hukouAddress","houseAddressCode","houseAddress","memo"})
 public class DescriptiveMsg {
 
     /**

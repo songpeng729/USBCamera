@@ -3,11 +3,13 @@ package com.finger.fpt.tp;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  * 捺印指掌纹人像信息
  */
 @XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(propOrder = {"personPictureTypeCode","personPictureFileLayout","personPictureImageData"})
 public class TpFaceImage {
     /**
      * 人像照片类型代码

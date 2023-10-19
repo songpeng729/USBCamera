@@ -22,6 +22,10 @@ import java.io.UnsupportedEncodingException;
 
 import static android.content.ContentValues.TAG;
 
+/**
+ * 文件管理工具
+ * saveTextFile保存fpt文件到Download目录下
+ */
 public class FileUtils {
     // TODO 获取系统存储路径 这里先写死
 //    Environment.getExternalStorageDirectory().getPath();

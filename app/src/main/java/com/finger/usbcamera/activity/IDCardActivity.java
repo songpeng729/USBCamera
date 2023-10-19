@@ -51,6 +51,7 @@ import org.json.JSONException;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Base64;
 import java.util.Date;
 
@@ -329,12 +330,13 @@ public class IDCardActivity extends AppCompatActivity {
     }
 
     /**
-     * 生成人员编号, 当前使用P+身份证号{18}+随机4位
-     * fpt5 asjxgrybh 正则表达式: |(P[0-9]{6}([0-9]|[A-Z]){6}[0-9]{4}(0[1-9]|1[0-2])([0-9]|[A-Z]){4})
+     * 生成人员编号, 当前使用R+身份证号{18}+随机4位
+     * fpt5 asjxgrybh 正则表达式: |(R[0-9]{6}([0-9]|[A-Z]){6}[0-9]{4}(0[1-9]|1[0-2])([0-9]|[A-Z]){4})
      * @return
      */
-    private String generatePersonId(String idcardno){
-        return String.format("P%s%04d", idcardno, (int)(Math.random()*10000));
+    private String generatePersonId(String unitCode){
+        SimpleDateFormat sdf= new SimpleDateFormat("yyyyMM");
+        return String.format("R%s%s%04d", unitCode, sdf.format(new Date()), (int)(Math.random()*10000));
     }
     private void savePerson(){
         if(name.getText().toString().isEmpty() || idCardNo.getText().toString().isEmpty()){

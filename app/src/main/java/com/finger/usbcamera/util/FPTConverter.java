@@ -94,23 +94,23 @@ public class FPTConverter {
         byte[] rightImage = face.getRightImage();
         if(centerImage != null){
             TpFaceImage faceImage = new TpFaceImage();
-            faceImage.setPersonPictureTypeCode("JPEG");
-            faceImage.setPersonPictureImageData(Base64.getEncoder().encodeToString(centerImage));
-            faceImage.setPersonPictureFileLayout(FACE_CENTER_CODE);
+            faceImage.setPersonPictureTypeCode(FACE_CENTER_CODE);
+            faceImage.setPersonPictureFileLayout("JPEG");
+            faceImage.setPersonPictureImageData(BitmapUtil.bitmap2Bytes(BitmapUtil.bytes2Bitmap(centerImage)));
             faceImageList.add(faceImage);
         }
         if(leftImage != null){
             TpFaceImage faceImage = new TpFaceImage();
-            faceImage.setPersonPictureTypeCode("JPEG");
-            faceImage.setPersonPictureImageData(Base64.getEncoder().encodeToString(leftImage));
-            faceImage.setPersonPictureFileLayout(FACE_LEFT_CODE);
+            faceImage.setPersonPictureTypeCode(FACE_LEFT_CODE);
+            faceImage.setPersonPictureFileLayout("JPEG");
+            faceImage.setPersonPictureImageData(BitmapUtil.bitmap2Bytes(BitmapUtil.bytes2Bitmap(leftImage)));
             faceImageList.add(faceImage);
         }
         if(rightImage != null){
             TpFaceImage faceImage = new TpFaceImage();
-            faceImage.setPersonPictureTypeCode("JPEG");
-            faceImage.setPersonPictureImageData(Base64.getEncoder().encodeToString(rightImage));
-            faceImage.setPersonPictureFileLayout(FACE_RIGHT_CODE);
+            faceImage.setPersonPictureTypeCode(FACE_RIGHT_CODE);
+            faceImage.setPersonPictureFileLayout("JPEG");
+            faceImage.setPersonPictureImageData(BitmapUtil.bitmap2Bytes(BitmapUtil.bytes2Bitmap(rightImage)));
             faceImageList.add(faceImage);
         }
 

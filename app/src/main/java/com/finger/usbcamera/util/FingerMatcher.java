@@ -19,6 +19,6 @@ public class FingerMatcher {
         }
         float[] similarity = new float[1];
         GBFPNative.FPFeatureMatchGAFIS(srcFeature, destFeature, similarity);
-        return similarity[0] > 0.8;
+        return similarity[0] > 0.6;
     }
 }

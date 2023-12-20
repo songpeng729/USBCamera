@@ -89,6 +89,13 @@
                 android:text="@string/person_list_idcardno"
                 android:textSize="20sp" />
             <TextView
+                android:id="@+id/person_id"
+                android:layout_width="match_parent"
+                android:layout_height="25dp"
+                android:layout_gravity="left"
+                android:text="@string/person_list_id"
+                android:textSize="20sp" />
+            <TextView
                 android:id="@+id/person_address"
                 android:layout_width="wrap_content"
                 android:layout_height="25dp"

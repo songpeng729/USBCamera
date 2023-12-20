@@ -44,6 +44,7 @@ import com.finger.usbcamera.R;
 import com.finger.usbcamera.USBCameraAPP;
 import com.finger.usbcamera.db.DatabaseConstants;
 import com.finger.usbcamera.db.entity.Person;
+import com.finger.usbcamera.db.entity.User;
 import com.finger.usbcamera.db.greendao.PersonDao;
 import com.finger.usbcamera.util.BitmapUtil;
 
@@ -81,6 +82,8 @@ public class IDCardActivity extends AppCompatActivity {
     private AlertDialog.Builder alertDialog;//OCR 弹框
     private PersonDao personDao;
     private byte[] photo;
+
+    private User loginUser = USBCameraAPP.getInstances().getLoginUser();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -325,7 +328,7 @@ public class IDCardActivity extends AppCompatActivity {
         person.setBirthday(idCardResult.getBirthday().getWords());
         person.setGatherDate(new Date());
 
-        person.setPersonId(generatePersonId(person.getIdCardNo()));
+        person.setPersonId(generatePersonId(loginUser.getUnitCode()));
         personDao.insert(person);
     }
 
@@ -357,7 +360,7 @@ public class IDCardActivity extends AppCompatActivity {
             person.setIdCardStatus(DatabaseConstants.STATUS_NOT_NULL);
         }
 
-        person.setPersonId(generatePersonId(person.getIdCardNo()));
+        person.setPersonId(generatePersonId(loginUser.getUnitCode()));
         personDao.insert(person);
 
         alertText("保存成功", "继续采集指纹！", new DialogInterface.OnClickListener() {

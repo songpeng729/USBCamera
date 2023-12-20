@@ -25,7 +25,7 @@ public class TpFaceImage {
      * 人像_图像数据
      */
     @XmlElement(name = "rx_txsj")
-    private String personPictureImageData = "";
+    private byte[] personPictureImageData;
 
     public String getPersonPictureTypeCode() {
         return personPictureTypeCode;
@@ -43,11 +43,11 @@ public class TpFaceImage {
         this.personPictureFileLayout = personPictureFileLayout;
     }
 
-    public String getPersonPictureImageData() {
+    public byte[] getPersonPictureImageData() {
         return personPictureImageData;
     }
 
-    public void setPersonPictureImageData(String personPictureImageData) {
+    public void setPersonPictureImageData(byte[] personPictureImageData) {
         this.personPictureImageData = personPictureImageData;
     }
 }

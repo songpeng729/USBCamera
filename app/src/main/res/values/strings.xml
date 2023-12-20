@@ -109,6 +109,7 @@
     <string name="person_list_gender">姓别</string>
     <string name="person_list_ethnic">民族</string>
     <string name="person_list_idcardno">身份证</string>
+    <string name="person_list_id">人员编号</string>
     <string name="person_list_address">地址</string>
     <string name="person_list_gather_time">采集时间</string>
 

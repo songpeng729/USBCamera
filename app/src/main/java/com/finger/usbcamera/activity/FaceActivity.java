@@ -24,6 +24,7 @@ import com.finger.usbcamera.db.entity.Face;
 import com.finger.usbcamera.db.entity.Person;
 import com.finger.usbcamera.db.greendao.FaceDao;
 import com.finger.usbcamera.db.greendao.PersonDao;
+import com.finger.usbcamera.util.BitmapUtil;
 
 import java.io.ByteArrayOutputStream;
 import java.util.List;
@@ -96,9 +97,9 @@ public class FaceActivity extends Activity implements View.OnClickListener, View
             List<Face> faceList = faceDao.queryBuilder().where(FaceDao.Properties.PersonId.eq(personId)).list();
             if(faceList != null && faceList.size() > 0){
                 Face face = faceList.get(0);
-                centerFace.setImageBitmap(bytes2Bitmap(face.getCenterImage()));
-                leftFace.setImageBitmap(bytes2Bitmap(face.getLeftImage()));
-                rightFace.setImageBitmap(bytes2Bitmap(face.getRightImage()));
+                centerFace.setImageBitmap(BitmapUtil.bytes2Bitmap(face.getCenterImage()));
+                leftFace.setImageBitmap(BitmapUtil.bytes2Bitmap(face.getLeftImage()));
+                rightFace.setImageBitmap(BitmapUtil.bytes2Bitmap(face.getRightImage()));
             }
         }
     }
@@ -243,7 +244,7 @@ public class FaceActivity extends Activity implements View.OnClickListener, View
 
     private void setImage(int faceIndex, String filePath){
         Bitmap bm = BitmapFactory.decodeFile(filePath); //lessenUriImage(filePath);
-        byte[] imageData = bitmap2Bytes(bm);
+        byte[] imageData = BitmapUtil.bitmap2Bytes(bm);
         switch (faceIndex){
             case FACE_INDEX_LEFT:
                 leftFace.setImageBitmap(bm);
@@ -258,14 +259,6 @@ public class FaceActivity extends Activity implements View.OnClickListener, View
                 rightImage = imageData;
                 break;
         }
-    }
-    private byte[] bitmap2Bytes(Bitmap bitmap){
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
-        return outputStream.toByteArray();
-    }
-    private Bitmap bytes2Bitmap(byte[] data){
-        return BitmapFactory.decodeByteArray(data, 0, data.length);
     }
 
     /**

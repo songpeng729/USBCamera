@@ -48,6 +48,7 @@ public class PersonListAdapter extends RecyclerView.Adapter<PersonListAdapter.Pe
         holder.name.setText(person.getName());
         holder.gender.setText(person.getGender());
         holder.idCardNo.setText(person.getIdCardNo());
+        holder.personId.setText(person.getPersonId());
         holder.address.setText(person.getAddress());
         if(person.getIdCardPhoto() != null)
             holder.photo.setImageBitmap(BitmapUtil.bytes2Bitmap(person.getIdCardPhoto()));
@@ -104,6 +105,7 @@ public class PersonListAdapter extends RecyclerView.Adapter<PersonListAdapter.Pe
         TextView name;
         TextView gender;
         TextView idCardNo;
+        TextView personId;
         TextView gatherTime;
         TextView address;
         ImageView idcardStatusImage, fingerStatusImage, faceStatusImage;
@@ -114,6 +116,7 @@ public class PersonListAdapter extends RecyclerView.Adapter<PersonListAdapter.Pe
             name = itemView.findViewById(R.id.person_name);
             gender = itemView.findViewById(R.id.person_gender);
             idCardNo = itemView.findViewById(R.id.person_idcardno);
+            personId = itemView.findViewById(R.id.person_id);
             gatherTime = itemView.findViewById(R.id.gather_time);
             address = itemView.findViewById(R.id.person_address);
             idcardStatusImage = itemView.findViewById(R.id.person_idcard_status);

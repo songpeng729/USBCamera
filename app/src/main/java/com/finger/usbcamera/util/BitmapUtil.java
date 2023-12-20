@@ -3,6 +3,8 @@ package com.finger.usbcamera.util;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+import java.io.ByteArrayOutputStream;
+
 public class BitmapUtil {
 
     public static int[] convert2Pixels(byte[] pixBuff) {
@@ -28,5 +30,10 @@ public class BitmapUtil {
     }
     public static Bitmap bytes2Bitmap(byte[] data){
         return BitmapFactory.decodeByteArray(data, 0, data.length);
+    }
+    public static byte[] bitmap2Bytes(Bitmap bitmap){
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+        return outputStream.toByteArray();
     }
 }

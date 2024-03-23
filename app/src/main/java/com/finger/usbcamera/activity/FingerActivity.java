@@ -221,25 +221,22 @@ public class FingerActivity extends Activity implements View.OnClickListener,Vie
 
             @Override
             public void onDettach(UsbDevice device) {
-                Toast.makeText(mContext, "onDettach", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onConnect(UsbDevice device, USBMonitor.UsbControlBlock ctrlBlock, boolean createNew) {
-                Toast.makeText(mContext, "onConnect vid:"+ ctrlBlock.getVenderId() + " pid:"+ ctrlBlock.getProductId(), Toast.LENGTH_SHORT).show();
                 usbControlBlock = ctrlBlock;// 得到UsbControlBlock,用于链接usb设备
                 fingerSurfaceView.releaseCamera();//释放usb设备
-                showGatherStatus( "设备链接成功可以采集！", false);
+                showGatherStatus( "Device link successful!", false);
                 ready = true;
             }
 
             @Override
             public void onDisconnect(UsbDevice device, USBMonitor.UsbControlBlock ctrlBlock) {
-                Toast.makeText(mContext, "onDisconnect", Toast.LENGTH_SHORT).show();
                 stopGather();
                 fingerSurfaceView.releaseCamera();
                 usbControlBlock = null;
-                showGatherStatus( "设备断开链接！", true);
+                showGatherStatus( "Device disconnect link！", true);
                 ready = false;
             }
 
@@ -317,8 +314,7 @@ public class FingerActivity extends Activity implements View.OnClickListener,Vie
                 }else if(ready){
                     startGather();
                 }else {
-                    showGatherStatus("设备未连接!",true);
-                    Toast.makeText(mContext, "设备未连接！", Toast.LENGTH_SHORT).show();
+                    showGatherStatus("Device not connected!",true);
                 }
                 break;
             case R.id.finger_save_btn:
@@ -381,7 +377,6 @@ public class FingerActivity extends Activity implements View.OnClickListener,Vie
         Log.i(TAG, " status:"+ status + " message:"+ message);
         switch (status){
             case MOSAIC_STATUS_START:
-                Toast.makeText(this, "开始采集", Toast.LENGTH_SHORT).show();
                 break;
             case MOSAIC_STATUS_SUCCESS:
                 gatherSuccess();
@@ -431,10 +426,10 @@ public class FingerActivity extends Activity implements View.OnClickListener,Vie
      */
     private void showRegatherAlertDialog(String message){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("采集失败("+message+") 是否重新采集"); //设置标题
-//                builder.setMessage(); //设置内容
+        builder.setTitle(R.string.diag_title); //设置标题
+        builder.setMessage(message+" \r\n Do you want regather?"); //设置内容
         //设置确定按钮
-        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(R.string.diag_positive_button, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //重新开始采集
@@ -443,7 +438,7 @@ public class FingerActivity extends Activity implements View.OnClickListener,Vie
             }
         });
         //设置取消按钮
-        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(R.string.diag_negative_button, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 gatherSuccess();
@@ -463,7 +458,7 @@ public class FingerActivity extends Activity implements View.OnClickListener,Vie
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(message); //设置标题
         //设置确定按钮
-        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(R.string.diag_positive_button, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //重新开始采集
@@ -607,7 +602,7 @@ public class FingerActivity extends Activity implements View.OnClickListener,Vie
         startGatherBtn.setTextColor(Color.WHITE);
         startGatherBtn.setText(getString(R.string.stop_collect));
 
-        showGatherStatus("正在采集"+fingerTypeName + "-->"+ fingerButtonNameList[currentFingerIndex], false);
+        showGatherStatus(fingerTypeName + "-->"+ fingerButtonNameList[currentFingerIndex]+" gathering", false);
         fingerSurfaceView.startGather(usbControlBlock, isFlat);
     }
     private void setGatherModel(int gatherModel){
@@ -648,7 +643,7 @@ public class FingerActivity extends Activity implements View.OnClickListener,Vie
     private void restartGather(){
         Log.i(TAG, "restartGather "+ currentFingerIndex + " isFlat "+ isFlat);
         fingerSurfaceView.stopGather();
-        showGatherStatus("正在采集"+fingerTypeName + "-->"+ fingerButtonNameList[currentFingerIndex], false);
+        showGatherStatus(fingerTypeName + "-->"+ fingerButtonNameList[currentFingerIndex]+" gathering", false);
         fingerSurfaceView.startGather(usbControlBlock, isFlat);
     }
 
@@ -672,10 +667,10 @@ public class FingerActivity extends Activity implements View.OnClickListener,Vie
      */
     private void setFingerStatusNone(final int fingerIndex){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("提示"); //设置标题
-        builder.setMessage("当前指位是否缺指"); //设置内容
+        builder.setTitle(R.string.diag_title); //设置标题
+        builder.setMessage("Whether the current finger is missing?"); //设置内容
         //设置确定按钮
-        builder.setPositiveButton("是", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(R.string.diag_positive_button, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 flatFingerDataList[fingerIndex].setStatus(FINGER_STATUS_NONE);
@@ -692,7 +687,7 @@ public class FingerActivity extends Activity implements View.OnClickListener,Vie
             }
         });
         //设置取消按钮
-        builder.setNegativeButton("否", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(R.string.diag_negative_button, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 flatFingerDataList[fingerIndex].setStatus(FINGER_STATUS_NORMAL);
@@ -765,7 +760,7 @@ public class FingerActivity extends Activity implements View.OnClickListener,Vie
         if(sameMnt != null){
             boolean isSame = FingerMatcher.featureMatchGAFIS(mnt, sameMnt);
             if(!isSame){
-                showMessageAlertDialog("滚动和平面不是同一个指纹,请重新采集!");
+                showMessageAlertDialog("Scroll and plane are not the same fingerprint, please re-gather!");
                 return false;
             }
         }
@@ -787,19 +782,6 @@ public class FingerActivity extends Activity implements View.OnClickListener,Vie
                         }
                     });
                     fingerMatchResultFutureList.add(distinctFingerFuture);
-                   /* Future<FingerMatchResultFuture<Boolean>> distinctFingerFuture = distinctExecutorService.submit(new Callable<FingerMatchResultFuture<Boolean>>() {
-                        @Override
-                        public FingerMatchResultFuture<Boolean> call() throws Exception {
-                            FingerMatchResultFuture<Boolean> future = new FingerMatchResultFuture<Boolean>();
-                            future.setObjectValue(FingerMatcher.featureMatchGAFIS(mnt, finalDestMnt));
-                            return future;
-                        }
-                    });
-                    try {
-                        fingerMatchResultFutureList.add(distinctFingerFuture.get());
-                    } catch (ExecutionException | InterruptedException e) {
-                        e.printStackTrace();
-                    }*/
                 }
             }
         }
@@ -809,7 +791,7 @@ public class FingerActivity extends Activity implements View.OnClickListener,Vie
                 Future<Boolean> future = fingerMatchResultFutureList.get(i);
                 boolean isMatch = future.get();
                 if(isMatch){
-                    showMessageAlertDialog("重复采集,请换一个指纹重新采集!");
+                    showMessageAlertDialog("repeat gather! Change another one.");
                     isDistinct = false;
                     break;
                 }
@@ -823,50 +805,6 @@ public class FingerActivity extends Activity implements View.OnClickListener,Vie
     }
     //用于指位重复采集校验，10个指位，最多9个线程
     ExecutorService distinctExecutorService = Executors.newFixedThreadPool(9);
-
-
-    /**
-     * Future模式 目前用于统一指位校验，并发比对结果
-     */
-    /*public class FingerMatchResultFuture<V> implements Future<V> {
-        private CountDownLatch countDownLatch = new CountDownLatch(1);
-        private boolean cancelled = false;
-        private V obj;
-        @Override
-        public boolean cancel(boolean mayInterruptIfRunning) {
-            cancelled = true;
-            return cancelled;
-        }
-
-        @Override
-        public boolean isCancelled() {
-            return cancelled;
-        }
-
-        @Override
-        public boolean isDone() {
-            return countDownLatch.getCount() == 0;
-        }
-
-        @Override
-        public V get() throws ExecutionException, InterruptedException {
-            countDownLatch.await();
-            return obj;
-        }
-
-        @Override
-        public V get(long timeout, TimeUnit unit) throws ExecutionException, InterruptedException, TimeoutException {
-            if (countDownLatch.await(timeout, unit)) {
-                return obj;
-            } else {
-                throw new TimeoutException();
-            }
-        }
-        public void setObjectValue(V value){
-            obj = value;
-            countDownLatch.countDown();
-        }
-    }*/
 
     /**
      * 保存指纹数据,存储压缩图和特征
@@ -902,6 +840,5 @@ public class FingerActivity extends Activity implements View.OnClickListener,Vie
         Person person = personDao.load(personId);
         person.setFingerStatus(STATUS_NOT_NULL);
         personDao.save(person);
-        Toast.makeText(mContext, "数据保存成功", Toast.LENGTH_SHORT).show();
     }
 }

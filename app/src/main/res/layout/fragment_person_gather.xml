@@ -16,7 +16,7 @@
             android:id="@+id/person_gather_refresh"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="刷新"
+            android:text="@string/person_gather_refresh"
             />
         <TextView
             android:id="@+id/person_gather_title"
@@ -24,14 +24,14 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="今日采集"
+            android:text="@string/person_gather_title"
             android:textColor="@color/white"
             android:textSize="30sp" />
         <Button
             android:id="@+id/person_gather_add"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="添加"
+            android:text="@string/person_gather_add"
             />
     </LinearLayout>
     <!-- TODO: Update blank fragment layout -->

@@ -128,7 +128,7 @@
     </LinearLayout>
     <Button
         android:id="@+id/user_save_btn"
-        android:text="保存"
+        android:text="@string/tv_save"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:ignore="HardcodedText"/>

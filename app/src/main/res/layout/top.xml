@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:gravity="center"
-        android:text="今日采集"
+        android:text="@string/person_gather_title"
         android:textColor="@color/white"
         android:textSize="30sp" />
 </LinearLayout>

@@ -23,7 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="人员采集" />
+            android:text="@string/person_gather_text" />
     </LinearLayout>
 
     <LinearLayout
@@ -44,7 +44,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="人员管理" />
+            android:text="@string/person_manager_text" />
     </LinearLayout>
 
 
@@ -66,6 +66,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="设置" />
+            android:text="@string/system_setting_text" />
     </LinearLayout>
 </LinearLayout>

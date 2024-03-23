@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import com.finger.usbcamera.R;
 import com.finger.usbcamera.USBCameraAPP;
 import com.finger.usbcamera.listener.MosaicImageListener;
 import com.finger.usbcamera.util.ImageConverter;
@@ -202,7 +203,7 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
                 @Override
                 public void afterMosaic(final int ret, byte[] bytes) {
                     Log.i(TAG, "afterMosaic ret "+ ret);
-                    if(ret == 0){
+                    if(ret == 0 || ret == -101){// 屏蔽手指回滚
                         imgDataBuffer = bytes;
                         onMosaicStatusChanged(MOSAIC_STATUS_SUCCESS, "采集完成", ret);
                         try {
@@ -332,52 +333,52 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
         String message = "";
         switch (code){
             case -101:
-                message = "手指回滚了";
+                message = getResources().getString(R.string.error_msg_101);
                 break;
             case -102:
-                message = "模糊";
+                message = getResources().getString(R.string.error_msg_102);
                 break;
             case -103:
-                message = "尺寸太小";
+                message = getResources().getString(R.string.error_msg_103);
                 break;
             case -104:
-                message = "手指太干";
+                message = getResources().getString(R.string.error_msg_104);
                 break;
             case -105:
-                message = "手指太湿";
+                message = getResources().getString(R.string.error_msg_105);
                 break;
             case -106:
-                message = "手指模糊";
+                message = getResources().getString(R.string.error_msg_106);
                 break;
             case -107:
-                message = "core偏左";
+                message = getResources().getString(R.string.error_msg_107);
                 break;
             case -108:
-                message = "core偏右";
+                message = getResources().getString(R.string.error_msg_108);
                 break;
             case -109:
-                message = "core太靠顶部";
+                message = getResources().getString(R.string.error_msg_109);
                 break;
             case -110:
-                message = "core太靠下部";
+                message = getResources().getString(R.string.error_msg_110);
                 break;
             case -111:
-                message = "没有core";
+                message = getResources().getString(R.string.error_msg_111);
                 break;
             case -112:
-                message = "重心偏左";
+                message = getResources().getString(R.string.error_msg_112);
                 break;
             case -113:
-                message = "重心偏右";
+                message = getResources().getString(R.string.error_msg_113);
                 break;
             case -114:
-                message = "重心偏上";
+                message = getResources().getString(R.string.error_msg_114);
                 break;
             case -115:
-                message = "重心偏下";
+                message = getResources().getString(R.string.error_msg_115);
                 break;
             case -116:
-                message = "不支持平面采集";
+                message = getResources().getString(R.string.error_msg_116);
                 break;
         }
         return message;

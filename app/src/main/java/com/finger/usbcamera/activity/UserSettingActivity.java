@@ -63,10 +63,10 @@ public class UserSettingActivity extends Activity implements View.OnClickListene
                     loginUser.setUnitCode(unitCode.getText().toString());
                     loginUser.setUnitName(unitName.getText().toString());
                     userDao.save(loginUser);
-                    Toast.makeText(mContext,"保存成功！", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext,"Save Success！", Toast.LENGTH_SHORT).show();
                     finish();
                 }else{
-                    Toast.makeText(mContext,"单位代码长度不是12位", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext,"Unit Code length not 12", Toast.LENGTH_SHORT).show();
                 }
                 break;
         }

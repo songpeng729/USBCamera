@@ -92,7 +92,7 @@ public class FaceActivity extends Activity implements View.OnClickListener, View
             name = intent.getStringExtra(EXTRA_NAME);
             idcardno = intent.getStringExtra(EXTRA_IDCARDNO);
             personId = intent.getLongExtra(EXTRA_PERSONID, 0);
-            faceTitle.setText(String.format("%s(%s)\r\n三面人像采集"+personId, name, idcardno));
+            faceTitle.setText(String.format("%s(%s)\r\nThree-sided Face Gather"+personId, name, idcardno));
 
             List<Face> faceList = faceDao.queryBuilder().where(FaceDao.Properties.PersonId.eq(personId)).list();
             if(faceList != null && faceList.size() > 0){
@@ -190,9 +190,9 @@ public class FaceActivity extends Activity implements View.OnClickListener, View
 
     protected void removeImage(final int faceIndex) {
         AlertDialog.Builder builder=new AlertDialog.Builder(this);  //先得到构造器
-        builder.setTitle("提示"); //设置标题
-        builder.setMessage("是否删除此照片？"); //设置内容
-        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() { //设置确定按钮
+        builder.setTitle(R.string.diag_title); //设置标题
+        builder.setMessage(R.string.diag_delete_photo); //设置内容
+        builder.setPositiveButton(R.string.diag_positive_button, new DialogInterface.OnClickListener() { //设置确定按钮
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 switch (faceIndex){
@@ -212,7 +212,7 @@ public class FaceActivity extends Activity implements View.OnClickListener, View
                 dialog.dismiss(); //关闭dialog
             }
         });
-        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() { //设置取消按钮
+        builder.setNegativeButton(R.string.diag_negative_button, new DialogInterface.OnClickListener() { //设置取消按钮
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
@@ -278,7 +278,6 @@ public class FaceActivity extends Activity implements View.OnClickListener, View
         Bitmap bitmap = BitmapFactory.decodeFile(path, options);
         int w = bitmap.getWidth();
         int h = bitmap.getHeight();
-        Log.i(TAG, "lessenUriImage: width "+ w + " height " + h); // after zoom
         return bitmap;
     }
 
@@ -287,13 +286,13 @@ public class FaceActivity extends Activity implements View.OnClickListener, View
      */
     private void savePhoto() {
         if(centerImage == null || leftImage == null || rightImage == null){
-            Toast.makeText(getApplicationContext(),"请采集三面人像数据!",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(),R.string.msg_gather_thress_sided_face,Toast.LENGTH_SHORT).show();
             return;
         }
         AlertDialog.Builder builder=new AlertDialog.Builder(this);  //先得到构造器
-        builder.setTitle("提示"); //设置标题
-        builder.setMessage("是否保存照片？"); //设置内容
-        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() { //设置确定按钮
+        builder.setTitle(R.string.diag_title); //设置标题
+        builder.setMessage(R.string.diag_save_photo); //设置内容
+        builder.setPositiveButton(R.string.diag_positive_button, new DialogInterface.OnClickListener() { //设置确定按钮
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Face face = new Face();
@@ -308,12 +307,11 @@ public class FaceActivity extends Activity implements View.OnClickListener, View
                 personDao.save(person);
 
                 dialog.dismiss(); //关闭dialog
-                Toast.makeText(getApplicationContext(),"成功保存三面人像数据",Toast.LENGTH_SHORT).show();
                 saveBtn.setBackgroundResource(R.color.gray_light);
                 saveBtn.setEnabled(false);
             }
         });
-        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() { //设置取消按钮
+        builder.setNegativeButton(R.string.diag_negative_button, new DialogInterface.OnClickListener() { //设置取消按钮
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();

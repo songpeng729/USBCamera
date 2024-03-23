@@ -187,7 +187,7 @@
             android:textSize="18sp" />
     </LinearLayout>
     <Button
-        android:text="保存"
+        android:text="@string/tv_save"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/id_card_save"

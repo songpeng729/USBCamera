@@ -130,7 +130,7 @@ public class DryWetSettingActivity extends Activity implements View.OnClickListe
         mUSBMonitor = new USBMonitor(mContext, new USBMonitor.OnDeviceConnectListener() {
             @Override
             public void onAttach(UsbDevice device) {
-                Toast.makeText(mContext, "onAttach", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, "onAttach", Toast.LENGTH_LONG).show();
                 final List<DeviceFilter> filter = DeviceFilter.getDeviceFilters(mContext,
                         com.finger.usbcamera.R.xml.device_filter);
                 final List<UsbDevice> deviceList = mUSBMonitor.getDeviceList(filter);
@@ -146,19 +146,19 @@ public class DryWetSettingActivity extends Activity implements View.OnClickListe
 
             @Override
             public void onDettach(UsbDevice device) {
-                Toast.makeText(mContext, "onDettach", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, "onDettach", Toast.LENGTH_LONG).show();
             }
 
             @Override
             public void onConnect(UsbDevice device, USBMonitor.UsbControlBlock ctrlBlock, boolean createNew) {
-                Toast.makeText(mContext, "onConnect", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, "onConnect", Toast.LENGTH_LONG).show();
                 usbControlBlock = ctrlBlock;// 得到UsbControlBlock,用于链接usb设备
                 fingerSurfaceView.releaseCamera();
             }
 
             @Override
             public void onDisconnect(UsbDevice device, USBMonitor.UsbControlBlock ctrlBlock) {
-                Toast.makeText(mContext, "onDisconnect", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, "onDisconnect", Toast.LENGTH_LONG).show();
                 fingerSurfaceView.releaseCamera();
             }
 
@@ -174,9 +174,8 @@ public class DryWetSettingActivity extends Activity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.drywet_start_btn:
-                Log.d(TAG, "onClick: drywet_start_btn");
                 if(usbControlBlock == null){
-                    Toast.makeText(mContext, "未连接设备", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, "Disconnected device", Toast.LENGTH_SHORT).show();
                     break;
                 }
                 fingerSurfaceView.startPreview(usbControlBlock);

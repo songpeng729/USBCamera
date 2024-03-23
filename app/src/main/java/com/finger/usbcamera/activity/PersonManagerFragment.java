@@ -76,7 +76,7 @@ public class PersonManagerFragment extends Fragment {
         }
     };
     private void refreshDateTitle(){
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.MILLISECOND, 0);

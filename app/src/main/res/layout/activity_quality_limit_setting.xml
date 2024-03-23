@@ -22,7 +22,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="18sp"
-            android:text="最小质量分数"/>
+            android:text="@string/quality_limit"/>
 
         <EditText
             android:id="@+id/quality_limit_edit"
@@ -35,7 +35,7 @@
 
     <Button
         android:id="@+id/quality_limit_save_btn"
-        android:text="保存"
+        android:text="@string/tv_save"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:ignore="HardcodedText"/>

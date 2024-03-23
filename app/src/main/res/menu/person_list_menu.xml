@@ -2,21 +2,21 @@
     <item
         android:id="@+id/person_list_menu_gather_finger"
         android:orderInCategory="100"
-        android:title="采集指纹"/>
+        android:title="@string/gather_finger"/>
     <item
         android:id="@+id/person_list_menu_gather_face"
         android:orderInCategory="100"
-        android:title="采集人像"/>
+        android:title="@string/gather_face"/>
     <item
         android:id="@+id/person_list_menu_export_fpt"
         android:orderInCategory="100"
-        android:title="导出FPT"/>
+        android:title="@string/export_fpt"/>
     <item
         android:id="@+id/person_list_menu_upload"
         android:orderInCategory="100"
-        android:title="上报"/>
+        android:title="@string/upload"/>
     <item
         android:id="@+id/person_list_menu_delete"
         android:orderInCategory="100"
-        android:title="删除" />
+        android:title="@string/delete" />
 </menu>

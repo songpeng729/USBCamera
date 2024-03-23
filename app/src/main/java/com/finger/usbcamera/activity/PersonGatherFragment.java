@@ -269,12 +269,12 @@ public class PersonGatherFragment extends Fragment {
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.PUT, url, jsonObject,new Response.Listener() {
             @Override
             public void onResponse(Object response) {
-                Toast.makeText(mContext, "上报数据成功"+ response.toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, "upload success"+ response.toString(), Toast.LENGTH_SHORT).show();
             }
         }, new Response.ErrorListener(){
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(mContext, "上报数据失败"+ error.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, "upload error:"+ error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -287,9 +287,9 @@ public class PersonGatherFragment extends Fragment {
      */
     private void showAlertDialog(String message){
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-        builder.setTitle("消息提示"); //设置标题
+        builder.setTitle(R.string.diag_title); //设置标题
         builder.setMessage(message);
-        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(R.string.diag_positive_button, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();

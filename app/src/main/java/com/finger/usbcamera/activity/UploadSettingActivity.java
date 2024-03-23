@@ -37,7 +37,7 @@ public class UploadSettingActivity extends Activity{
             public void onClick(View v) {
                 String url = uploadUrl.getText().toString();
                 SharedPreferencesUtil.putStringValue(SharedPreferencesUtil.KEY_UPLOAD_URL, url);
-                Toast.makeText(mContext,"保存成功！", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext,"Save Success！", Toast.LENGTH_SHORT).show();
                 finish();
             }
         });

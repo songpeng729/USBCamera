@@ -6,6 +6,11 @@
     <string name="diag_about_title">关于</string>
     <string name="diag_about_message">这是一个USB摄像头APP。</string>
     <string name='diag_usbinfo_title'>USB设备信息</string>
+    <string name="diag_title">提示消息</string>
+    <string name="diag_positive_button">确定</string>
+    <string name="diag_negative_button">取消</string>
+    <string name="diag_delete_photo">Do you want to delete this photo?</string>
+    <string name="diag_save_photo">Do you want to save this photo?</string>
     <string name="msg_permissiondeny">获取权限失败，正在退出...</string>
     <string name="acra_notification_text">抱歉程序崩溃了，请将错误报告发送给开发者。</string>
     <string name="acra_notification_title">USB摄像头崩溃了</string>
@@ -120,4 +125,41 @@
     <string name="set_upload_btn">上报设置</string>
     <string name="login_btn">登 录 系 统</string>
 
+    <string name="person_gather_title">今日采集</string>
+    <string name="person_gather_add">添加</string>
+    <string name="person_gather_refresh">刷新</string>
+    <string name="person_gather_text">人员采集</string>
+    <string name="person_manager_text">人员管理</string>
+    <string name="person_manager_date">日历</string>
+    <string name="system_setting_text">设置</string>
+
+    <string name="upload_url">上报地址</string>
+    <string name="quality_limit">最小质量分数</string>
+    <string name="gather_finger">采集指纹</string>
+    <string name="gather_face">采集人像</string>
+    <string name="export_fpt">导出FPT</string>
+    <string name="upload">上报</string>
+    <string name="delete">删除</string>
+    <string name="dry">干</string>
+    <string name="wet">湿</string>
+    <string name="loading">正在加载。。。</string>
+
+    <string name="error_msg_101">手指回滚了</string>
+    <string name="error_msg_102">模糊</string>
+    <string name="error_msg_103">尺寸太小</string>
+    <string name="error_msg_104">手指太干</string>
+    <string name="error_msg_105">手指太湿</string>
+    <string name="error_msg_106">手指模糊</string>
+    <string name="error_msg_107">core偏左</string>
+    <string name="error_msg_108">core偏右</string>
+    <string name="error_msg_109">core太靠顶部</string>
+    <string name="error_msg_110">core太靠下部</string>
+    <string name="error_msg_111">没有core</string>
+    <string name="error_msg_112">重心偏左</string>
+    <string name="error_msg_113">重心偏右</string>
+    <string name="error_msg_114">重心偏上</string>
+    <string name="error_msg_115">重心偏下</string>
+    <string name="error_msg_116">不支持平面采集</string>
+
+    <string name="msg_gather_thress_sided_face">请采集三面人像数据！</string>
 </resources>

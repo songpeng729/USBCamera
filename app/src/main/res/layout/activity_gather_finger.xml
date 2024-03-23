@@ -171,7 +171,7 @@
                 android:layout_width="50dp"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:text="干"
+                android:text="@string/dry"
                 android:textSize="20sp" />
 
             <SeekBar
@@ -190,7 +190,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:gravity="end"
-                android:text="湿"
+                android:text="@string/wet"
                 android:textSize="20sp" />
         </RelativeLayout>
 

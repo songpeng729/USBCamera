@@ -121,18 +121,18 @@ public class IDCardActivity extends AppCompatActivity {
                         String msg;
                         switch (errorCode) {
                             case CameraView.NATIVE_SOLOAD_FAIL:
-                                msg = "加载so失败，请确保apk中存在ui部分的so";
+                                msg = "native soload fail";
                                 break;
                             case CameraView.NATIVE_AUTH_FAIL:
-                                msg = "授权本地质量控制token获取失败";
+                                msg = "native auth fail";
                                 break;
                             case CameraView.NATIVE_INIT_FAIL:
-                                msg = "本地质量控制";
+                                msg = "native init fail";
                                 break;
                             default:
                                 msg = String.valueOf(errorCode);
                         }
-                        infoTextView.setText("本地质量控制初始化错误，错误原因： " + msg);
+                        infoTextView.setText("native init error，message：" + msg);
                     }
                 });
 
@@ -223,7 +223,7 @@ public class IDCardActivity extends AppCompatActivity {
             @Override
             public void onError(OCRError error) {
                 error.printStackTrace();
-                alertText("自定义文件路径licence方式获取token失败", error.getMessage());
+                alertText("licence fail", error.getMessage());
                 try {
                     //网络请求token授权
                     USBCameraAPP.accessToken = AuthService.getAccessToken();
@@ -343,7 +343,7 @@ public class IDCardActivity extends AppCompatActivity {
     }
     private void savePerson(){
         if(name.getText().toString().isEmpty() || idCardNo.getText().toString().isEmpty()){
-            Toast.makeText(this, "请输入姓名和身份证!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Name or IDCard is empty!", Toast.LENGTH_SHORT).show();
             return;
         }
         Person person = new Person();
@@ -363,7 +363,7 @@ public class IDCardActivity extends AppCompatActivity {
         person.setPersonId(generatePersonId(loginUser.getUnitCode()));
         personDao.insert(person);
 
-        alertText("保存成功", "继续采集指纹！", new DialogInterface.OnClickListener() {
+        alertText("save success", "continue gather", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Intent intent = new Intent(mContext, FingerActivity.class);
@@ -461,7 +461,7 @@ public class IDCardActivity extends AppCompatActivity {
             public void run() {
                 alertDialog.setTitle(title)
                         .setMessage(message)
-                        .setPositiveButton("确定", listener)
+                        .setPositiveButton(R.string.diag_positive_button, listener)
                         .setCancelable(false)//不能取消
                         .show();
             }

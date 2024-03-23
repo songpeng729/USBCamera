@@ -39,10 +39,10 @@ public class QualityLimitSettingActivity extends Activity{
                 int limit = Integer.parseInt(qualityLimit.getText().toString());
                 if(limit > 0 && limit < 100){
                     SharedPreferencesUtil.putIntValue(SharedPreferencesUtil.KEY_QUALITY_LIMIT, limit);
-                    Toast.makeText(mContext,"保存成功！", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext,"Save Success！", Toast.LENGTH_SHORT).show();
                     finish();
                 }else{
-                    Toast.makeText(mContext,"只能输入1-99的数字", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext,"Limit [1-99]", Toast.LENGTH_SHORT).show();
                 }
             }
         });

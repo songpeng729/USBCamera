@@ -81,7 +81,7 @@ public class LoginActivity extends Activity implements View.OnClickListener{
             startActivity(intent);
             finish();
         }else{
-            Toast.makeText(this, "用户不存在", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "user not exist!", Toast.LENGTH_SHORT).show();
         }
     }
 }

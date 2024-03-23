@@ -193,7 +193,7 @@ public class MosaicActivity extends Activity implements View.OnClickListener, Mo
         Log.i(TAG, " status:"+ status + " message:"+ message);
         switch (status){
             case MOSAIC_STATUS_START:
-                Toast.makeText(this, "开始采集", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Start Gather", Toast.LENGTH_SHORT).show();
                 break;
             case MOSAIC_STATUS_SUCCESS:
                 //获取指纹数据
@@ -202,7 +202,7 @@ public class MosaicActivity extends Activity implements View.OnClickListener, Mo
                 stopGather();
                 break;
             case MOSAIC_STATUS_FAIL:
-                Toast.makeText(this, "采集失败"+message, Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Gather Fail:"+message, Toast.LENGTH_SHORT).show();
                 stopGather();
                 break;
             case MOSAIC_STATUS_MESSAGE:

@@ -59,6 +59,9 @@ import java.util.Date;
 import static com.finger.usbcamera.USBCameraAPP.EXTRA_IDCARDNO;
 import static com.finger.usbcamera.USBCameraAPP.EXTRA_NAME;
 import static com.finger.usbcamera.USBCameraAPP.EXTRA_PERSONID;
+import static com.finger.usbcamera.USBCameraAPP.REQUEST_CODE_CAMERA;
+import static com.finger.usbcamera.USBCameraAPP.REQUEST_CODE_GATHER_FINGER;
+import static com.finger.usbcamera.USBCameraAPP.REQUEST_CODE_PICK_IMAGE_FRONT;
 
 /**
  * 身份证采集
@@ -68,10 +71,6 @@ import static com.finger.usbcamera.USBCameraAPP.EXTRA_PERSONID;
 public class IDCardActivity extends AppCompatActivity {
     private final String TAG = "IDCardActivity";
     private Context mContext;
-    private static final int REQUEST_CODE_PICK_IMAGE_FRONT = 201;   // 从相册选择身份证正面照片
-    private static final int REQUEST_CODE_PICK_IMAGE_BACK = 202;    // 从相册选择身份证背面照片
-    private static final int REQUEST_CODE_CAMERA = 102;     //相机拍照
-    private static final int REQUEST_CODE_GATHER_FINGER = 101;  //采集指纹
 
     private ImageView idCardPhoto;
     private TextView name, idCardNo, birthday, address;
@@ -363,7 +362,7 @@ public class IDCardActivity extends AppCompatActivity {
         person.setPersonId(generatePersonId(loginUser.getUnitCode()));
         personDao.insert(person);
 
-        alertText("save success", "continue gather", new DialogInterface.OnClickListener() {
+        alertText("Save Success", "Continue Gather Finger ?", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Intent intent = new Intent(mContext, FingerActivity.class);

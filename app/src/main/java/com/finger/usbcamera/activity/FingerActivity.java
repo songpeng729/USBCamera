@@ -23,6 +23,7 @@ import androidx.annotation.Nullable;
 
 import com.finger.usbcamera.R;
 import com.finger.usbcamera.USBCameraAPP;
+import com.finger.usbcamera.db.entity.Face;
 import com.finger.usbcamera.db.entity.Finger;
 import com.finger.usbcamera.db.entity.Person;
 import com.finger.usbcamera.db.greendao.FingerDao;
@@ -51,6 +52,8 @@ import centipede.livescan.MosaicNative;
 import static com.finger.usbcamera.USBCameraAPP.EXTRA_IDCARDNO;
 import static com.finger.usbcamera.USBCameraAPP.EXTRA_NAME;
 import static com.finger.usbcamera.USBCameraAPP.EXTRA_PERSONID;
+import static com.finger.usbcamera.USBCameraAPP.REQUEST_CODE_GATHER_FACE;
+import static com.finger.usbcamera.USBCameraAPP.REQUEST_CODE_GATHER_FINGER;
 import static com.finger.usbcamera.db.DatabaseConstants.STATUS_NOT_NULL;
 import static com.finger.usbcamera.vo.FingerData.FINGER_STATUS_EMPTY;
 import static com.finger.usbcamera.vo.FingerData.FINGER_STATUS_NONE;
@@ -97,6 +100,7 @@ public class FingerActivity extends Activity implements View.OnClickListener,Vie
     private USBMonitor.UsbControlBlock usbControlBlock;
     private Context mContext;
 
+    private AlertDialog.Builder alertDialog;//消息弹框
 //    int fingerRedColor = getColor(R.color.finger_red);//Color.parseColor("#fd4949");
 //    int fingerGreenColor = getColor(R.color.finger_green);//Color.parseColor("#009688");
 //    int fingerGrayColor = getColor(R.color.finger_gray);//Color.parseColor("#4b4b4b");
@@ -840,5 +844,34 @@ public class FingerActivity extends Activity implements View.OnClickListener,Vie
         Person person = personDao.load(personId);
         person.setFingerStatus(STATUS_NOT_NULL);
         personDao.save(person);
+        // 保存成功之后，确认提示是否下一步采集
+        showSuccessAlertDialog();
+    }
+    private void showSuccessAlertDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.diag_save_success); //设置标题
+        builder.setMessage("Do you want gather photo?"); //设置内容
+        //设置确定按钮,继续采集人像
+        builder.setPositiveButton(R.string.diag_to_face_button, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(mContext, FaceActivity.class);
+                intent.putExtra(EXTRA_NAME, name);
+                intent.putExtra(EXTRA_IDCARDNO, idcardno);
+                intent.putExtra(EXTRA_PERSONID, personId);
+                startActivityForResult(intent, REQUEST_CODE_GATHER_FACE);
+                dialog.dismiss();
+            }
+        });
+        //取消，返回列表
+        builder.setNegativeButton(R.string.diag_cancel_button, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+                dialog.dismiss();
+            }
+        });
+
+        builder.create().show();
     }
 }

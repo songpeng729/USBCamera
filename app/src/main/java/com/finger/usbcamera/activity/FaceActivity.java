@@ -32,6 +32,8 @@ import java.util.List;
 import static com.finger.usbcamera.USBCameraAPP.EXTRA_IDCARDNO;
 import static com.finger.usbcamera.USBCameraAPP.EXTRA_NAME;
 import static com.finger.usbcamera.USBCameraAPP.EXTRA_PERSONID;
+import static com.finger.usbcamera.USBCameraAPP.REQUEST_CODE_CAMERA;
+import static com.finger.usbcamera.USBCameraAPP.REQUEST_CODE_PICK_IMAGE;
 import static com.finger.usbcamera.db.DatabaseConstants.STATUS_NOT_NULL;
 
 /**
@@ -40,8 +42,6 @@ import static com.finger.usbcamera.db.DatabaseConstants.STATUS_NOT_NULL;
  */
 public class FaceActivity extends Activity implements View.OnClickListener, View.OnLongClickListener{
     private final String TAG = "FaceActivity";
-    public static final int REQUEST_CODE_CAMERA = 100;//相机拍照
-    private static final int REQUEST_CODE_PICK_IMAGE = 101;//从相册选择照片
 
     private String name = "", idcardno = "";
     private Long personId; //person.id

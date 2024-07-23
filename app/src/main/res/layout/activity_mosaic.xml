@@ -76,11 +76,11 @@
                 android:text="@string/dry_wet_setting"
                 android:textColor="@drawable/finger_text_color" />
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/m5000_info"
-                />
+<!--            <ImageView-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:src="@drawable/m5000_info"-->
+<!--                />-->
         </LinearLayout>
 
     </RelativeLayout>

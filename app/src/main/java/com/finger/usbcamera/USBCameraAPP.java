@@ -29,12 +29,22 @@ public class USBCameraAPP extends Application {
 
     private User loginUser;
 
+    // 跳转采集activity，需要的参数
     public static String EXTRA_NAME = "name";
     public static String EXTRA_IDCARDNO= "idcardno";
     public static String EXTRA_PERSONID= "person_id";
 
+
     public static final String DEFAULT_USER = "admin";  //默认登录用户
     public static final int DEFAULT_QUALITY_LIMIT = 65; //默认采集质量分数限制
+
+    public static final int REQUEST_CODE_CAMERA = 100;//相机拍照
+    public static final int REQUEST_CODE_PICK_IMAGE = 101;//从相册选择照片
+    public static final int REQUEST_CODE_PICK_IMAGE_FRONT = 102;   // 从相册选择身份证正面照片
+    public static final int REQUEST_CODE_PICK_IMAGE_BACK = 103;    // 从相册选择身份证背面照片
+    public static final int REQUEST_CODE_GATHER_FINGER = 200;  //采集指纹
+    public static final int REQUEST_CODE_GATHER_FACE = 302;  //采集指纹
+
 
     public static USBCameraAPP getInstances(){
         return instances;

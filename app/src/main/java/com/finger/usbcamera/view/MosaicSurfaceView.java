@@ -318,9 +318,9 @@ public class MosaicSurfaceView extends SurfaceView implements SurfaceHolder.Call
                     if(quality >= qualityLimit){
                         mosaicImageListener.onMosaicStatusChanged(MOSAIC_STATUS_SUCCESS, msg.obj.toString());
                     }else if (quality > 0 ) {
-                        mosaicImageListener.onMosaicStatusChanged(MOSAIC_STATUS_FAIL, "质量不合格（" + quality + "）");
+                        mosaicImageListener.onMosaicStatusChanged(MOSAIC_STATUS_FAIL, "Disqualification（" + quality + "）");
                     }else if (quality == 0){
-                        mosaicImageListener.onMosaicStatusChanged(MOSAIC_STATUS_FAIL, "程序异常GBFPNative.FPBegin");
+                        mosaicImageListener.onMosaicStatusChanged(MOSAIC_STATUS_FAIL, "Error GBFPNative.FPBegin");
                     }else{
                         mosaicImageListener.onMosaicStatusChanged(MOSAIC_STATUS_FAIL, getErrorMessage(quality));
                     }
